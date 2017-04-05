@@ -66,10 +66,10 @@ class Model extends EventAware {
 
         if (EVENT_MODEL_CHANGE !== event) {
             const originalEvent = event;
-            const originalParameters = parameters
+            const originalParameters = parameters;
             this.emit(EVENT_MODEL_CHANGE, this, originalEvent, originalParameters);
         }
     }
-};
+}
 
 export {EVENT_MODEL_CHANGE, Model};

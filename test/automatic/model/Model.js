@@ -4,20 +4,6 @@ import {assert} from "chai";
 const OTHER_EVENT = Symbol("event:other");
 
 describe("Model", function () {
-    describe("#new()", function () {
-        it("should create a Model that can emit EVENT_MODEL_CHANGE", function () {
-            const model = new Model();
-            assert.isTrue(model.eventHandlers.hasOwnProperty(EVENT_MODEL_CHANGE));
-        });
-        
-        it("should create a Model that can emit EVENT_MODEL_CHANGE as well as other registered events", function () {
-            const model = new Model([OTHER_EVENT]);
-            assert.isTrue(model.eventHandlers.hasOwnProperty(EVENT_MODEL_CHANGE));
-            assert.isTrue(model.eventHandlers.hasOwnProperty(OTHER_EVENT));
-        });
-    });
-
-
     describe("#emit(OTHER_EVENT)", function () {
         const model = new Model([OTHER_EVENT]);
         let other = -1;

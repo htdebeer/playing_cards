@@ -29,6 +29,9 @@ const initializeEventHandlers = function (events = []) {
     }, {});
 };
 
+// Private properties of an EventAware class
+_eventHandlers = new WeakMap();
+
 /**
  * EventAware is a base class for event aware object. EventAware objects can
  * emit events. For each emittable event an event handler can be installed or
@@ -42,7 +45,7 @@ class EventAware {
      * @param {symbol[]} [emitableEvents = []] - the list of events this object can emit.
      */
     constructor(emitableEvents = []) {
-        this.eventHandlers = initializeEventHandlers(emitableEvents);
+        _eventHandlers.set(this, initializeEventHandlers(emitableEvents));
     }
 
     /**
@@ -63,8 +66,8 @@ class EventAware {
      * this EventAware object can emit.
      */
     on(event, eventHandler) {
-        if (this.eventHandlers.hasOwnProperty(event)) {
-            this.eventHandlers[event].push(eventHandler);
+        if (_eventHandlers.get(this).hasOwnProperty(event)) {
+            _eventHandlers.get(this)[event].push(eventHandler);
         } else {
             throw new Error(`The EventAware object '${this}' does not emit event '${event.toString()}'.`);
         }
@@ -85,15 +88,15 @@ class EventAware {
      * this EventAware object can emit. 
      */
     off(event, eventHandler = undefined) {
-        if (this.eventHandlers.hasOwnProperty(event)) {
+        if (_eventHandlers.get(this).hasOwnProperty(event)) {
             if (undefined === eventHandler) {
                 // remove all event handlers for this event
-                this.eventHandlers[event] = [];
+                _eventHandlers.get(this)[event] = [];
             } else {
-                const index = this.eventHandlers[event].indexOf(eventHandler);
+                const index = _eventHandlers.get(this)[event].indexOf(eventHandler);
 
                 if (0 <= index) {
-                    this.eventHandlers[event].splice(index, 1);
+                    _eventHandlers.get(this)[event].splice(index, 1);
                 }
             }
         } else {
@@ -111,11 +114,11 @@ class EventAware {
     emit(event, ...parameters) {
         const handleEvent = function () {
             return function (eventHandler) {
-                eventHandler.apply(this, parameters);
+                eventHandler.call(this, ...parameters);
             };
         };
 
-        this.eventHandlers[event].forEach(handleEvent());
+        _eventHandlers.get(this)[event].forEach(handleEvent());
     }
 }
 
