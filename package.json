@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha --require babel-polyfill --compilers js:babel-register ./test/automatic",
+    "test": "node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register ./test/automatic",
     "build": "node_modules/rollup/bin/rollup --config ./rollup.config.js",
     "doc": "node_modules/jsdoc/jsdoc.js ./src --destination doc --recurse",
     "dev": "npm run build && npm run test && npm run doc"

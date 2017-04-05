@@ -30,7 +30,7 @@ const initializeEventHandlers = function (events = []) {
 };
 
 /**
- * EventAware base class for an event handling system. EventAware object can
+ * EventAware is a base class for event aware object. EventAware objects can
  * emit events. For each emittable event an event handler can be installed or
  * uninstalled.
  */
@@ -39,7 +39,7 @@ class EventAware {
     /**
      * Create an EventAware object.
      *
-     * @param {symbol} [emitableEvents = []] - the list of events this object can emit.
+     * @param {symbol[]} [emitableEvents = []] - the list of events this object can emit.
      */
     constructor(emitableEvents = []) {
         this.eventHandlers = initializeEventHandlers(emitableEvents);
@@ -59,13 +59,14 @@ class EventAware {
      * @param {eventHandler} eventHandler - the event handler to install; when this EventAware
      * object emits the event this event handler will be executed.
      *
-     * @throws Error
+     * @throws {Error} An event handler can only be installed for an event
+     * this EventAware object can emit.
      */
     on(event, eventHandler) {
-        if (this.eventHandlers[event]) {
+        if (this.eventHandlers.hasOwnProperty(event)) {
             this.eventHandlers[event].push(eventHandler);
         } else {
-            throw new Error(`The EventAware object '${this}' does not emit event '${event}'.`);
+            throw new Error(`The EventAware object '${this}' does not emit event '${event.toString()}'.`);
         }
     }
 
@@ -73,15 +74,30 @@ class EventAware {
      * Remove an event handler.
      *
      * @param {symbol} event - the event to stop listen for.
-     * @param {eventHandler} eventHandler - the event handler to uninstall; when this
+     * @param {eventHandler} [eventHandler] - the event handler to uninstall; when this
      * EventAware object emits the event this event handler will not be
      * executed anymore.
+     *
+     * If the eventHandler is not supplied, all event handlers for this event
+     * will be uninstalled.
+     *
+     * @throws {Error} An event handler can only be uninstalled for an event
+     * this EventAware object can emit. 
      */
-    off(event, eventHandler) {
-        const index = this.eventHandlers[event].indexOf(eventHandler);
+    off(event, eventHandler = undefined) {
+        if (this.eventHandlers.hasOwnProperty(event)) {
+            if (undefined === eventHandler) {
+                // remove all event handlers for this event
+                this.eventHandlers[event] = [];
+            } else {
+                const index = this.eventHandlers[event].indexOf(eventHandler);
 
-        if (0 <= index) {
-            this.eventHandlers[event].splice(index, 1);
+                if (0 <= index) {
+                    this.eventHandlers[event].splice(index, 1);
+                }
+            }
+        } else {
+            throw new Error(`The EventAware object '${this}' does not emit event '${event.toString()}'.`);
         }
     }
 
@@ -89,8 +105,8 @@ class EventAware {
      * Emit an event.
      *
      * @param {symbol} event - the event to emit by this EventAware object.
-     * @param {...*} parameters - a list of parameters to call an bound action
-     * with.
+     * @param {...*} parameters - a list of parameters that are applied to the
+     * installed event handlers as parameters.
      */
     emit(event, ...parameters) {
         const handleEvent = function () {

@@ -111,12 +111,12 @@ class EventAware {
     emit(event, ...parameters) {
         const handleEvent = function () {
             return function (eventHandler) {
-                eventHandler.apply(this, parameters);
+                eventHandler.call(this, ...parameters);
             };
         };
 
         this.eventHandlers[event].forEach(handleEvent());
     }
-}
+};
 
 export default EventAware;

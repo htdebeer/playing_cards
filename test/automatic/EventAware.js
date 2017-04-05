@@ -67,30 +67,29 @@ describe("EventAware", function () {
 
     describe("#emit(EVENT, parameters)", function () {
         it("should emit event 'EVENT' and call handler with no arguments", function () {
-            let result = -1;
+            let result = 0;
             eventAware.off(EVENT_ONE);
-            eventAware.on(EVENT_ONE, function (...ns) {
-                result = ns.reduce((sum, n) => {sum = sum + n; return sum;}, 0);
+            eventAware.on(EVENT_ONE, function () {
             });
             eventAware.emit(EVENT_ONE);
             assert.equal(result, 0);
         });
         
         it("should emit event 'EVENT' and call handler with one argument", function () {
-            let result = -1;
+            let result = 0;
             eventAware.off(EVENT_ONE);
-            eventAware.on(EVENT_ONE, function (...ns) {
-                result = ns.reduce((sum, n) => {sum = sum + n; return sum;}, 0);
+            eventAware.on(EVENT_ONE, function (n) {
+                result = n;
             });
             eventAware.emit(EVENT_ONE, 1);
             assert.equal(result, 1);
         });
         
         it("should emit event 'EVENT' and call handler with multiple arguments", function () {
-            let result = -1;
+            let result = 0;
             eventAware.off(EVENT_ONE);
-            eventAware.on(EVENT_ONE, function (...ns) {
-                result = ns.reduce((sum, n) => {sum = sum + n; return sum;}, 0);
+            eventAware.on(EVENT_ONE, function (n, m, o) {
+                result = n + m + o;
             });
             eventAware.emit(EVENT_ONE, 1, 3, 5);
             assert.equal(result, 9);
