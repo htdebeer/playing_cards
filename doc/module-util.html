@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Model - Documentation</title>
+    <title>util - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Model</h1>
+    <h1 class="page-title">util</h1>
     
 
     
@@ -39,14 +39,8 @@
 
 <header>
     
-        <h2>
-            <span class="ancestors"><a href="module-model_Model.html">model/Model</a>~</span>
         
-        Model
-        </h2>
-        
-            <div class="class-description">Model is the base class for all models for concepts in the domain of
-playing cards, such as cards, piles, decks, and the game.</div>
+            
         
     
 </header>
@@ -55,14 +49,11 @@ playing cards, such as cards, piles, decks, and the game.</div>
     <div class="container-overview">
     
         
+            <div class="description">General utility functions</div>
+        
 
-    
-    <h2>Constructor</h2>
-    
-
-    <h4 class="name" id="Model"><span class="type-signature"></span>new Model<span class="signature">(emitableEvents<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-
-    
+        
+            
 
 
 
@@ -72,7 +63,7 @@ playing cards, such as cards, piles, decks, and the game.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Model.js.html">model/Model.js</a>, <a href="model_Model.js.html#line37">line 37</a>
+        <a href="util.js.html">util.js</a>, <a href="util.js.html#line21">line 21</a>
     </li></ul></dd>
     
 
@@ -111,9 +102,6 @@ playing cards, such as cards, piles, decks, and the game.</div>
 
 
 
-<div class="description">
-    Construct a new Model.
-</div>
 
 
 
@@ -125,102 +113,22 @@ playing cards, such as cards, piles, decks, and the game.</div>
 
 
 
-    <h5>Parameters:</h5>
-    
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
 
-        <th>Type</th>
+
+
+
+
+
+
+
+
+
+
 
         
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>emitableEvents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;symbol></span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>[]</code>
-                
-                </td>
-            
-
-            <td class="description last">the list of events this object can emit.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li>EventAware</li>
-    </ul>
-
 
     
 
@@ -242,7 +150,7 @@ playing cards, such as cards, piles, decks, and the game.</div>
 
     
 
-    <h4 class="name" id="emit"><span class="type-signature"></span>emit<span class="signature">(event, &hellip;parameters)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~symbolToString"><span class="type-signature">(inner) </span>symbolToString<span class="signature">(symbol)</span><span class="type-signature"> &rarr; {string}</span></h4>
 
     
 
@@ -254,7 +162,7 @@ playing cards, such as cards, piles, decks, and the game.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Model.js.html">model/Model.js</a>, <a href="model_Model.js.html#line64">line 64</a>
+        <a href="util.js.html">util.js</a>, <a href="util.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -294,13 +202,8 @@ playing cards, such as cards, piles, decks, and the game.</div>
 
 
 <div class="description">
-    Emit an event. This method overrides the EventAware's emit method to
-emit the EVENT_MODEL_CHANGE event whenever any other event is emitted
-to signal to all subscribers that the model has been changed.
-
-In case of an EVENT_MODEL_CHANGE event, this model, the original event,
-and the original parameters are passed as parameters to any installed
-listener to EVENT_MODEL_CHANGE.
+    Convert a symbol to a string representation without the "Symbol(...)" in
+it.
 </div>
 
 
@@ -326,8 +229,6 @@ listener to EVENT_MODEL_CHANGE.
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -340,7 +241,7 @@ listener to EVENT_MODEL_CHANGE.
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>symbol</code></td>
             
 
             <td class="type">
@@ -353,52 +254,10 @@ listener to EVENT_MODEL_CHANGE.
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">the event to emit by this EventAware object.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>parameters</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last">a list of parameters that are applied to the
-installed event handlers as parameters.</td>
+            <td class="description last">the symbol to convert to a string.</td>
         </tr>
 
     
@@ -418,6 +277,28 @@ installed event handlers as parameters.</td>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The string representation of the symbol.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
         

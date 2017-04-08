@@ -2,22 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: model/Card.js</title>
+    <title>model/Card.js - Documentation</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
 </head>
-
 <body>
 
-<div id="main">
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
-    <h1 class="page-title">Source: model/Card.js</h1>
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-EventAware-EventAware.html">EventAware</a><ul class='methods'><li data-type='method'><a href="module-EventAware-EventAware.html#emit">emit</a></li><li data-type='method'><a href="module-EventAware-EventAware.html#off">off</a></li><li data-type='method'><a href="module-EventAware-EventAware.html#on">on</a></li></ul></li><li><a href="module-model_Card-Card.html">Card</a><ul class='methods'><li data-type='method'><a href="module-model_Card-Card.html#.fromUnicode">fromUnicode</a></li><li data-type='method'><a href="module-model_Card-Card.html#.joker">joker</a></li><li data-type='method'><a href="module-model_Card-Card.html#equals">equals</a></li><li data-type='method'><a href="module-model_Card-Card.html#isAce">isAce</a></li><li data-type='method'><a href="module-model_Card-Card.html#isBlack">isBlack</a></li><li data-type='method'><a href="module-model_Card-Card.html#isClubs">isClubs</a></li><li data-type='method'><a href="module-model_Card-Card.html#isDiamonds">isDiamonds</a></li><li data-type='method'><a href="module-model_Card-Card.html#isFaceCard">isFaceCard</a></li><li data-type='method'><a href="module-model_Card-Card.html#isFacingDown">isFacingDown</a></li><li data-type='method'><a href="module-model_Card-Card.html#isFacingUp">isFacingUp</a></li><li data-type='method'><a href="module-model_Card-Card.html#isHearts">isHearts</a></li><li data-type='method'><a href="module-model_Card-Card.html#isJack">isJack</a></li><li data-type='method'><a href="module-model_Card-Card.html#isJoker">isJoker</a></li><li data-type='method'><a href="module-model_Card-Card.html#isKing">isKing</a></li><li data-type='method'><a href="module-model_Card-Card.html#isKnight">isKnight</a></li><li data-type='method'><a href="module-model_Card-Card.html#isPipsCard">isPipsCard</a></li><li data-type='method'><a href="module-model_Card-Card.html#isQueen">isQueen</a></li><li data-type='method'><a href="module-model_Card-Card.html#isRed">isRed</a></li><li data-type='method'><a href="module-model_Card-Card.html#isSpades">isSpades</a></li><li data-type='method'><a href="module-model_Card-Card.html#toString">toString</a></li><li data-type='method'><a href="module-model_Card-Card.html#toUnicode">toUnicode</a></li><li data-type='method'><a href="module-model_Card-Card.html#turn">turn</a></li></ul></li><li><a href="module-model_Model-Model.html">Model</a><ul class='methods'><li data-type='method'><a href="module-model_Model-Model.html#emit">emit</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-EventAware.html">EventAware</a></li><li><a href="module-model_Card.html">model/Card</a></li><li><a href="module-model_Model.html">model/Model</a></li><li><a href="module-util.html">util</a><ul class='methods'><li data-type='method'><a href="module-util.html#~symbolToString">symbolToString</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">model/Card.js</h1>
+    
 
     
 
@@ -49,6 +60,7 @@
 /**
  * @module
  */
+import {symbolToString} from "../util.js";
 import {Model} from "./Model.js";
 
 const BACK = 0x1F0A0;
@@ -182,11 +194,11 @@ const KING = Symbol("king");
 const RANK = [ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, KNIGHT, QUEEN, KING];
 
 const check = function (type, value) {
-  if (type.includes(value)) {
-    return value;
-  } else {
-    throw new Error(`Value "${value}" not in ${type}`);
-  }
+    if (type.includes(value)) {
+        return value;
+    } else {
+        throw new Error(`Value "${value}" not in ${type}`);
+    }
 };
 
 // Private properties of a Card
@@ -276,6 +288,15 @@ class Card extends Model {
     }
 
     /**
+     * Get the deck this card belongs to.
+     *
+     * @returns {Deck} The deck this card belongs to.
+     */
+    get deck() {
+        return _deck.get(this);
+    }
+
+    /**
      * Get the number of pips on this card. If this card is a joker card or a
      * face card, this property is 0.
      *
@@ -286,7 +307,282 @@ class Card extends Model {
         return 0 &lt;= rankIndex &amp;&amp; rankIndex &lt; 10 ? rankIndex + 1 : 0;
     }
 
-};
+    /**
+     * Get the name of this card, which follows the pattern "rank of suit" or
+     * "color joker".
+     *
+     * @return {string} The name of this card.
+     */
+    get name() {
+        let name = "";
+        if (this.isJoker()) {
+            name = `${symbolToString(this.color)} joker`;
+        } else {
+            name = `${symbolToString(this.rank)} of ${symbolToString(this.suit)}`;
+        }
+        return name;
+    }
+
+    /**
+     * Is this a joker card?
+     *
+     * @return {Boolean} True if this card is a joker card, false otherwise.
+     */
+    isJoker() {
+        return undefined === this.rank || undefined === this.suit;
+    }
+
+    /**
+     * Is this card a jack?
+     *
+     * @returns {Boolean} True if this card is a jack, false otherwise.
+     */
+    isJack() {
+        return JACK === this.rank;
+    }
+
+    /**
+     * Is this card a knight?
+     *
+     * @return {Boolean} True is this card is a knight, false otherwise.
+     */
+    isKnight() {
+        return KNIGHT === this.rank;
+    }
+
+    /**
+     * Is this card a queen?
+     *
+     * @return {Boolean} True if this card is a queen, false otherwise.
+     */
+    isQueen() {
+        return QUEEN === this.rank;
+    }
+
+    /**
+     * Is this card a king?
+     *
+     * @return {Boolean} True if this card is a king, false otherwise.
+     */
+    isKing() {
+        return KING === this.rank;
+    }
+
+    /**
+     * Is this card an ace?
+     *
+     * @return {Boolean} True if this card is an ace, false otherwise.
+     */
+    isAce() {
+        return ACE === this.rank;
+    }
+
+    /**
+     * Is this a face card? 
+     *
+     * @return {Boolean} True if this card is a jack, knight, queen or king,
+     * false otherwise. 
+     *
+     * Note. In some card games the ace is also considered a face card.
+     */
+    isFaceCard() {
+        return this.isJack() || 
+            this.isKnight() ||
+            this.isQueen() ||
+            this.isKing();
+    }
+
+    /**
+     * Is this a pips card?
+     *
+     * @return {Boolean} True if this card has 1 — 10 pips, false otherwise.
+     * 
+     * Note. In some card games the ace is not considered a pips card.
+     */
+    isPipsCard() {
+        return 0 &lt; this.pips;
+    }
+
+    /**
+     * Belongs this card to the spades?
+     *
+     * @return {Boolean} True if this card's suit is spades, false otherwise.
+     */
+    isSpades() {
+        return SPADES === this.suit;
+    }
+
+    /**
+     * Belongs this card to the hearts?
+     *
+     * @return {Boolean} True if this card's suit is hearts, false otherwise.
+     */
+    isHearts() {
+        return HEARTS === this.suit;
+    }
+
+    /**
+     * Belongs this card to the diamonds?
+     *
+     * @return {Boolean} True if this card's suit is diamonds, false
+     * otherwise.
+     */
+    isDiamonds() {
+        return DIAMONDS === this.suit;
+    }
+
+    /**
+     * Belongs this card to the clubs?
+     *
+     * @return {Boolean} True if this card's suit is clubs, false otherwise.
+     */
+    isClubs() {
+        return CLUBS === this.suit;
+    }
+
+    /**
+     * Is this card facing up?
+     *
+     * @return {Boolean} True if this card is facing up, false if it is facing
+     * down.
+     */
+    isFacingUp() {
+        return _faceUp.get(this);
+    }
+
+    /**
+     * Is this card facing down?
+     *
+     * @return {Boolean} True if this card is facing down, false if it is
+     * facing up.
+     */
+    isFacingDown() {
+        return !this.isFacingUp();
+    }
+
+    /**
+     * Turn this card around.
+     *
+     * @fires EVENT_CARD_TURN
+     */
+    turn() {
+        _faceUp.set(this, !_faceUp.get(this));
+        this.emit(EVENT_CARD_TURN);
+    }
+
+    /**
+     * Is this a red card?
+     *
+     * @return {Boolean} True true if this card belongs to the hearts or
+     * diamonds, or is the red joker.
+     */
+    isRed() {
+        return RED === this.color;
+    }
+
+    /**
+     * Is this a black card?
+     *
+     * @return {Boolean} True if this card belongs to the spades or clubs, or
+     * is the black joker.
+     */
+    isBlack() {
+        return BLACK === this.color;
+    }
+
+    /**
+     * The background of this card is the color of the deck this card belongs
+     * to. 
+     *
+     * @return {string} ["black"] A string representation of a color, such as a HTML
+     * name, like "red" or a hexadecimal number like "#ff00ae".
+     */
+    get backColor() {
+        return this.deck.color;
+    }
+
+    /**
+     * Is this card the same card as another card? For two cards to be equal,
+     * they need to have the same suit, rank, color, and should be part of the
+     * same deck.
+     *
+     * @param {Card} other - The other card to compare with this card.
+     *
+     * @returns {Boolean} True if this card and the other card are the same,
+     * false otherwise.
+     */
+    equals(other) {
+        return this.suit === other.suit &amp;&amp;
+            this.rank === other.rank &amp;&amp;
+            this.color === other.color &amp;&amp;
+            this.deck === other.deck;
+    }
+
+    /**
+     * Return a string representation of this card. 
+     *
+     * @returns {string} This card's string representation.
+     */
+    toString() {
+        return this.isFacingDown() ? String.fromCodePoint(BACK) : this.toUnicode();
+    }
+
+    /**
+     * Convert this card to a unicode symbol. See {@link https://en.wikipedia.org/wiki/Playing_cards_in_Unicode|the wikipedia page on playing cards in Unicode} for more information.
+     *
+     * @return {string} The unicode symbol representation of this card.
+     */
+    toUnicode() {
+        let codePoint = 0;
+
+        if (this.isJoker()) {
+            codePoint = this.isRed() ? 0x1F0BF : 0x1F0CF;
+        } else {
+            codePoint = 0x1F0A0 + SUIT.indexOf(this.suit) * HEX + RANK.indexOf(this.rank) + 1;
+        }
+
+        return String.fromCodePoint(codePoint);
+    }
+  
+    /**
+     * Create a new card based on a unicode representation, the deck it belongs
+     * to and if it should initially be facing up. See {@link https://en.wikipedia.org/wiki/Playing_cards_in_Unicode|the wikipedia page on playing cards in Unicode} for more information.
+     *
+     * @param {String} cardChar A single unicode character representing a card.
+     * @param {Deck} deck The deck this card belongs to.
+     * @param {Boolean} faceUp This card is facing up.
+     *
+     * @returns {Card} The card corresponding to the unicode representation of
+     * a card.
+     *
+     * @throws {Error} When the unicode representation is not exactly one
+     * character
+     * @throws {Error} When the unicode representation cannot be converted to
+     * a card.
+     */
+    static fromUnicode(cardChar, deck, faceUp = false) {
+        if (1 !== [...cardChar].length) {
+            // Got the idea to check for unicode length via array from
+            // https://mathiasbynens.be/notes/javascript-unicode
+            throw new Error(`Expected one character, but got ${cardChar.length} characters instead: "${cardChar}"`);
+        }
+
+        // The unicode card symbols contain two bytecodes: combine them to one
+        // codepoint.
+        const codePoint = cardChar.codePointAt(0);
+        const rankPart = codePoint % HEX;
+        const suitPart = Math.trunc(codePoint / HEX);
+
+        if (0xF === rankPart &amp;&amp; (0x1F0B === suitPart || 0x1F0C === suitPart)) {
+            return Card.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
+        } else if (0 &lt; rankPart &amp;&amp; rankPart &lt; 0xF &amp;&amp; 0x1F0A &lt;= suitPart &amp;&amp; suitPart &lt;= 0x1F0D) {
+            return new Card({rank: RANK[rankPart - 1], suit: SUIT[suitPart - 0x1F0A]}, deck, faceUp);
+        } else {
+            throw new Error(`Unable to convert character with code point ${codePoint.toString(HEX)} to a card.`);
+        }
+    }
+
+}
 
 export {
     EVENT_CARD_TURN,
@@ -324,17 +620,13 @@ export {
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-EventAware.html">EventAware</a></li><li><a href="module-model_Card.html">model/Card</a></li><li><a href="module-model_Model.html">model/Model</a></li></ul><h3>Classes</h3><ul><li><a href="module-EventAware-EventAware.html">EventAware</a></li><li><a href="module-model_Card-Card.html">Card</a></li><li><a href="module-model_Model-Model.html">Model</a></li></ul>
-</nav>
-
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Apr 05 2017 21:44:40 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sat Apr 08 2017 13:47:57 GMT+0200 (CEST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
 </body>
 </html>
