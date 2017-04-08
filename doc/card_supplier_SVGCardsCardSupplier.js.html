@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>model/Model.js - Documentation</title>
+    <title>card_supplier/SVGCardsCardSupplier.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">model/Model.js</h1>
+    <h1 class="page-title">card_supplier/SVGCardsCardSupplier.js</h1>
     
 
     
@@ -60,58 +60,57 @@
 /**
  * @module
  */
-import EventAware from "../EventAware.js";
+import CardSupplier from "./CardSupplier.js";
+
+const _url = new WeakMap();
 
 /**
- * General event to denote that a model has been changed;
+ * SVGCardsCardSupplier is a CardSupplier that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
+ * to supply cards.
  */
-const EVENT_MODEL_CHANGE = Symbol("event:model:change");
-
-/**
- * Model is the base class for all models for concepts in the domain of
- * playing cards, such as cards, piles, decks, and the game.
- *
- * @extends EventAware
- */
-class Model extends EventAware {
-
-    /**
-     * Construct a new Model.
-     *
-     * @param {symbol[]} [emitableEvents = []] - the list of events this object can emit.
-     */
-    constructor(emitableEvents = []) {
-        if (!emitableEvents.includes(EVENT_MODEL_CHANGE)) {
-            emitableEvents.push(EVENT_MODEL_CHANGE);
-        }
-        super(emitableEvents);
-    }
+class SVGCardsCardSupplier extends CardSupplier {
 
     /** 
-     * Emit an event. This method overrides the EventAware's emit method to
-     * emit the EVENT_MODEL_CHANGE event whenever any other event is emitted
-     * to signal to all subscribers that the model has been changed.
+     * Create a SVGCardsCardsSupplier. Specify the URL to the SVG file to get
+     * the cards from.
      *
-     * In case of an EVENT_MODEL_CHANGE event, this model, the original event,
-     * and the original parameters are passed as parameters to any installed
-     * listener to EVENT_MODEL_CHANGE.
-     *
-     * @param {symbol} event - the event to emit by this EventAware object.
-     * @param {...*} parameters - a list of parameters that are applied to the
-     * installed event handlers as parameters.
+     * @param {string} [url = "/svg-cards.svg"] - the URL to the SVG file to
+     * get the cards from.
+     * @param {SVG} [svg] - the SVG utility to use
      */
-    emit(event, ...parameters) { 
-        super.emit(event, ...parameters);
+    constructor(url = "/svg-cards.svg", svg) {
+        super(svg);
+        _url.set(this, url);
+    }
 
-        if (EVENT_MODEL_CHANGE !== event) {
-            const originalEvent = event;
-            const originalParameters = parameters;
-            this.emit(EVENT_MODEL_CHANGE, this, originalEvent, originalParameters);
+    /**
+     * The URL to the SVG file to get the cards from;
+     */
+    get url() {
+        return _url.get(this);
+    }
+
+    /**
+     * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
+     *
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} An SVG representation of the card.
+     */
+    createCard(card) {
+        let id = "back";
+        if (card.isFacingUp()) {
+            let [rank, suit] = card.name.split(" of ");
+            if (card.isPipCard()) {
+                rank = card.pips;
+            }
+            id = `${rank}_${suit.slice(0, -1)}`;
         }
+        return this.svg.use(`${this.url}/#${id}`);
     }
 }
 
-export {EVENT_MODEL_CHANGE, Model};
+export default SVGCardsCardSupplier;
 </code></pre>
         </article>
     </section>

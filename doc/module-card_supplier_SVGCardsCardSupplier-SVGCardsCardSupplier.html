@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>util - Documentation</title>
+    <title>SVGCardsCardSupplier - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">util</h1>
+    <h1 class="page-title">SVGCardsCardSupplier</h1>
     
 
     
@@ -39,8 +39,14 @@
 
 <header>
     
+        <h2>
+            <span class="ancestors"><a href="module-card_supplier_SVGCardsCardSupplier.html">card_supplier/SVGCardsCardSupplier</a>~</span>
         
-            
+        SVGCardsCardSupplier
+        </h2>
+        
+            <div class="class-description">SVGCardsCardSupplier is a CardSupplier that uses <a href="https://github.com/htdebeer/SVG-cards">SVG Cards</a>
+to supply cards.</div>
         
     
 </header>
@@ -49,108 +55,12 @@
     <div class="container-overview">
     
         
-            <div class="description">General utility functions</div>
-        
-
-        
-            
-
-
-
-
-<dl class="details">
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util.js.html">util.js</a>, <a href="util.js.html#line21">line 21</a>
-    </li></ul></dd>
+    <h2>Constructor</h2>
     
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id="~symbolToString"><span class="type-signature">(inner) </span>symbolToString<span class="signature">(symbol)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="SVGCardsCardSupplier"><span class="type-signature"></span>new SVGCardsCardSupplier<span class="signature">(url<span class="signature-attributes">opt</span>, svg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -162,7 +72,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util.js.html">util.js</a>, <a href="util.js.html#line35">line 35</a>
+        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -202,8 +112,284 @@
 
 
 <div class="description">
-    Convert a symbol to a string representation without the "Symbol(...)" in
-it.
+    Create a SVGCardsCardsSupplier. Specify the URL to the SVG file to get
+the cards from.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>"/svg-cards.svg"</code>
+                
+                </td>
+            
+
+            <td class="description last">the URL to the SVG file to
+get the cards from.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>svg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">SVG</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">the SVG utility to use</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="url"><span class="type-signature"></span>url<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line50">line 50</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    The URL to the SVG file to get the cards from;
+</div>
+
+
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="createCard"><span class="type-signature"></span>createCard<span class="signature">(card)</span><span class="type-signature"> &rarr; {SVGElement}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line61">line 61</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Represent a card as an SVG USE element, using cards defined in <a href="https://github.com/htdebeer/SVG-cards"> SVG Cards</a>.
 </div>
 
 
@@ -241,13 +427,13 @@ it.
 
         <tr>
             
-                <td class="name"><code>symbol</code></td>
+                <td class="name"><code>card</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">symbol</span>
+<span class="param-type">Card</span>
 
 
             
@@ -257,7 +443,7 @@ it.
 
             
 
-            <td class="description last">the symbol to convert to a string.</td>
+            <td class="description last">the card model to represent;</td>
         </tr>
 
     
@@ -281,7 +467,7 @@ it.
 
         
 <div class="param-desc">
-    The string representation of the symbol.
+    An SVG representation of the card.
 </div>
 
 
@@ -292,7 +478,7 @@ it.
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type">SVGElement</span>
 
 
     </dd>

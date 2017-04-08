@@ -1,4 +1,4 @@
-import EventAware from "../../src/EventAware.js";
+import {EventAware} from "../../src/EventAware.js";
 import {assert} from "chai";
 
 const EVENT_ONE = Symbol("event:one");

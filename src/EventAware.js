@@ -122,4 +122,4 @@ class EventAware {
     }
 }
 
-export default EventAware;
+export {EventAware};

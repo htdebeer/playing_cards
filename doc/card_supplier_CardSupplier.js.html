@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>model/Model.js - Documentation</title>
+    <title>card_supplier/CardSupplier.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">model/Model.js</h1>
+    <h1 class="page-title">card_supplier/CardSupplier.js</h1>
     
 
     
@@ -60,58 +60,50 @@
 /**
  * @module
  */
-import EventAware from "../EventAware.js";
+
+import {SVG} from "../svg.js";
+
+const _svg = new WeakMap();
 
 /**
- * General event to denote that a model has been changed;
+ * CardSupplier base class as an interface to various card suppliers, such as
+ * a font based one, an image based one, or a SVG based one.
  */
-const EVENT_MODEL_CHANGE = Symbol("event:model:change");
-
-/**
- * Model is the base class for all models for concepts in the domain of
- * playing cards, such as cards, piles, decks, and the game.
- *
- * @extends EventAware
- */
-class Model extends EventAware {
+class CardSupplier {
+    /**
+     * Create a new supplier
+     *
+     * @param {SVG} [svg] - The SVG object to use to handle SVG elements.
+     */
+    constructor(svg = new SVG()) {
+        _svg.set(this, svg);
+    }
 
     /**
-     * Construct a new Model.
+     * Get the SVG object to handle SVG element;
      *
-     * @param {symbol[]} [emitableEvents = []] - the list of events this object can emit.
+     * @return {SVG} The SVG utility object.
      */
-    constructor(emitableEvents = []) {
-        if (!emitableEvents.includes(EVENT_MODEL_CHANGE)) {
-            emitableEvents.push(EVENT_MODEL_CHANGE);
-        }
-        super(emitableEvents);
+    get svg() {
+        return _svg.get(this);
     }
 
-    /** 
-     * Emit an event. This method overrides the EventAware's emit method to
-     * emit the EVENT_MODEL_CHANGE event whenever any other event is emitted
-     * to signal to all subscribers that the model has been changed.
+    /**
+     * Represent a card as an SVG element.
      *
-     * In case of an EVENT_MODEL_CHANGE event, this model, the original event,
-     * and the original parameters are passed as parameters to any installed
-     * listener to EVENT_MODEL_CHANGE.
+     * @param {Card} card - the card model to represent;
      *
-     * @param {symbol} event - the event to emit by this EventAware object.
-     * @param {...*} parameters - a list of parameters that are applied to the
-     * installed event handlers as parameters.
+     * @return {SVGElement} An SVG representation of the card.
      */
-    emit(event, ...parameters) { 
-        super.emit(event, ...parameters);
-
-        if (EVENT_MODEL_CHANGE !== event) {
-            const originalEvent = event;
-            const originalParameters = parameters;
-            this.emit(EVENT_MODEL_CHANGE, this, originalEvent, originalParameters);
-        }
+    createCard(card) {
+        const text = this.svg.create("text");
+        text.textContent = card.toString();
+        return text;
     }
+
 }
 
-export {EVENT_MODEL_CHANGE, Model};
+export default CardSupplier;
 </code></pre>
         </article>
     </section>

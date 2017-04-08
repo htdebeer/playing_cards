@@ -21,7 +21,7 @@
 /**
  * @module
  */
-import EventAware from "../EventAware.js";
+import {EventAware} from "../EventAware.js";
 
 /**
  * General event to denote that a model has been changed;

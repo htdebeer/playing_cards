@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>model/Model.js - Documentation</title>
+    <title>svg.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">model/Model.js</h1>
+    <h1 class="page-title">svg.js</h1>
     
 
     
@@ -58,60 +58,64 @@
  */
 
 /**
+ * Utilities for handling SVG.
+ *
  * @module
  */
-import EventAware from "../EventAware.js";
+
+const SVGNS = "http://www.w3.org/2000/svg";
+const XLINKNS = "http://www.w3.org/1999/xlink";
+
+const _document = new WeakMap();
 
 /**
- * General event to denote that a model has been changed;
+ * SVG is a utility class to create and work with SVG elements.
  */
-const EVENT_MODEL_CHANGE = Symbol("event:model:change");
-
-/**
- * Model is the base class for all models for concepts in the domain of
- * playing cards, such as cards, piles, decks, and the game.
- *
- * @extends EventAware
- */
-class Model extends EventAware {
+class SVG {
+    /**
+     * Create a new SVG object with the document to use to create SVG
+     * elements.
+     *
+     * @param {Document} [doc = document] - the document to use to create SVG
+     * elements.
+     */
+    constructor(doc = document) {
+        _document.set(this, doc);
+    }
 
     /**
-     * Construct a new Model.
+     * Create a SVG element with name and attributes.
      *
-     * @param {symbol[]} [emitableEvents = []] - the list of events this object can emit.
+     * @param {string} name - the name of the element to create.
+     * @param {object} [attributes = {}] - the attributes to set on the
+     * created element.
      */
-    constructor(emitableEvents = []) {
-        if (!emitableEvents.includes(EVENT_MODEL_CHANGE)) {
-            emitableEvents.push(EVENT_MODEL_CHANGE);
-        }
-        super(emitableEvents);
+    create(name, attributes = {}) {
+        const elt = _document.get(this).createElementNS(SVGNS, name);
+        
+        Object
+            .entries(attributes)
+            .forEach((attribute, value) => elt.setAttribute(attribute, value));
+
+        return elt;
     }
 
-    /** 
-     * Emit an event. This method overrides the EventAware's emit method to
-     * emit the EVENT_MODEL_CHANGE event whenever any other event is emitted
-     * to signal to all subscribers that the model has been changed.
+    /**
+     * Create a USE element with url and attributes.
      *
-     * In case of an EVENT_MODEL_CHANGE event, this model, the original event,
-     * and the original parameters are passed as parameters to any installed
-     * listener to EVENT_MODEL_CHANGE.
-     *
-     * @param {symbol} event - the event to emit by this EventAware object.
-     * @param {...*} parameters - a list of parameters that are applied to the
-     * installed event handlers as parameters.
+     * @param {string} url - the URL to the object to use.
+     * @param {object} [attributes = {}] - the attributes to set.
      */
-    emit(event, ...parameters) { 
-        super.emit(event, ...parameters);
-
-        if (EVENT_MODEL_CHANGE !== event) {
-            const originalEvent = event;
-            const originalParameters = parameters;
-            this.emit(EVENT_MODEL_CHANGE, this, originalEvent, originalParameters);
-        }
+    use(url, attributes = {}) {
+        const use = create("use", attributes);
+        use.setAttributeNS(XLINKNS, "xlink:href", url);
+        return use;
     }
+
+
 }
 
-export {EVENT_MODEL_CHANGE, Model};
+export {SVG, SVGNS, XLINKNS};
 </code></pre>
         </article>
     </section>
