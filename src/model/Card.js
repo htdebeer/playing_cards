@@ -70,11 +70,11 @@ const HEARTS = Symbol("hearts");
 const SPADES = Symbol("spades");
 
 /**
- * The four suits: clubs, diamonds, diamonds, and hearts.
+ * The four suits: spades, hearts, diamonds, and clubs.
  *
  * @enum {symbol}
  */
-const SUIT = [CLUBS, DIAMONDS, HEARTS, SPADES];
+const SUIT = [SPADES, HEARTS, DIAMONDS, CLUBS]; // Note. order of these suits matter, they are used by #fromUnicode to determine the suit.
 
 /**
  * The rank ace.
@@ -480,7 +480,9 @@ class Card extends Model {
     }
 
     /**
-     * Return a string representation of this card. 
+     * Return a string representation of this card. The difference with
+     * #toUnicode() is that is returns the "back" unicode character when this
+     * card is facing down.
      *
      * @returns {string} This card's string representation.
      */
@@ -537,7 +539,9 @@ class Card extends Model {
         if (0xF === rankPart && (0x1F0B === suitPart || 0x1F0C === suitPart)) {
             return Card.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
         } else if (0 < rankPart && rankPart < 0xF && 0x1F0A <= suitPart && suitPart <= 0x1F0D) {
-            return new Card({rank: RANK[rankPart - 1], suit: SUIT[suitPart - 0x1F0A]}, deck, faceUp);
+            const rank = RANK[rankPart - 1];
+            const suit = SUIT[suitPart - 0x1F0A];
+            return new Card({rank, suit}, deck, faceUp);
         } else {
             throw new Error(`Unable to convert character with code point ${codePoint.toString(HEX)} to a card.`);
         }

@@ -1,7 +1,12 @@
 import * as cardModel from "../../../src/model/Card.js";
+import {EVENT_MODEL_CHANGE} from "../../../src/model/Model.js";
 import {assert} from "chai";
 
-const deck = null; // Deck is not yet implemented;
+const deck = {color: "red"}; // Deck is not yet implemented;
+
+// Note. There are 58 cards in a full deck with jokers as there is also a
+// knight card included per suit with the other 13 standard cards 1, 2, 3, 4,
+// 5, 6, 7, 8, 9, 10, J, Q, K per suit.
 
 const CARD_CHARS = [
     0x1F0A1, // Spades 1 - K
@@ -86,11 +91,19 @@ const assertCountPerDeck = function (predicate, expectedCount) {
         assert.equal(CARDS.length - count, expectedFalseCount);
     });
 };
+    
+const assertIsMethodForProperties = function (properties, trueCount) {
+    properties.forEach(function (property) {
+        const isPropertyMethodName = `is${property.slice(0,1).toUpperCase()}${property.slice(1)}`;
+
+        describe(`#${isPropertyMethodName}()`, function () {
+            assertCountPerDeck((card) => card[isPropertyMethodName](), trueCount);
+        });
+    });
+};
 
 const ACE_HEARTS = codePointToCard(0x1F0B1);
-const KING_SPADES = codePointToCard(0x1F0AE);
 const ACE_CLUBS = codePointToCard(0x1F0D1);
-const TEN_DIAMONDS = codePointToCard(0x1F0CA);
 
 describe("Card", function () {
     describe("#fromUnicode(char, deck)", function () {
@@ -100,6 +113,13 @@ describe("Card", function () {
                 const card = cardModel.Card.fromUnicode(cardChar, deck);
                 assert.equal(cardChar, card.toUnicode());
             }
+        });
+    });
+
+    describe("#toUnicode()", function () {
+        it("should return the correct unicode card symbol for each card", function () {
+            CARDS.forEach((card, index) => 
+                assert.equal(card.toUnicode(), String.fromCodePoint(CARD_CHARS[index])));
         });
     });
 
@@ -117,16 +137,86 @@ describe("Card", function () {
             });
         });
     });
+    
+    assertIsMethodForProperties(["red", "black"], 29);
+    assertIsMethodForProperties(["clubs", "hearts", "spades", "diamonds"], 14);
+    assertIsMethodForProperties(["faceCard"], 16);
+    assertIsMethodForProperties(["pipsCard"], 40);
+    assertIsMethodForProperties(["jack", "knight", "queen", "king", "ace"], 4);
+    assertIsMethodForProperties(["joker"], 2);
+    assertIsMethodForProperties(["facingUp"], 0);
+    assertIsMethodForProperties(["facingDown"], 58);
 
-    describe("isAce()", function () {
-        it("should return true for an ace of hearts", function () {
-            assert.isTrue(ACE_HEARTS.isAce());
+    describe("pips", function () {
+        [1,2,3,4,5,6,7,8,9,10].forEach(function (pips) {
+            it(`should be ${pips} for a card with ${pips} pips.`, function () {
+                assertCountPerDeck((card) => card.pips === pips, 4);
+            });
         });
-        it("should return false for a ten of diamonds", function () {
-            assert.isFalse(TEN_DIAMONDS.isAce());
+        
+        it("should be 0 for all face cards and jokers", function () {
+            assertCountPerDeck((card) => card.pips === card.isFaceCard() ? 0 : -1, 22);
         });
-
-        assertCountPerDeck((card) => card.isAce(), 4);
     });
+
+    describe("backColor", function () {
+        it("should be the same as the deck's color", function () {
+            assertCountPerDeck((card) => card.backColor === deck.color, 58);
+        });
+    });
+
+    describe("#turn()", function () {
+        const card = codePointToCard(0x1F0CA);
+
+        it("should turn the card around", function () {
+
+            assert.isTrue(card.isFacingDown());
+            assert.isFalse(card.isFacingUp());
+            assert.equal(String.fromCodePoint(BACK_CHAR), card.toString());
+            
+            card.turn();
+            assert.isFalse(card.isFacingDown());
+            assert.isTrue(card.isFacingUp());
+            assert.notEqual(String.fromCodePoint(BACK_CHAR), card.toString());
+            
+            card.turn();
+            assert.isTrue(card.isFacingDown());
+            assert.isFalse(card.isFacingUp());
+            
+        });
+
+        it("should emit EVENT_CARD_TURN", function () {
+            let result = 0;
+            card.on(cardModel.EVENT_CARD_TURN, function () {
+                result = 1;
+            });
+            assert.equal(result, 0);
+            card.turn();
+            assert.equal(result, 1);
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            let result = 0;
+            card.on(EVENT_MODEL_CHANGE, function () {
+                result = 2;
+            });
+            assert.equal(result, 0);
+            card.turn();
+            assert.equal(result, 2);
+        });
+    });
+
+    describe("#toString()", function () {
+        CARDS.forEach((card) => {if (card.isFacingUp()) {card.turn();}});
+        it("should return the back card if a card is facing down", function () {
+            assertCountPerDeck((card) => card.toString() === String.fromCodePoint(BACK_CHAR), 58);
+        });
+        CARDS.forEach((card) => {if (card.isFacingDown()) {card.turn();}});
+        it("should return the unicode representation of the card if a card is facing up", function () {
+            assertCountPerDeck((card) => card.toString() === card.toUnicode(), 58);
+        });
+        CARDS.forEach((card) => {if (card.isFacingUp()) {card.turn();}});
+    });
+
 
 });
