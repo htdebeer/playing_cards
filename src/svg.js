@@ -27,7 +27,6 @@
 const SVGNS = "http://www.w3.org/2000/svg";
 const XLINKNS = "http://www.w3.org/1999/xlink";
 
-let doc = undefined;
 /**
  * SVG is a utility class to create and work with SVG elements.
  */
