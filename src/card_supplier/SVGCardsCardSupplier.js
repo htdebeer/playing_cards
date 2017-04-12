@@ -29,6 +29,8 @@ const _url = new WeakMap();
 /**
  * SVGCardsCardSupplier is a CardSupplier that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
  * to supply cards.
+ *
+ * @extends CardSupplier
  */
 class SVGCardsCardSupplier extends CardSupplier {
 

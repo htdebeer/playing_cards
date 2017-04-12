@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>SVGCardsCardSupplier - Documentation</title>
+    <title>Deck - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">SVGCardsCardSupplier</h1>
+    <h1 class="page-title">Deck</h1>
     
 
     
@@ -40,13 +40,12 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-card_supplier_SVGCardsCardSupplier.html">card_supplier/SVGCardsCardSupplier</a>~</span>
+            <span class="ancestors"><a href="module-Deck.html">Deck</a>~</span>
         
-        SVGCardsCardSupplier
+        Deck
         </h2>
         
-            <div class="class-description">SVGCardsCardSupplier is a CardSupplier that uses <a href="https://github.com/htdebeer/SVG-cards">SVG Cards</a>
-to supply cards.</div>
+            <div class="class-description">A Deck is a <a href="https://en.wikipedia.org/wiki/Standard_52-card_deck">standard 52-card deck</a> and, optionally, two joker cards.</div>
         
     
 </header>
@@ -60,7 +59,7 @@ to supply cards.</div>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="SVGCardsCardSupplier"><span class="type-signature"></span>new SVGCardsCardSupplier<span class="signature">(url<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Deck"><span class="type-signature"></span>new Deck<span class="signature">(color<span class="signature-attributes">opt</span>, jokers<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -72,7 +71,7 @@ to supply cards.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line35">line 35</a>
+        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -112,8 +111,7 @@ to supply cards.</div>
 
 
 <div class="description">
-    Create a SVGCardsCardsSupplier. Specify the URL to the SVG file to get
-the cards from.
+    Construct a new Deck.
 </div>
 
 
@@ -155,7 +153,7 @@ the cards from.
 
         <tr>
             
-                <td class="name"><code>url</code></td>
+                <td class="name"><code>color</code></td>
             
 
             <td class="type">
@@ -182,13 +180,52 @@ the cards from.
             
                 <td class="default">
                 
-                    <code>"/svg-cards.svg"</code>
+                    <code>"red"</code>
                 
                 </td>
             
 
-            <td class="description last">the URL to the SVG file to
-get the cards from.</td>
+            <td class="description last">the background color of this deck.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>jokers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last">should this deck include joker
+cards or not?</td>
         </tr>
 
     
@@ -214,17 +251,6 @@ get the cards from.</td>
     </div>
 
     
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li>CardSupplier</li>
-    </ul>
-
-
-    
 
     
 
@@ -239,7 +265,7 @@ get the cards from.</td>
 
         
             
-<h4 class="name" id="url"><span class="type-signature"></span>url<span class="type-signature"></span></h4>
+<h4 class="name" id="cards"><span class="type-signature"></span>cards<span class="type-signature"></span></h4>
 
 
 
@@ -250,7 +276,7 @@ get the cards from.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line52">line 52</a>
+        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -290,7 +316,7 @@ get the cards from.</td>
 
 
 <div class="description">
-    The URL to the SVG file to get the cards from;
+    Get the cards of this deck.
 </div>
 
 
@@ -301,19 +327,9 @@ get the cards from.</td>
 
 
         
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
             
+<h4 class="name" id="color"><span class="type-signature"></span>color<span class="type-signature"></span></h4>
 
-    
-
-    <h4 class="name" id="createCard"><span class="type-signature"></span>createCard<span class="signature">(card)</span><span class="type-signature"> &rarr; {SVGElement}</span></h4>
-
-    
 
 
 
@@ -323,7 +339,7 @@ get the cards from.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="card_supplier_SVGCardsCardSupplier.js.html">card_supplier/SVGCardsCardSupplier.js</a>, <a href="card_supplier_SVGCardsCardSupplier.js.html#line63">line 63</a>
+        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -363,7 +379,7 @@ get the cards from.</td>
 
 
 <div class="description">
-    Represent a card as an SVG USE element, using cards defined in <a href="https://github.com/htdebeer/SVG-cards"> SVG Cards</a>.
+    This deck's card's back-side color.
 </div>
 
 
@@ -373,95 +389,72 @@ get the cards from.</td>
 
 
 
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
         
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
             
-                <td class="name"><code>card</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Card</span>
+<h4 class="name" id="hasJokers"><span class="type-signature"></span>hasJokers<span class="type-signature"></span></h4>
 
 
-            
-            </td>
 
-            
 
-            
 
-            <td class="description last">the card model to represent;</td>
-        </tr>
+<dl class="details">
 
     
-    </tbody>
-</table>
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-<h5>Returns:</h5>
+    
 
-        
-<div class="param-desc">
-    An SVG representation of the card.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">SVGElement</span>
-
-
-    </dd>
+    
 </dl>
 
-    
+
+
+
+
+<div class="description">
+    Does this deck contain jokers?
+</div>
+
+
+
+
+
+
 
 
         
+    
+
     
 
     

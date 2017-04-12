@@ -171,6 +171,8 @@ const _faceUp = new WeakMap();
 
 /**
  * A Card models a playing card.
+ *
+ * @extends Model
  */
 class Card extends Model {
 
