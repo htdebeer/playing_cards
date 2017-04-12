@@ -22,7 +22,7 @@
  * @module
  */
 
-import SVG from "../svg.js";
+import {svg} from "../svg.js";
 
 /**
  * CardSupplier base class as an interface to various card suppliers, such as
@@ -43,8 +43,17 @@ class CardSupplier {
      * @return {SVGElement} An SVG representation of the card.
      */
     createCard(card) {
-        const text = SVG.create("text");
+        const attributes = {};
+
+        if (card.isFacingUp()) {
+            attributes.stroke = card.isRed() ? "red" : "black";
+        } else {
+            attributes.stroke = card.backColor;
+        }
+
+        const text = svg.create("text", attributes);
         text.textContent = card.toString();
+        
         return text;
     }
 

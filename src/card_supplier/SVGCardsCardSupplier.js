@@ -21,7 +21,7 @@
 /**
  * @module
  */
-import SVG from "../svg.js";
+import {svg} from "../svg.js";
 import {CardSupplier} from "./CardSupplier.js";
 
 const _url = new WeakMap();
@@ -59,15 +59,19 @@ class SVGCardsCardSupplier extends CardSupplier {
      * @return {SVGElement} An SVG representation of the card.
      */
     createCard(card) {
+        const attributes = {};
         let id = "back";
         if (card.isFacingUp()) {
             let [rank, suit] = card.name.split(" of ");
-            if (card.isPipCard()) {
+            if (card.isPipsCard()) {
                 rank = card.pips;
             }
             id = `${rank}_${suit.slice(0, -1)}`;
+        } else {
+            // Color the back
+            attributes.fill = card.backColor;
         }
-        return SVG.use(`${this.url}/#${id}`);
+        return svg.use(`${this.url}/#${id}`, attributes);
     }
 }
 

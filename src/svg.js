@@ -47,11 +47,9 @@ class SVG {
      */
     create(name, attributes = {}) {
         const elt = document.createElementNS(SVGNS, name);
+      
+        Object.keys(attributes).forEach(key => elt.setAttribute(key, attributes[key]));
         
-        Object
-            .entries(attributes)
-            .forEach((attribute, value) => elt.setAttribute(attribute, value));
-
         return elt;
     }
 
@@ -62,7 +60,7 @@ class SVG {
      * @param {object} [attributes = {}] - the attributes to set.
      */
     use(url, attributes = {}) {
-        const use = create("use", attributes);
+        const use = this.create("use", attributes);
         use.setAttributeNS(XLINKNS, "xlink:href", url);
         return use;
     }
@@ -70,4 +68,5 @@ class SVG {
 
 }
 
-export default new SVG();
+const svg = new SVG();
+export {svg, SVGNS, XLINKNS};
