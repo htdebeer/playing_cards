@@ -1,0 +1,3 @@
+[submodule "SVG-cards"]
+	path = SVG-cards
+	url = https://github.com/htdebeer/SVG-cards

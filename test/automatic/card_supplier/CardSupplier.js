@@ -10,13 +10,13 @@ const backUnicode = String.fromCodePoint(backCodePoint);
 const checkCard = function (card, supplier) {
     let representation = supplier.createCard(card);
     assert.equal(representation.textContent, backUnicode);
-    assert.isTrue(representation.hasAttribute("stroke"));
-    assert.equal(representation.getAttribute("stroke"), card.backColor);
+    assert.isTrue(representation.hasAttribute("fill"));
+    assert.equal(representation.getAttribute("fill"), card.backColor);
     card.turn();
     representation = supplier.createCard(card);
     assert.equal(representation.textContent, card.toUnicode());
-    assert.isTrue(representation.hasAttribute("stroke"));
-    assert.equal(representation.getAttribute("stroke"), card.isRed() ? "red" : "black"); 
+    assert.isTrue(representation.hasAttribute("fill"));
+    assert.equal(representation.getAttribute("fill"), card.isRed() ? "red" : "black"); 
 };
 
 describe("CardSupplier", function () {

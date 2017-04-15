@@ -45,11 +45,14 @@ class CardSupplier {
     createCard(card) {
         const attributes = {};
 
+        let color;
         if (card.isFacingUp()) {
-            attributes.stroke = card.isRed() ? "red" : "black";
+            color = card.isRed() ? "red" : "black";
         } else {
-            attributes.stroke = card.backColor;
+            color = card.backColor;
         }
+
+        attributes.fill = color;
 
         const text = svg.create("text", attributes);
         text.textContent = card.toString();
