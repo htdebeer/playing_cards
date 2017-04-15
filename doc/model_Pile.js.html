@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>card_supplier/CardSupplier.js - Documentation</title>
+    <title>model/Pile.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">card_supplier/CardSupplier.js</h1>
+    <h1 class="page-title">model/Pile.js</h1>
     
 
     
@@ -60,48 +60,189 @@
 /**
  * @module
  */
+import {Model, EVENT_MODEL_CHANGE} from "./Model.js";
 
-import {svg} from "../svg.js";
+const _cards = new WeakMap();
 
 /**
- * CardSupplier base class as an interface to various card suppliers, such as
- * a font based one, an image based one, or a SVG based one.
+ * A pile of cards.
+ *
+ * @extends Model
  */
-class CardSupplier {
-    /**
-     * Create a new supplier
-     */
+class Pile extends Model {
     constructor() {
+        super();
+        _cards.set(this, []);
     }
 
     /**
-     * Represent a card as an SVG element.
+     * The number of cards in this pile.
      *
-     * @param {Card} card - the card model to represent;
-     *
-     * @return {SVGElement} An SVG representation of the card.
+     * @return {integer} The number of cards in this pile.
      */
-    createCard(card) {
-        const attributes = {};
-
-        let color;
-        if (card.isFacingUp()) {
-            color = card.isRed() ? "red" : "black";
-        } else {
-            color = card.backColor;
-        }
-
-        attributes.fill = color;
-
-        const text = svg.create("text", attributes);
-        text.textContent = card.toString();
-        
-        return text;
+    get count() {
+        return _cards.get(this).length;
     }
 
+    /**
+     * Get a list of the cards in this pile.
+     *
+     * @return {Card[]} The cards in this pile as an array.
+     */
+    get cards() {
+        return _cards.get(this);
+    }
+
+    /**
+     * Is this pile empty?
+     *
+     * @return {Boolean} True if this pile has no cards, false otherwise.
+     */
+    isEmpty() {
+        return 0 >= this.count;
+    }
+
+    /**
+     * Add a card to this pile.
+     *
+     * @param {Card} card - the card to add.
+     * @param {integer} [index = pile.count] - the index to insert the card in
+     * this pile. Defaults to the end of the pile.
+     *
+     * @return {Pile} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {Error} Index out of bounds.
+     */
+    add (card, index = this.count) {
+        if (0 &lt;= index &amp;&amp; index &lt;= this.count) {
+            _cards.get(this).splice(index, 0, card);
+            this.emit(EVENT_MODEL_CHANGE, this);
+        } else {
+            throw new Error("Index out of bounds");
+        }
+    }
+
+    /**
+     * Iterator over all cards of this pile.
+     *
+     * @return {iterator} 
+     */
+    *each() {
+        for (const card of _cards.get(this)) {
+            yield card;
+        }
+    }
+
+    /**
+     * Pick a random card from this pile; the pile contains one card less
+     * hereafter.
+     *
+     * @return {Card} the picked card.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    pick() {
+        const randomIndex = Math.floor(Math.random() * this.count);
+        const card = _cards.get(this).splice(randomIndex, 1)[0];
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return card;
+    }
+
+    /**
+     * Take the top card from this pile. The pile contains one card less.
+     *
+     * @return {Card} the top card
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    take() {
+        const card = _cards.get(this).pop();
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return card;
+    }
+
+    /**
+     * Inspect a card in this pile. The pile does not change.
+     *
+     * @param {integer} [index = top] - the index of the card to
+     * inspect. Defaults to the top card
+     *
+     * @return {Card} the card to inspect.
+     */
+    inspect(index = this.count - 1) {
+        return _cards.get(this)[index];
+    }
+
+    /**
+     * Shuffle this pile.
+     *
+     * @return {Pile} this pile, shuffled.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    shuffle() {
+        _cards.get(this).sort(() => Math.random() - 0.5);
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return this;
+    }
+
+    /**
+     * Split this pile in a number of smaller piles. By default the pile is
+     * split in two.
+     *
+     * @param {integer} [numberOfPiles = 2] - the number of piles to split
+     * this pile into, defaults to 2.
+     *
+     * @return {Pile[]} An array of piles, this pile is the first in that list
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    split(numberOfPiles = 2) {
+        if (Number.isInteger(numberOfPiles)) {
+            const pileCount = Math.floor(this.count / numberOfPiles);
+            const piles = [this];
+
+            while (this.count > pileCount) {
+                const pile = new Pile();
+
+                while (pile.count &lt; pileCount) {
+                    pile.add(this.take());
+                }
+
+                piles.push(pile);
+            }
+
+            this.emit(EVENT_MODEL_CHANGE, this);
+            return piles;
+        }
+    }
+
+    /**
+     * Merge another pile with this pile.
+     *
+     * @param {Pile} other - the other pile to merge with this one.
+     *
+     * @return {Pile} this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    merge(other) {
+        while (!other.isEmpty()) {
+            this.add(other.take());
+        }
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return this;
+    }
+
+
+    
 }
 
-export {CardSupplier};
+export {
+    Pile,
+};
 </code></pre>
         </article>
     </section>

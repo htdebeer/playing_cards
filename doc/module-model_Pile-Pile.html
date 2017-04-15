@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>model/Card - Documentation</title>
+    <title>Pile - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">model/Card</h1>
+    <h1 class="page-title">Pile</h1>
     
 
     
@@ -39,6 +39,13 @@
 
 <header>
     
+        <h2>
+            <span class="ancestors"><a href="module-model_Pile.html">model/Pile</a>~</span>
+        
+        Pile
+        </h2>
+        
+            <div class="class-description">A pile of cards.</div>
         
     
 </header>
@@ -48,21 +55,103 @@
     
         
 
-        
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="Pile"><span class="type-signature"></span>new Pile<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line33">line 33</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     </div>
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>Model</li>
+    </ul>
+
 
     
 
     
-        <h3 class="subsection-title">Classes</h3>
 
-        <dl>
-            <dt><a href="module-model_Card-Card.html">Card</a></dt>
-            <dd></dd>
-        </dl>
     
 
      
@@ -74,7 +163,7 @@
 
         
             
-<h4 class="name" id="~ACE"><span class="type-signature">(inner, constant) </span>ACE<span class="type-signature"></span></h4>
+<h4 class="name" id="cards"><span class="type-signature"></span>cards<span class="type-signature"></span></h4>
 
 
 
@@ -85,7 +174,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line82">line 82</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line53">line 53</a>
     </li></ul></dd>
     
 
@@ -125,7 +214,7 @@
 
 
 <div class="description">
-    The rank ace.
+    Get a list of the cards in this pile.
 </div>
 
 
@@ -137,7 +226,7 @@
 
         
             
-<h4 class="name" id="~BLACK"><span class="type-signature">(inner, constant) </span>BLACK<span class="type-signature"></span></h4>
+<h4 class="name" id="count"><span class="type-signature"></span>count<span class="type-signature"></span></h4>
 
 
 
@@ -148,7 +237,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line43">line 43</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -188,7 +277,7 @@
 
 
 <div class="description">
-    A black card.
+    The number of cards in this pile.
 </div>
 
 
@@ -199,9 +288,19 @@
 
 
         
-            
-<h4 class="name" id="~CLUBS"><span class="type-signature">(inner, constant) </span>CLUBS<span class="type-signature"></span></h4>
+    
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(card, index<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Pile}</span></h4>
+
+    
 
 
 
@@ -211,7 +310,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line55">line 55</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -251,7 +350,7 @@
 
 
 <div class="description">
-    The suit clubs.
+    Add a card to this pile.
 </div>
 
 
@@ -261,10 +360,158 @@
 
 
 
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>card</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Card</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">the card to add.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>pile.count</code>
+                
+                </td>
+            
+
+            <td class="description last">the index to insert the card in
+this pile. Defaults to the end of the pile.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Return this pile.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Pile</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~COLOR"><span class="type-signature">(inner, constant) </span>COLOR<span class="type-signature"> :symbol</span></h4>
 
+    
+
+    <h4 class="name" id="each"><span class="type-signature"></span>each<span class="signature">()</span><span class="type-signature"> &rarr; {iterator}</span></h4>
+
+    
 
 
 
@@ -274,7 +521,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line50">line 50</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -314,30 +561,59 @@
 
 
 <div class="description">
-    The two colors of a card: red and black.
+    Iterator over all cards of this pile.
 </div>
 
 
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">symbol</span>
-
-
-        </li>
-    </ul>
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">iterator</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
         
             
-<h4 class="name" id="~DIAMONDS"><span class="type-signature">(inner, constant) </span>DIAMONDS<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="inspect"><span class="type-signature"></span>inspect<span class="signature">(index<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Card}</span></h4>
+
+    
 
 
 
@@ -347,7 +623,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line60">line 60</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -387,7 +663,7 @@
 
 
 <div class="description">
-    The suit diamonds.
+    Inspect a card in this pile. The pile does not change.
 </div>
 
 
@@ -397,10 +673,123 @@
 
 
 
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>top</code>
+                
+                </td>
+            
+
+            <td class="description last">the index of the card to
+inspect. Defaults to the top card</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the card to inspect.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Card</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~EIGHT"><span class="type-signature">(inner, constant) </span>EIGHT<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="isEmpty"><span class="type-signature"></span>isEmpty<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
 
 
 
@@ -410,7 +799,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line117">line 117</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -450,7 +839,7 @@
 
 
 <div class="description">
-    The rank eight.
+    Is this pile empty?
 </div>
 
 
@@ -460,10 +849,53 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    True if this pile has no cards, false otherwise.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~EVENT_CARD_TURN"><span class="type-signature">(inner, constant) </span>EVENT_CARD_TURN<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="merge"><span class="type-signature"></span>merge<span class="signature">(other)</span><span class="type-signature"> &rarr; {Pile}</span></h4>
+
+    
 
 
 
@@ -473,7 +905,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line33">line 33</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line192">line 192</a>
     </li></ul></dd>
     
 
@@ -513,7 +945,7 @@
 
 
 <div class="description">
-    EVENT_CARD_TURN is emitted when a card is turned.
+    Merge another pile with this pile.
 </div>
 
 
@@ -523,10 +955,102 @@
 
 
 
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>other</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Pile</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the other pile to merge with this one.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    this pile.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Pile</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~FIVE"><span class="type-signature">(inner, constant) </span>FIVE<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="pick"><span class="type-signature"></span>pick<span class="signature">()</span><span class="type-signature"> &rarr; {Card}</span></h4>
+
+    
 
 
 
@@ -536,7 +1060,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line102">line 102</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -576,7 +1100,8 @@
 
 
 <div class="description">
-    The rank five.
+    Pick a random card from this pile; the pile contains one card less
+hereafter.
 </div>
 
 
@@ -586,10 +1111,53 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the picked card.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Card</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~FOUR"><span class="type-signature">(inner, constant) </span>FOUR<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="shuffle"><span class="type-signature"></span>shuffle<span class="signature">()</span><span class="type-signature"> &rarr; {Pile}</span></h4>
+
+    
 
 
 
@@ -599,7 +1167,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line97">line 97</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line146">line 146</a>
     </li></ul></dd>
     
 
@@ -639,7 +1207,7 @@
 
 
 <div class="description">
-    The rank four.
+    Shuffle this pile.
 </div>
 
 
@@ -649,10 +1217,53 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    this pile, shuffled.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Pile</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~HEARTS"><span class="type-signature">(inner, constant) </span>HEARTS<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="split"><span class="type-signature"></span>split<span class="signature">(numberOfPiles<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Pile>}</span></h4>
+
+    
 
 
 
@@ -662,7 +1273,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line65">line 65</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -702,7 +1313,8 @@
 
 
 <div class="description">
-    The suit hearts.
+    Split this pile in a number of smaller piles. By default the pile is
+split in two.
 </div>
 
 
@@ -712,10 +1324,123 @@
 
 
 
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>numberOfPiles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>2</code>
+                
+                </td>
+            
+
+            <td class="description last">the number of piles to split
+this pile into, defaults to 2.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    An array of piles, this pile is the first in that list
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Pile></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
         
             
-<h4 class="name" id="~JACK"><span class="type-signature">(inner, constant) </span>JACK<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="take"><span class="type-signature"></span>take<span class="signature">()</span><span class="type-signature"> &rarr; {Card}</span></h4>
+
+    
 
 
 
@@ -725,7 +1450,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line132">line 132</a>
+        <a href="model_Pile.js.html">model/Pile.js</a>, <a href="model_Pile.js.html#line121">line 121</a>
     </li></ul></dd>
     
 
@@ -765,7 +1490,7 @@
 
 
 <div class="description">
-    The rank JACK.
+    Take the top card from this pile. The pile contains one card less.
 </div>
 
 
@@ -775,849 +1500,46 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
         
-            
-<h4 class="name" id="~KING"><span class="type-signature">(inner, constant) </span>KING<span class="type-signature"></span></h4>
+<div class="param-desc">
+    the top card
+</div>
 
 
 
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Card</span>
 
 
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line147">line 147</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
+    </dd>
 </dl>
 
-
-
-
-
-<div class="description">
-    The rank king.
-</div>
-
-
-
-
-
-
+    
 
 
         
-            
-<h4 class="name" id="~KNIGHT"><span class="type-signature">(inner, constant) </span>KNIGHT<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line137">line 137</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank KNIGHT.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~NINE"><span class="type-signature">(inner, constant) </span>NINE<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line122">line 122</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank nine.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~QUEEN"><span class="type-signature">(inner, constant) </span>QUEEN<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line142">line 142</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank queen.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~RANK"><span class="type-signature">(inner, constant) </span>RANK<span class="type-signature"> :symbol</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line155">line 155</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The various ranks: ace, two, three, four, five, six, seven, eight, nine,
-ten, jack, knight, queen, and king.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">symbol</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~RED"><span class="type-signature">(inner, constant) </span>RED<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    A red card.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~SEVEN"><span class="type-signature">(inner, constant) </span>SEVEN<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line112">line 112</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank seven.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~SIX"><span class="type-signature">(inner, constant) </span>SIX<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank six.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~SPADES"><span class="type-signature">(inner, constant) </span>SPADES<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line70">line 70</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The suit spades.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~SUIT"><span class="type-signature">(inner, constant) </span>SUIT<span class="type-signature"> :symbol</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line77">line 77</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The four suits: spades, hearts, diamonds, and clubs.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">symbol</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~TEN"><span class="type-signature">(inner, constant) </span>TEN<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line127">line 127</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank ten.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~THREE"><span class="type-signature">(inner, constant) </span>THREE<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line92">line 92</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank three.
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~TWO"><span class="type-signature">(inner, constant) </span>TWO<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="model_Card.js.html">model/Card.js</a>, <a href="model_Card.js.html#line87">line 87</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The rank two.
-</div>
-
-
-
-
-
-
-
-
-        
-    
-
     
 
     
