@@ -21,7 +21,7 @@
 /**
  * @module
  */
-import {Card} from "model/Card.js";
+import {Card} from "./model/Card.js";
 
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
@@ -88,7 +88,7 @@ const createDeck = function (deck, jokers = false) {
 
     if (jokers) {
         cards.push(createCard(0x1F0CF)); // black joker
-        cards.pus(createCard(0x1F0BF)); // red joker
+        cards.push(createCard(0x1F0BF)); // red joker
     }
 
     return cards;

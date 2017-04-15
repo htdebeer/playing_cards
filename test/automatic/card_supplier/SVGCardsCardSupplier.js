@@ -1,18 +1,22 @@
 require("jsdom-global")();
-import {Card} from "../../../src/model/Card.js";
+import {Deck} from "../../../src/Deck.js";
 import {SVGCardsCardSupplier} from "../../../src/card_supplier/SVGCardsCardSupplier.js";
 
 import {assert} from "chai";
 
-const deck = {color: "purple"};
-const makeCard = function (codePoint) {
-    return Card.fromUnicode(String.fromCodePoint(codePoint), deck);
-};
+const checkCard = function (card, supplier) {
 
-const ACE_OF_SPADES = makeCard(0x1F0A1);
-const THREE_OF_DIAMONDS = makeCard(0x1F0C3);
+    let name = "back";
+    if (card.isJoker()) {
+        name = `${card.isRed() ? "red" : "black"}_joker`;
+    } else {
+        let [rank, suit] = card.name.split(" of ");
+        if (card.isPipsCard()) {
+            rank = card.pips;
+        }
+        name = `${rank}_${suit.slice(0, -1)}`;
+    }
 
-const checkCard = function (card, name, supplier) {
     let representation = supplier.createCard(card);
     assert.equal(representation.tagName, "use");
     assert.isTrue(representation.hasAttribute("fill"));
@@ -29,10 +33,13 @@ const checkCard = function (card, name, supplier) {
 describe("SVGCardsCardSupplier", function () {
     describe("#createCard(card)", function () {
 
+        const deck = new Deck("skyblue", true);
+        const supplier = new SVGCardsCardSupplier();
+
         it("should create a USE element pointing to the card to show in the svg-cards.svg file", function () {
-            const supplier = new SVGCardsCardSupplier();
-            checkCard(ACE_OF_SPADES, "1_spade", supplier);
-            checkCard(THREE_OF_DIAMONDS, "3_diamond", supplier);
+            for (const card of deck.cards) {
+                checkCard(card, supplier);
+            }
         });
     });
 });

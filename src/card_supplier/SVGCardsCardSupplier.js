@@ -64,11 +64,15 @@ class SVGCardsCardSupplier extends CardSupplier {
         const attributes = {};
         let id = "back";
         if (card.isFacingUp()) {
-            let [rank, suit] = card.name.split(" of ");
-            if (card.isPipsCard()) {
-                rank = card.pips;
+            if (card.isJoker()) {
+                id = `${card.isRed() ? "red" : "black"}_joker`;
+            } else {
+                let [rank, suit] = card.name.split(" of ");
+                if (card.isPipsCard()) {
+                    rank = card.pips;
+                }
+                id = `${rank}_${suit.slice(0, -1)}`;
             }
-            id = `${rank}_${suit.slice(0, -1)}`;
         } else {
             // Color the back
             attributes.fill = card.backColor;
