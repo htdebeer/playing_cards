@@ -30,7 +30,7 @@ const initializeEventHandlers = function (events = []) {
 };
 
 // Private properties of an EventAware class
-_eventHandlers = new WeakMap();
+const _eventHandlers = new WeakMap();
 
 /**
  * EventAware is a base class for event aware object. EventAware objects can

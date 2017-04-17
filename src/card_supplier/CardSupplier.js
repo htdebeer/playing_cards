@@ -56,6 +56,13 @@ class CardSupplier {
 
         const text = svg.create("text", attributes);
         text.textContent = card.toString();
+
+        if (card.isRed() && card.isJoker()) {
+            // The red joker unicode symbol looks off compared to the other
+            // card symbols. Therefore, instead of red joker symbol, use the
+            // black joker symbol (but color it red).
+            text.textContent = String.fromCodePoint(0x1F0CF);
+        }
         
         return text;
     }

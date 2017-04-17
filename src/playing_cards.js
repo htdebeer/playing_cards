@@ -1,3 +1,3 @@
-import EventAware from "./EventAware.js";
+import {EventAware} from "./EventAware.js";
 
 window.EventAware = EventAware;

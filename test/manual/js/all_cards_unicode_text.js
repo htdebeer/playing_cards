@@ -927,6 +927,20 @@ class Deck {
     get cards() {
         return _cards.get(this);
     }
+
+    /**
+     * Add all cards from this deck to a pile.
+     *
+     * @param {Pile} pile - the pile to add this deck's cards to.
+     *
+     * @return {Pile} the pile the cards are added to.
+     */
+    addToPile(pile) {
+        for (const card of this.cards) {
+            pile.add(card);
+        }
+        return pile;
+    }
         
 }
 
@@ -1058,6 +1072,13 @@ class CardSupplier {
 
         const text = svg$1.create("text", attributes);
         text.textContent = card.toString();
+
+        if (card.isRed() && card.isJoker()) {
+            // The red joker unicode symbol looks off compared to the other
+            // card symbols. Therefore, instead of red joker symbol, use the
+            // black joker symbol (but color it red).
+            text.textContent = String.fromCodePoint(0x1F0CF);
+        }
         
         return text;
     }
