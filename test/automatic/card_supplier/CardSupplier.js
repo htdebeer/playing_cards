@@ -14,7 +14,11 @@ const checkCard = function (card, supplier) {
     assert.equal(representation.getAttribute("fill"), card.backColor);
     card.turn();
     representation = supplier.createCard(card);
-    assert.equal(representation.textContent, card.toUnicode());
+    if (card.isJoker() && card.isRed()) {
+        assert.equal(representation.textContent, String.fromCodePoint(0x1F0CF));
+    } else {
+        assert.equal(representation.textContent, card.toUnicode());
+    }
     assert.isTrue(representation.hasAttribute("fill"));
     assert.equal(representation.getAttribute("fill"), card.isRed() ? "red" : "black"); 
 };
