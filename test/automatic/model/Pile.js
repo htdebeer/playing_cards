@@ -14,6 +14,21 @@ describe("Pile", function () {
         });
     });
 
+    describe("#each()", function () {
+        const deck = new Deck("navy");
+        const pile = new Pile();
+        deck.addToPile(pile);
+
+        it("should create an iterator over all cards", function () {
+            let i = 0;
+            for (const card of pile.each()) {
+                assert.isTrue(card.equals(pile.cards[i]));
+                i++;
+            }
+            assert.equal(i, pile.count);
+        });
+    });
+
     describe("#add(card)", function () {
         const deck = new Deck("navy");
         const pile = new Pile();
@@ -166,6 +181,146 @@ describe("Pile", function () {
                 i++;
             }
             assert(i, pile1.count);
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            const currentCount = pile1.count;
+            let result = 0;
+            pile1.on(EVENT_MODEL_CHANGE, function (p) {
+                result = p.count;
+            });
+            
+            pile2.add(deck.cards.pop());
+            pile2.add(deck.cards.pop());
+
+            pile1.merge(pile2);
+
+            assert.equal(result, currentCount + 2);
+        });
+
+    });
+    
+    describe("#pick()", function () {
+        const deck = new Deck("navy");
+        const pile = new Pile();
+        deck.addToPile(pile);
+
+        it("should pick a card from the pile", function () {
+            const numberOfCards = pile.count;
+            const card = pile.pick();
+            assert.equal(pile.count + 1, numberOfCards);
+            assert.equal(pile.cards.filter((c) => c.equals(card)).length, 0);
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            const currentCount = pile.count;
+            let result = 0;
+            pile.on(EVENT_MODEL_CHANGE, function () {
+                result = 1;
+            });
+            
+            pile.pick();
+
+            assert.equal(result, 1);
+            assert.equal(pile.count + 1, currentCount);
+        });
+    });
+    
+    describe("#shuffle()", function () {
+        const deck = new Deck("navy");
+        const pile = new Pile();
+        deck.addToPile(pile);
+
+        const deck2 = new Deck("maroon");
+        const pile2 = new Pile();
+        deck2.addToPile(pile2);
+
+        const pileToString = function (pile) {
+            return pile.cards.map((c) => c.toUnicode()).join(" ");
+        };
+
+        it("should reorder the cards randomly", function () {
+            // Note, it is possible that the shuffle method returns the same
+            // order as before, albeit a small chance.
+            pile2.shuffle();
+            assert.notEqual(pileToString(pile), pileToString(pile2));
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            let result = 0;
+            pile.on(EVENT_MODEL_CHANGE, function () {
+                result = 1;
+            });
+            
+            pile.shuffle();
+
+            assert.equal(result, 1);
+        });
+    });
+    
+    describe("#split()", function () {
+
+        it("should split a pile in two", function () {
+            const deck = new Deck("navy");
+            const pile = new Pile();
+            deck.addToPile(pile);
+
+            const numberOfItems = pile.count;
+            const splits = pile.split();
+
+            assert.equal(splits.length, 2);
+            
+            assert.equal(splits[0].count, numberOfItems/2);
+            assert.equal(splits[1].count, numberOfItems/2);
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            const deck = new Deck("navy");
+            const pile = new Pile();
+            deck.addToPile(pile);
+            let result = 0;
+            pile.on(EVENT_MODEL_CHANGE, function () {
+                result = 1;
+            });
+            
+            pile.split();
+
+            assert.equal(result, 1);
+        });
+    });
+    
+    describe("#take()", function () {
+        const deck = new Deck("navy");
+        const pile = new Pile();
+        deck.addToPile(pile);
+
+        it("should take the top card from the pile", function () {
+            const numberOfCards = pile.count;
+            const card = pile.take();
+            assert.equal(pile.count + 1, numberOfCards);
+            assert.equal(pile.cards.filter((c) => c.equals(card)).length, 0);
+        });
+        
+        it("should take a card from the pile", function () {
+            const theCard = pile.cards[5];
+            const numberOfCards = pile.count;
+            const card = pile.take(5);
+            assert.equal(pile.count + 1, numberOfCards);
+            assert.equal(pile.cards.filter((c) => c.equals(card)).length, 0);
+            assert.equal(card, theCard);            
+        });
+
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            const currentCount = pile.count;
+            let result = 0;
+            pile.on(EVENT_MODEL_CHANGE, function () {
+                result = 1;
+            });
+            
+            pile.take(3);
+
+            assert.equal(result, 1);
+            assert.equal(pile.count + 1, currentCount);
         });
     });
 });

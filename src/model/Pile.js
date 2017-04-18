@@ -180,7 +180,8 @@ class Pile extends Model {
     split(numberOfPiles = 2) {
         if (Number.isInteger(numberOfPiles)) {
             const pileCount = Math.floor(this.count / numberOfPiles);
-            const piles = [this];
+            const piles = [];
+            piles.push(this);
 
             while (this.count > pileCount) {
                 const pile = new Pile();
