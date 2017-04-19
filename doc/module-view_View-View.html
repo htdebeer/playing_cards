@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Deck - Documentation</title>
+    <title>View - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Deck</h1>
+    <h1 class="page-title">View</h1>
     
 
     
@@ -40,13 +40,12 @@
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-Deck.html">Deck</a>~</span>
+            <span class="ancestors"><a href="module-view_View.html">view/View</a>~</span>
         
-        Deck
+        View
         </h2>
         
-            <div class="class-description">A Deck is a <a href="https://en.wikipedia.org/wiki/Standard_52-card_deck">standard 52-card deck</a> 
-and, optionally, with two joker cards.</div>
+            <div class="class-description">Base class of views.</div>
         
     
 </header>
@@ -60,7 +59,7 @@ and, optionally, with two joker cards.</div>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="Deck"><span class="type-signature"></span>new Deck<span class="signature">(color<span class="signature-attributes">opt</span>, jokers<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="View"><span class="type-signature"></span>new View<span class="signature">(parent, model, config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -72,7 +71,7 @@ and, optionally, with two joker cards.</div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line106">line 106</a>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
@@ -112,7 +111,7 @@ and, optionally, with two joker cards.</div>
 
 
 <div class="description">
-    Construct a new Deck.
+    Create a new view
 </div>
 
 
@@ -154,13 +153,13 @@ and, optionally, with two joker cards.</div>
 
         <tr>
             
-                <td class="name"><code>color</code></td>
+                <td class="name"><code>parent</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">View</span>
 
 
             
@@ -168,8 +167,6 @@ and, optionally, with two joker cards.</div>
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -181,25 +178,58 @@ and, optionally, with two joker cards.</div>
             
                 <td class="default">
                 
-                    <code>"red"</code>
-                
                 </td>
             
 
-            <td class="description last">the background color of this deck.</td>
+            <td class="description last">the parent view. Will be undefined for the root view.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>jokers</code></td>
+                <td class="name"><code>model</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">Model</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">the model this view represents</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
 
 
             
@@ -220,13 +250,13 @@ and, optionally, with two joker cards.</div>
             
                 <td class="default">
                 
-                    <code>false</code>
+                    <code>{}</code>
                 
                 </td>
             
 
-            <td class="description last">should this deck include joker
-cards or not?</td>
+            <td class="description last">an (initial) configuration of this
+view.</td>
         </tr>
 
     
@@ -252,6 +282,17 @@ cards or not?</td>
     </div>
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>EventAware</li>
+    </ul>
+
+
+    
 
     
 
@@ -266,7 +307,7 @@ cards or not?</td>
 
         
             
-<h4 class="name" id="cards"><span class="type-signature"></span>cards<span class="type-signature"></span></h4>
+<h4 class="name" id="config"><span class="type-signature"></span>config<span class="type-signature"></span></h4>
 
 
 
@@ -277,7 +318,7 @@ cards or not?</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line145">line 145</a>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -317,7 +358,7 @@ cards or not?</td>
 
 
 <div class="description">
-    Get the cards of this deck.
+    Get this view's configuration.
 </div>
 
 
@@ -329,7 +370,7 @@ cards or not?</td>
 
         
             
-<h4 class="name" id="color"><span class="type-signature"></span>color<span class="type-signature"></span></h4>
+<h4 class="name" id="element"><span class="type-signature"></span>element<span class="type-signature"></span></h4>
 
 
 
@@ -340,7 +381,7 @@ cards or not?</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line126">line 126</a>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -380,7 +421,7 @@ cards or not?</td>
 
 
 <div class="description">
-    This deck's card's back-side color.
+    Get this view's SVG DOM element.
 </div>
 
 
@@ -392,7 +433,7 @@ cards or not?</td>
 
         
             
-<h4 class="name" id="hasJokers"><span class="type-signature"></span>hasJokers<span class="type-signature"></span></h4>
+<h4 class="name" id="model"><span class="type-signature"></span>model<span class="type-signature"></span></h4>
 
 
 
@@ -403,7 +444,7 @@ cards or not?</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line136">line 136</a>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -443,7 +484,134 @@ cards or not?</td>
 
 
 <div class="description">
-    Does this deck contain jokers?
+    Get this view's model.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Get this view's parent view.
+</div>
+
+
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="table"><span class="type-signature"></span>table<span class="type-signature"></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Get the table this view belongs to; each view belongs to a table or is
+a table.
 </div>
 
 
@@ -464,7 +632,7 @@ cards or not?</td>
 
     
 
-    <h4 class="name" id="addToPile"><span class="type-signature"></span>addToPile<span class="signature">(pile)</span><span class="type-signature"> &rarr; {Pile}</span></h4>
+    <h4 class="name" id="configure"><span class="type-signature"></span>configure<span class="signature">(config<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -476,7 +644,7 @@ cards or not?</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Deck.js.html">Deck.js</a>, <a href="Deck.js.html#line156">line 156</a>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line165">line 165</a>
     </li></ul></dd>
     
 
@@ -516,7 +684,8 @@ cards or not?</td>
 
 
 <div class="description">
-    Add all cards from this deck to a pile.
+    Configure this view. Each subclass will override this method to handle
+view specific configuration options.
 </div>
 
 
@@ -542,7 +711,11 @@ cards or not?</td>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -554,23 +727,39 @@ cards or not?</td>
 
         <tr>
             
-                <td class="name"><code>pile</code></td>
+                <td class="name"><code>config</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Pile</span>
+<span class="param-type">object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last">the pile to add this deck's cards to.</td>
+            
+                <td class="default">
+                
+                    <code>{}</code>
+                
+                </td>
+            
+
+            <td class="description last">the configuration to set on this view.</td>
         </tr>
 
     
@@ -590,28 +779,282 @@ cards or not?</td>
 
 
 
-<h5>Returns:</h5>
+
 
         
-<div class="param-desc">
-    the pile the cards are added to.
+            
+
+    
+
+    <h4 class="name" id="isTable"><span class="type-signature"></span>isTable<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line155">line 155</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Is this view a table node?
 </div>
 
 
 
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
-<span class="param-type">Pile</span>
-
-
-    </dd>
-</dl>
+            
 
     
+
+    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">(x<span class="signature-attributes">opt</span>, y<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="view_View.js.html">view/View.js</a>, <a href="view_View.js.html#line149">line 149</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Render this view. Has to be implemented for all subclasses of View.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last">the x coordinate to render this view.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last">the y coordinate to render this view.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         

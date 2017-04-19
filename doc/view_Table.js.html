@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>svg.js - Documentation</title>
+    <title>view/Table.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">svg.js</h1>
+    <h1 class="page-title">view/Table.js</h1>
     
 
     
@@ -58,83 +58,129 @@
  */
 
 /**
- * Utilities for handling SVG.
- *
  * @module
  */
+import {svg} from "../svg.js";
 
-const SVGNS = "http://www.w3.org/2000/svg";
-const XLINKNS = "http://www.w3.org/1999/xlink";
+import {CardSupplier} from "../card_supplier/CardSupplier.js";
+import {EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG, View} from "./View.js";
+
+const _dragElement = new WeakMap();
 
 /**
- * SVG is a utility class to create and work with SVG elements.
+ * Table represents the table a card game is played on. All viewed elements
+ * are on top of the table.
+ *
+ * @extends View
  */
-class SVG {
+class Table extends View {
+
+    constructor(model, config = {}) {
+        config.name = "table";
+        super(undefined, model, config);
+
+        this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
+            "fill": config.fill || "green"
+        }));
+    } 
+
     /**
-     * Create a new SVG object with the document to use to create SVG
-     * elements.
+     * Render this table at (x, y).
+     *
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
      */
-    constructor() {
+    render(x = 0, y = 0) {
     }
 
     /**
-     * Create a SVG element with name and attributes.
-     *
-     * @param {string} name - the name of the element to create.
-     * @param {object} [attributes = {}] - the attributes to set on the
-     * created element.
+     * This view is a table view.
      */
-    create(name, attributes = {}) {
-        const elt = document.createElementNS(SVGNS, name);
-      
-        Object.keys(attributes).forEach(key => elt.setAttribute(key, attributes[key]));
-        
-        return elt;
+    isTable() {
+        return true;
+    }
+  
+    /**
+     * Start dragging a view over this table.
+     *
+     * @param {Event} event - the original event initialing the dragging;
+     * @param {View} view - the view to drag
+     *
+     * @fire EVENT_DRAG_START
+     */
+    startDragging(event, view) {
+        const svgRoot = view.element.ownerSVGElement;
+
+        let point = svgRoot.createSVGPoint();
+        point.x = event.clientX - document.body.scrollLeft;
+        point.y = event.clientY - document.body.scrollTop;
+        point = point.matrixTransform(view.element.getScreenCTM().inverse());
+
+        const offset = {
+            x: point.x,
+            y: point.y
+        };
+
+        let transform = view.element.ownerSVGElement.createSVGTransform();
+        let transformList = view.element.transform.baseVal;
+
+        /**
+         * Drag this view around
+         *
+         * @param {Event} event - the mouse event
+         *
+         * @fire EVENT_DRAG
+         */
+        _dragElement.set(this, (event) => {
+            // Move card to table for dragging, only after starting moving, though
+            if (view.element.parentNode !== this.element) {
+                const elementToDrag = view.element.parentNode.removeChild(view.element);
+                this.element.appendChild(elementToDrag);
+            }
+
+            // Get a point in viewport coordinates
+            point = svgRoot.createSVGPoint();
+            point.x = event.clientX - document.body.scrollLeft;
+            point.y = event.clientY - document.body.scrollTop;
+
+            // transfor the to user coordinates
+            point = point.matrixTransform(view.element.getScreenCTM().inverse());
+
+            // keep track of the offset so the element that is being dragged keeps
+            // located under the cursor 
+            point.x -= offset.x;
+            point.y -= offset.y; 
+
+            // set transform
+            transform.setTranslate(point.x, point.y);
+            transformList.appendItem(transform);
+            transformList.consolidate();
+
+            view.emit(EVENT_DRAG, view);
+        });
+
+        this.element.addEventListener("mousemove", _dragElement.get(this));
+        view.emit(EVENT_DRAG_START, view);
     }
 
     /**
-     * Create a USE element with url and attributes.
+     * Stop dragging a view over this table.
      *
-     * @param {string} url - the URL to the object to use.
-     * @param {object} [attributes = {}] - the attributes to set.
-     */
-    use(url, attributes = {}) {
-        const use = this.create("use", attributes);
-        use.setAttributeNS(XLINKNS, "xlink:href", url);
-        return use;
-    }
-
-    /**
-     * Create a GROUP element with attributes.
+     * @param {View} view - the view that has been dragged.
      *
-     * @param {object} [attributes = {}] - the attributes to set.
+     * @fire EVENT_DRAG_END
      */
-    group(attributes = {}) {
-        return this.create("g", attributes);
-    }
-
-    /**
-     * Create a RECT
-     *
-     * @param {float} x - the upper left corner, x coordinate
-     * @param {float} y - the upper left corner, y coordinate
-     * @param {float} width - the width of the rectangle
-     * @param {float} height - the heigt of the rectangle
-     * @param {attributes} [attributes = {}] - other attributes
-     */
-    rectangle(x, y, width, height, attributes = {}) {
-        const rect = this.create("rect", attributes);
-        rect.setAttribute("x", x);
-        rect.setAttribute("y", y);
-        rect.setAttribute("width", width);
-        rect.setAttribute("height", height);
-        return rect;
+    stopDragging(view) {
+        this.element.removeEventListener("mousemove", _dragElement.get(this));
+        this.element.removeChild(view.element);
+        view.emit(EVENT_DRAG_END, view);
     }
 
 }
 
-const svg = new SVG();
-export {svg, SVGNS, XLINKNS};
+export {
+    Table
+}
 </code></pre>
         </article>
     </section>

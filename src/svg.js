@@ -65,6 +65,32 @@ class SVG {
         return use;
     }
 
+    /**
+     * Create a GROUP element with attributes.
+     *
+     * @param {object} [attributes = {}] - the attributes to set.
+     */
+    group(attributes = {}) {
+        return this.create("g", attributes);
+    }
+
+    /**
+     * Create a RECT
+     *
+     * @param {float} x - the upper left corner, x coordinate
+     * @param {float} y - the upper left corner, y coordinate
+     * @param {float} width - the width of the rectangle
+     * @param {float} height - the heigt of the rectangle
+     * @param {attributes} [attributes = {}] - other attributes
+     */
+    rectangle(x, y, width, height, attributes = {}) {
+        const rect = this.create("rect", attributes);
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", width);
+        rect.setAttribute("height", height);
+        return rect;
+    }
 
 }
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>svg.js - Documentation</title>
+    <title>view/Card.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">svg.js</h1>
+    <h1 class="page-title">view/Card.js</h1>
     
 
     
@@ -58,83 +58,71 @@
  */
 
 /**
- * Utilities for handling SVG.
- *
  * @module
  */
+import {svg} from "../svg.js";
 
-const SVGNS = "http://www.w3.org/2000/svg";
-const XLINKNS = "http://www.w3.org/1999/xlink";
+import {CardSupplier} from "../card_supplier/CardSupplier.js";
+import {EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG, View} from "./View.js";
+
+const CARD_SUPPLIER = "cardSupplier";
+const _cardSupplier = new WeakMap();
 
 /**
- * SVG is a utility class to create and work with SVG elements.
+ * View of a card.
+ *
+ * @extends View
  */
-class SVG {
+class Card extends View {
     /**
-     * Create a new SVG object with the document to use to create SVG
-     * elements.
-     */
-    constructor() {
-    }
-
-    /**
-     * Create a SVG element with name and attributes.
+     * Create a new card view.
      *
-     * @param {string} name - the name of the element to create.
-     * @param {object} [attributes = {}] - the attributes to set on the
-     * created element.
+     * @param {View} parent - the parent view
+     * @param {Card} model - the card model this view represents
+     * @param {object} [config = {}] - the configuration of this view. Set
+     * property "cardSupplier" to choose a card supplier; defaults to the font
+     * based card supplier.
      */
-    create(name, attributes = {}) {
-        const elt = document.createElementNS(SVGNS, name);
-      
-        Object.keys(attributes).forEach(key => elt.setAttribute(key, attributes[key]));
-        
-        return elt;
+    constructor(parent, model, config = {}) {
+        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
+            config[CARD_SUPPLIER] = new CardSupplier();
+        }
+
+        config.name = "card";
+
+        super(parent, model, config);
     }
 
     /**
-     * Create a USE element with url and attributes.
+     * Render this card at (x, y)
      *
-     * @param {string} url - the URL to the object to use.
-     * @param {object} [attributes = {}] - the attributes to set.
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
      */
-    use(url, attributes = {}) {
-        const use = this.create("use", attributes);
-        use.setAttributeNS(XLINKNS, "xlink:href", url);
-        return use;
+    render(x = 0, y = 0) {
+        this.element.removeChild(this.element.lastChild);
+        this.element.appendChild(_cardSupplier.get(this).createCard(this.model));
+        this.element.setAttribute("transform", `translate(${x},${y})`);
     }
 
     /**
-     * Create a GROUP element with attributes.
+     * Configure this card view. Use the property "cardSupplier" to select a
+     * card supplier. By default, this is the font based CardSupplier.
      *
-     * @param {object} [attributes = {}] - the attributes to set.
+     * @param {object} [config = {}] - the configuration to set.
      */
-    group(attributes = {}) {
-        return this.create("g", attributes);
-    }
+    configure(config = {}) {
+        super(config);
 
-    /**
-     * Create a RECT
-     *
-     * @param {float} x - the upper left corner, x coordinate
-     * @param {float} y - the upper left corner, y coordinate
-     * @param {float} width - the width of the rectangle
-     * @param {float} height - the heigt of the rectangle
-     * @param {attributes} [attributes = {}] - other attributes
-     */
-    rectangle(x, y, width, height, attributes = {}) {
-        const rect = this.create("rect", attributes);
-        rect.setAttribute("x", x);
-        rect.setAttribute("y", y);
-        rect.setAttribute("width", width);
-        rect.setAttribute("height", height);
-        return rect;
+        if (this.config.hasOwnProperty(CARD_SUPPLIER)) {
+            _cardSupplier.set(this, this.config[CARD_SUPPLIER]);
+        }
     }
-
 }
 
-const svg = new SVG();
-export {svg, SVGNS, XLINKNS};
+export {
+    Card
+}
 </code></pre>
         </article>
     </section>
