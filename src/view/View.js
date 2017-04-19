@@ -50,7 +50,6 @@ const createClickableAndDraggableElement = function (view, name = "") {
                 moving = true;
                 view.table.startDragging(event, view);
                 event.stopPropagation();
-            } else {
             }
         }
     });
@@ -69,7 +68,7 @@ const createClickableAndDraggableElement = function (view, name = "") {
     });
 
     return group;
-}
+};
 
 
 const _parent = new WeakMap();
@@ -93,13 +92,23 @@ class View extends EventAware {
      * view.
      */
     constructor(parent, model, config = {}) {
-        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_ENG, EVENT_DROP]);
+        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
         _parent.set(this, parent);
         _model.set(this, model);
+        
+        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
+            config[CARD_SUPPLIER] = new CardSupplier();
+        }
 
         this.configure(config);
 
         _element.set(this, createClickableAndDraggableElement(this, config.name || ""));
+
+        // Append the view to the parent unless it is a table. The table has
+        // to be appended to an SVG element that is not part of a view.
+        if (!this.isTable()) {
+            this.parent.element.appendChild(this.element);
+        }
 
         this.model.on(EVENT_MODEL_CHANGE, () => this.render());
     }
@@ -164,6 +173,10 @@ class View extends EventAware {
      */
     configure(config = {}) {
         _config.set(this, Object.assign(_config.get(this), config));
+        
+        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
+            config[CARD_SUPPLIER] = new CardSupplier();
+        }
     }
 
 }

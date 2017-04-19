@@ -23,7 +23,6 @@
  */
 import {svg} from "../svg.js";
 
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
 import {EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG, View} from "./View.js";
 
 const _dragElement = new WeakMap();
@@ -141,4 +140,4 @@ class Table extends View {
 
 export {
     Table
-}
+};
