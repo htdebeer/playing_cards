@@ -1000,6 +1000,18 @@ class SVG {
     }
 
     /**
+     * Create a TEXT element with content and attributes
+     *
+     * @param {string} content - the text to show
+     * @param {object} [attributes = {}] - the attributes to set.
+     */
+    text(content, attributes = {}) {
+        const text = this.create("text", attributes);
+        text.textContent = content;
+        return text;
+    }
+
+    /**
      * Create a USE element with url and attributes.
      *
      * @param {string} url - the URL to the object to use.
@@ -1011,6 +1023,32 @@ class SVG {
         return use;
     }
 
+    /**
+     * Create a GROUP element with attributes.
+     *
+     * @param {object} [attributes = {}] - the attributes to set.
+     */
+    group(attributes = {}) {
+        return this.create("g", attributes);
+    }
+
+    /**
+     * Create a RECT
+     *
+     * @param {float} x - the upper left corner, x coordinate
+     * @param {float} y - the upper left corner, y coordinate
+     * @param {float} width - the width of the rectangle
+     * @param {float} height - the heigt of the rectangle
+     * @param {attributes} [attributes = {}] - other attributes
+     */
+    rectangle(x, y, width, height, attributes = {}) {
+        const rect = this.create("rect", attributes);
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", width);
+        rect.setAttribute("height", height);
+        return rect;
+    }
 
 }
 
@@ -1040,6 +1078,25 @@ const svg$1 = new SVG();
  * @module
  */
 
+const SUITS = {
+    "club": {
+        codePoint: 0x2663,
+        color: "black"
+    },
+    "spade": {
+        codePoint: 0x2660,
+        color: "black"
+    },
+    "heart": {
+        codePoint: 0x2665,
+        color: "red"
+    },
+    "diamond": {
+        codePoint: 0x2666,
+        color: "red"
+    }
+};
+
 /**
  * CardSupplier base class as an interface to various card suppliers, such as
  * a font based one, an image based one, or a SVG based one.
@@ -1052,11 +1109,11 @@ class CardSupplier {
     }
 
     /**
-     * Represent a card as an SVG element.
+     * Represent a card as a SVG element.
      *
      * @param {Card} card - the card model to represent;
      *
-     * @return {SVGElement} An SVG representation of the card.
+     * @return {SVGElement} A SVG representation of the card.
      */
     createCard(card) {
         const attributes = {};
@@ -1070,10 +1127,9 @@ class CardSupplier {
 
         attributes.fill = color;
 
-        const text = svg$1.create("text", attributes);
-        text.textContent = card.toString();
+        const text = svg$1.text(card.toString(), attributes);
 
-        if (card.isRed() && card.isJoker()) {
+        if (card.isRed() && card.isJoker() && card.isFacingUp()) {
             // The red joker unicode symbol looks off compared to the other
             // card symbols. Therefore, instead of red joker symbol, use the
             // black joker symbol (but color it red).
@@ -1081,6 +1137,31 @@ class CardSupplier {
         }
         
         return text;
+    }
+
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return svg$1.text(String.fromCodePoint(0x1F0A0), {
+            fill: "silver",
+            "fill-opacity": 0.2
+        });
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return svg$1.text(String.fromCodePoint(SUITS[suit].codePoint), {
+            fill: SUITS[suit].color
+        });
     }
 
 }
@@ -1163,6 +1244,30 @@ class SVGCardsCardSupplier extends CardSupplier {
         }
         return svg$1.use(`${this.url}/#${id}`, attributes);
     }
+    
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return svg$1.use(`${this.url}/#card-base`, {
+            fill: "silver",
+            "fill-opacity": 0.2,
+            "stroke-opacity": 0.2
+        });
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return svg$1.use(`${this.url}/#suit-${suit}`);
+    }
 }
 
 const card_supplier = new SVGCardsCardSupplier("/SVG-cards/svg-cards.svg");
@@ -1203,3 +1308,18 @@ for (const card of deck.cards) {
 const card = deck.cards[0];
 card.turn();
 renderCard(card, x, y);
+
+// Render base of a card
+x += WIDTH;
+const base = card_supplier.createBase();
+base.setAttribute("transform", `translate(${x},${y})`);
+svg.appendChild(base);
+
+// Render each of the four suits separately
+x += WIDTH;
+["club", "spade", "heart", "diamond"].forEach(suit => {
+    const suitElt = card_supplier.createSuit(suit);
+    suitElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT / 2})`);
+    svg.appendChild(suitElt);
+    x += 20;
+});

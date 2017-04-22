@@ -54,6 +54,18 @@ class SVG {
     }
 
     /**
+     * Create a TEXT element with content and attributes
+     *
+     * @param {string} content - the text to show
+     * @param {object} [attributes = {}] - the attributes to set.
+     */
+    text(content, attributes = {}) {
+        const text = this.create("text", attributes);
+        text.textContent = content;
+        return text;
+    }
+
+    /**
      * Create a USE element with url and attributes.
      *
      * @param {string} url - the URL to the object to use.

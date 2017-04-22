@@ -24,6 +24,25 @@
 
 import {svg} from "../svg.js";
 
+const SUITS = {
+    "club": {
+        codePoint: 0x2663,
+        color: "black"
+    },
+    "spade": {
+        codePoint: 0x2660,
+        color: "black"
+    },
+    "heart": {
+        codePoint: 0x2665,
+        color: "red"
+    },
+    "diamond": {
+        codePoint: 0x2666,
+        color: "red"
+    }
+};
+
 /**
  * CardSupplier base class as an interface to various card suppliers, such as
  * a font based one, an image based one, or a SVG based one.
@@ -36,11 +55,11 @@ class CardSupplier {
     }
 
     /**
-     * Represent a card as an SVG element.
+     * Represent a card as a SVG element.
      *
      * @param {Card} card - the card model to represent;
      *
-     * @return {SVGElement} An SVG representation of the card.
+     * @return {SVGElement} A SVG representation of the card.
      */
     createCard(card) {
         const attributes = {};
@@ -54,8 +73,7 @@ class CardSupplier {
 
         attributes.fill = color;
 
-        const text = svg.create("text", attributes);
-        text.textContent = card.toString();
+        const text = svg.text(card.toString(), attributes);
 
         if (card.isRed() && card.isJoker() && card.isFacingUp()) {
             // The red joker unicode symbol looks off compared to the other
@@ -65,6 +83,31 @@ class CardSupplier {
         }
         
         return text;
+    }
+
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return svg.text(String.fromCodePoint(0x1F0A0), {
+            fill: "silver",
+            "fill-opacity": 0.2
+        });
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return svg.text(String.fromCodePoint(SUITS[suit].codePoint), {
+            fill: SUITS[suit].color
+        });
     }
 
 }

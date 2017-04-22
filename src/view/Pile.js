@@ -24,7 +24,7 @@
 import {svg} from "../svg.js";
 
 import {CardSupplier} from "../card_supplier/CardSupplier.js";
-import {EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG, View} from "./View.js";
+import {View} from "./View.js";
 
 
 /**

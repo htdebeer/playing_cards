@@ -79,6 +79,30 @@ class SVGCardsCardSupplier extends CardSupplier {
         }
         return svg.use(`${this.url}/#${id}`, attributes);
     }
+    
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return svg.use(`${this.url}/#card-base`, {
+            fill: "silver",
+            "fill-opacity": 0.2,
+            "stroke-opacity": 0.2
+        });
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return svg.use(`${this.url}/#suit-${suit}`);
+    }
 }
 
 export {SVGCardsCardSupplier};

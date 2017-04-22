@@ -39,3 +39,19 @@ for (const card of deck.cards) {
 const card = deck.cards[0];
 card.turn()
 renderCard(card, x, y);
+
+// Render base of a card
+x += WIDTH;
+const base = card_supplier.createBase();
+base.setAttribute("transform", `translate(${x},${y})`);
+svg.appendChild(base);
+
+// Render each of the four suits separately
+x += WIDTH;
+["club", "spade", "heart", "diamond"].forEach(suit => {
+    const suitElt = card_supplier.createSuit(suit);
+    suitElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT / 2})`);
+    svg.appendChild(suitElt);
+    x += 20;
+});
+
