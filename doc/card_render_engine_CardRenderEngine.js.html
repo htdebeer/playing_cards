@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>view/Pile.js - Documentation</title>
+    <title>card_render_engine/CardRenderEngine.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">view/Pile.js</h1>
+    <h1 class="page-title">card_render_engine/CardRenderEngine.js</h1>
     
 
     
@@ -60,46 +60,49 @@
 /**
  * @module
  */
-import {svg} from "../svg.js";
-
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
-import {View} from "./View.js";
-
-
 /**
- * View representing a pile
- *
- * @extends View
+ * CardRenderEngine is an abstract base class as an interface to various card render engines, such as
+ * an unicode font based one, an image based one, or a SVG based one.
  */
-class Pile extends View {
+class CardRenderEngine {
     /**
-     * Create a new pile view
-     *
-     * @param {View} parent - this view's parent
-     * @param {Pile} model - the pile this view represents
-     * @param {object} [config = {}] - initial configuration of this pile
-     * view.
+     * Create a new render engine
      */
-    constructor(parent, model, config = {}) {
-        config.name = "pile";
-        super(parent, model, config);
+    constructor() {
     }
 
     /**
-     * Rending this pile at (x, y)
+     * Represent a card as a SVG element.
      *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} A SVG representation of the card.
      */
-    render(x = 0, y = 0) {
+    createCard() {
     }
 
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit() {
+    }
 
 }
 
-export {
-    Pile
-};
+
+export {CardRenderEngine};
 </code></pre>
         </article>
     </section>

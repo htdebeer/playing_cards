@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>view/Pile.js - Documentation</title>
+    <title>card_render_engine/SVGCardsCardRenderEngine.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">view/Pile.js</h1>
+    <h1 class="page-title">card_render_engine/SVGCardsCardRenderEngine.js</h1>
     
 
     
@@ -61,45 +61,90 @@
  * @module
  */
 import {svg} from "../svg.js";
+import {CardRenderEngine} from "./CardRenderEngine.js";
 
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
-import {View} from "./View.js";
-
+const _url = new WeakMap();
 
 /**
- * View representing a pile
+ * SVGCardsCardRenderEngine is a CardRenderEngine that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
+ * to supply cards.
  *
- * @extends View
+ * @extends CardRenderEngine
  */
-class Pile extends View {
-    /**
-     * Create a new pile view
+class SVGCardsCardRenderEngine extends CardRenderEngine {
+
+    /** 
+     * Create a SVGCardsCardsRenderEngine. Specify the URL to the SVG file to get
+     * the cards from.
      *
-     * @param {View} parent - this view's parent
-     * @param {Pile} model - the pile this view represents
-     * @param {object} [config = {}] - initial configuration of this pile
-     * view.
+     * @param {string} [url = "/svg-cards.svg"] - the URL to the SVG file to
+     * get the cards from.
      */
-    constructor(parent, model, config = {}) {
-        config.name = "pile";
-        super(parent, model, config);
+    constructor(url = "/svg-cards.svg") {
+        super();
+        _url.set(this, url);
     }
 
     /**
-     * Rending this pile at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * The URL to the SVG file to get the cards from;
      */
-    render(x = 0, y = 0) {
+    get url() {
+        return _url.get(this);
     }
 
+    /**
+     * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
+     *
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} An SVG representation of the card.
+     */
+    createCard(card) {
+        const attributes = {};
+        let id = "back";
+        if (card.isFacingUp()) {
+            if (card.isJoker()) {
+                id = `${card.isRed() ? "red" : "black"}_joker`;
+            } else {
+                let [rank, suit] = card.name.split(" of ");
+                if (card.isPipsCard()) {
+                    rank = card.pips;
+                }
+                id = `${rank}_${suit.slice(0, -1)}`;
+            }
+        } else {
+            // Color the back
+            attributes.fill = card.backColor;
+        }
+        return svg.use(`${this.url}/#${id}`, attributes);
+    }
+    
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return svg.use(`${this.url}/#card-base`, {
+            fill: "silver",
+            "fill-opacity": 0.2,
+            "stroke-opacity": 0.2
+        });
+    }
 
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return svg.use(`${this.url}/#suit-${suit}`);
+    }
 }
 
-export {
-    Pile
-};
+export {SVGCardsCardRenderEngine};
 </code></pre>
         </article>
     </section>

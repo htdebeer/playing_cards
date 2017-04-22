@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>view/Pile.js - Documentation</title>
+    <title>UnicodeCardRenderEngine - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,82 +27,571 @@
 
 <div id="main">
     
-    <h1 class="page-title">view/Pile.js</h1>
+    <h1 class="page-title">UnicodeCardRenderEngine</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/*
- * Copyright 2017 Huub de Beer &lt;huub@heerdebeer.org>
- *
- * This file is part of playing_cards.
- *
- * playing_cards is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * playing_cards is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with playing_cards.  If not, see &lt;http://www.gnu.org/licenses/>.
- * 
- */
+        <h2>
+            <span class="ancestors"><a href="module-card_render_engine_UnicodeCardRenderEngine.html">card_render_engine/UnicodeCardRenderEngine</a>~</span>
+        
+        UnicodeCardRenderEngine
+        </h2>
+        
+            <div class="class-description">UnicodeCardRenderEngine renders cards and suits as unicode SVG TEXT elements.</div>
+        
+    
+</header>
 
-/**
- * @module
- */
-import {svg} from "../svg.js";
+<article>
+    <div class="container-overview">
+    
+        
 
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
-import {View} from "./View.js";
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="UnicodeCardRenderEngine"><span class="type-signature"></span>new UnicodeCardRenderEngine<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
 
 
-/**
- * View representing a pile
- *
- * @extends View
- */
-class Pile extends View {
-    /**
-     * Create a new pile view
-     *
-     * @param {View} parent - this view's parent
-     * @param {Pile} model - the pile this view represents
-     * @param {object} [config = {}] - initial configuration of this pile
-     * view.
-     */
-    constructor(parent, model, config = {}) {
-        config.name = "pile";
-        super(parent, model, config);
-    }
-
-    /**
-     * Rending this pile at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
-     */
-    render(x = 0, y = 0) {
-    }
 
 
-}
+<dl class="details">
 
-export {
-    Pile
-};
-</code></pre>
-        </article>
-    </section>
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_render_engine_UnicodeCardRenderEngine.js.html">card_render_engine/UnicodeCardRenderEngine.js</a>, <a href="card_render_engine_UnicodeCardRenderEngine.js.html#line52">line 52</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Create a new Unicode font based render engine.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>CardRenderEngine</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="createBase"><span class="type-signature"></span>createBase<span class="signature">()</span><span class="type-signature"> &rarr; {SVGElement}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_render_engine_UnicodeCardRenderEngine.js.html">card_render_engine/UnicodeCardRenderEngine.js</a>, <a href="card_render_engine_UnicodeCardRenderEngine.js.html#line96">line 96</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Represent a card's base, its circumference, as a SVG Element.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A SVG representation of a card's circumference
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">SVGElement</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="createCard"><span class="type-signature"></span>createCard<span class="signature">(card)</span><span class="type-signature"> &rarr; {SVGElement}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_render_engine_UnicodeCardRenderEngine.js.html">card_render_engine/UnicodeCardRenderEngine.js</a>, <a href="card_render_engine_UnicodeCardRenderEngine.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Represent a card as a SVG element.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>card</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Card</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the card model to represent;</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A SVG representation of the card.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">SVGElement</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="createSuit"><span class="type-signature"></span>createSuit<span class="signature">(suit)</span><span class="type-signature"> &rarr; {SVGElement}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="card_render_engine_UnicodeCardRenderEngine.js.html">card_render_engine/UnicodeCardRenderEngine.js</a>, <a href="card_render_engine_UnicodeCardRenderEngine.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Represent a suit as a SVG Element
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>suit</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the suit to represent.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A SVG representation of the suit.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">SVGElement</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

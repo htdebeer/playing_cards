@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>view/Pile.js - Documentation</title>
+    <title>CardSupplier.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">view/Pile.js</h1>
+    <h1 class="page-title">CardSupplier.js</h1>
     
 
     
@@ -60,46 +60,80 @@
 /**
  * @module
  */
-import {svg} from "../svg.js";
 
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
-import {View} from "./View.js";
+import {CardRenderEngine} from "./card_render_engine/CardRenderEngine.js";
+import {UnicodeCardRenderEngine} from "./card_render_engine/UnicodeCardRenderEngine.js";
 
+const _engine = new WeakMap();
 
 /**
- * View representing a pile
+ * CardSupplier is a singleton that renders cards. The engine to render cards
+ * can be configured.
  *
- * @extends View
+ * @extends CardRenderEngine
  */
-class Pile extends View {
+const CARD_SUPPLIER = new class extends CardRenderEngine {
     /**
-     * Create a new pile view
+     * Create a new supplier
      *
-     * @param {View} parent - this view's parent
-     * @param {Pile} model - the pile this view represents
-     * @param {object} [config = {}] - initial configuration of this pile
-     * view.
      */
-    constructor(parent, model, config = {}) {
-        config.name = "pile";
-        super(parent, model, config);
+    constructor() {
+        super();
+        _engine.set(this, new UnicodeCardRenderEngine());
     }
 
     /**
-     * Rending this pile at (x, y)
+     * Get the configured card render engine.
      *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * @returns {CardRenderEngine}
      */
-    render(x = 0, y = 0) {
+    get engine() {
+        return _engine.get(this);
     }
 
+    /**
+     * Set the card render engine.
+     *
+     * @param {CardRenderEngine} engine - the engine to use.
+     */
+    set engine(engine) {
+        _engine.set(this, engine);
+    }
 
-}
+    /**
+     * Represent a card as a SVG element.
+     *
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} A SVG representation of the card.
+     */
+    createCard(card) {
+        return this.engine.createCard(card);
+    }
 
-export {
-    Pile
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return this.engine.createBase();
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return this.engine.createSuit(suit);
+    }
+
 };
+
+export {CARD_SUPPLIER};
 </code></pre>
         </article>
     </section>
