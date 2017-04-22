@@ -21,7 +21,6 @@
 /**
  * @module
  */
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
 import {EventAware} from "../EventAware.js";
 import {EVENT_MODEL_CHANGE} from "../model/Model.js";
 import {svg} from "../svg.js";
@@ -31,8 +30,6 @@ const EVENT_DRAG = Symbol("event:view:drag");
 const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
 const EVENT_DROP = Symbol("event:view:drop");
-
-const CARD_SUPPLIER = "cardSupplier";
 
 const createClickableAndDraggableElement = function (view, name = "") {
     const group = svg.group({
@@ -99,10 +96,6 @@ class View extends EventAware {
         _parent.set(this, parent);
         _model.set(this, model);
         
-        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
-            config[CARD_SUPPLIER] = new CardSupplier();
-        }
-
         this.configure(config);
 
         _element.set(this, createClickableAndDraggableElement(this, config.name || ""));
@@ -159,6 +152,7 @@ class View extends EventAware {
      * @param {float} [y = 0] - the y coordinate to render this view.
      */
     render(x = 0, y = 0) {
+        this.element.setAttribute("transform", `translate(${x}, ${y})`);
     }
 
     /**
@@ -176,10 +170,6 @@ class View extends EventAware {
      */
     configure(config = {}) {
         _config.set(this, Object.assign(_config.get(this), config));
-        
-        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
-            config[CARD_SUPPLIER] = new CardSupplier();
-        }
     }
 
 }

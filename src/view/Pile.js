@@ -21,11 +21,11 @@
 /**
  * @module
  */
-import {svg} from "../svg.js";
-
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
+import {CARD_SUPPLIER} from "../CardSupplier.js";
+import {CardView} from "./Card.js";
 import {View} from "./View.js";
 
+const CARD_OFFSET = 0.2;
 
 /**
  * View representing a pile
@@ -44,6 +44,7 @@ class Pile extends View {
     constructor(parent, model, config = {}) {
         config.name = "pile";
         super(parent, model, config);
+        this.element.appendChild(CARD_SUPPLIER.createBase());
     }
 
     /**
@@ -53,8 +54,28 @@ class Pile extends View {
      * @param {float} [y = 0] - the y coordinate
      */
     render(x = 0, y = 0) {
+        for (const cardElement of this.element.querySelectorAll("g.card")) {
+            this.element.removeChild(cardElement);
+        }
+
+        for (const [index, card] of this.model.each()) {
+            const cardElement = new CardView(this, card);
+            cardElement.render(0, CARD_OFFSET * index);
+        }
+        super(x, y);
     }
 
+    /**
+     * Configure this pile view. 
+     *
+     * @param {object} [config = {}] - the configuration to set on this view.
+     */
+    configure(config = {}) {
+        if (!config.hasOwnProperty("offset")) {
+            config.offset = CARD_OFFSET;
+        }
+        super(config);
+    }
 
 }
 

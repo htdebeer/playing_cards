@@ -22,8 +22,7 @@
  * @module
  */
 import {View} from "./View.js";
-
-const _cardSupplier = new WeakMap();
+import {CARD_SUPPLIER} from "../CardSupplier.js";
 
 /**
  * View of a card.
@@ -42,7 +41,6 @@ class Card extends View {
      */
     constructor(parent, model, config = {}) {
         config.name = "card";
-
         super(parent, model, config);
     }
 
@@ -54,22 +52,8 @@ class Card extends View {
      */
     render(x = 0, y = 0) {
         this.element.removeChild(this.element.lastChild);
-        this.element.appendChild(_cardSupplier.get(this).createCard(this.model));
-        this.element.setAttribute("transform", `translate(${x},${y})`);
-    }
-
-    /**
-     * Configure this card view. Use the property "cardSupplier" to select a
-     * card supplier. By default, this is the font based CardSupplier.
-     *
-     * @param {object} [config = {}] - the configuration to set.
-     */
-    configure(config = {}) {
-        super(config);
-
-        if (this.config.hasOwnProperty(CARD_SUPPLIER)) {
-            _cardSupplier.set(this, this.config[CARD_SUPPLIER]);
-        }
+        this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
+        super(x, y);
     }
 }
 
