@@ -21,10 +21,8 @@
 /**
  * @module
  */
-import {CardSupplier} from "../card_supplier/CardSupplier.js";
 import {View} from "./View.js";
 
-const CARD_SUPPLIER = "cardSupplier";
 const _cardSupplier = new WeakMap();
 
 /**
@@ -43,10 +41,6 @@ class Card extends View {
      * based card supplier.
      */
     constructor(parent, model, config = {}) {
-        if (!config.hasOwnProperty(CARD_SUPPLIER)) {
-            config[CARD_SUPPLIER] = new CardSupplier();
-        }
-
         config.name = "card";
 
         super(parent, model, config);

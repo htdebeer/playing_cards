@@ -21,6 +21,7 @@
 /**
  * @module
  */
+import {CardSupplier} from "../card_supplier/CardSupplier.js";
 import {EventAware} from "../EventAware.js";
 import {EVENT_MODEL_CHANGE} from "../model/Model.js";
 import {svg} from "../svg.js";
@@ -30,6 +31,8 @@ const EVENT_DRAG = Symbol("event:view:drag");
 const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
 const EVENT_DROP = Symbol("event:view:drop");
+
+const CARD_SUPPLIER = "cardSupplier";
 
 const createClickableAndDraggableElement = function (view, name = "") {
     const group = svg.group({

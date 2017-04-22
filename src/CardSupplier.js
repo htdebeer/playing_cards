@@ -22,36 +22,43 @@
  * @module
  */
 
-import {svg} from "../svg.js";
+import {CardRenderEngine} from "./card_render_engine/CardRenderEngine.js";
+import {UnicodeCardRenderEngine} from "./card_render_engine/UnicodeCardRenderEngine.js";
 
-const SUITS = {
-    "club": {
-        codePoint: 0x2663,
-        color: "black"
-    },
-    "spade": {
-        codePoint: 0x2660,
-        color: "black"
-    },
-    "heart": {
-        codePoint: 0x2665,
-        color: "red"
-    },
-    "diamond": {
-        codePoint: 0x2666,
-        color: "red"
-    }
-};
+const _engine = new WeakMap();
 
 /**
- * CardSupplier base class as an interface to various card suppliers, such as
- * a font based one, an image based one, or a SVG based one.
+ * CardSupplier is a singleton that renders cards. The engine to render cards
+ * can be configured.
+ *
+ * @extends CardRenderEngine
  */
-class CardSupplier {
+const CARD_SUPPLIER = new class extends CardRenderEngine {
     /**
      * Create a new supplier
+     *
      */
     constructor() {
+        super();
+        _engine.set(this, new UnicodeCardRenderEngine());
+    }
+
+    /**
+     * Get the configured card render engine.
+     *
+     * @returns {CardRenderEngine}
+     */
+    get engine() {
+        return _engine.get(this);
+    }
+
+    /**
+     * Set the card render engine.
+     *
+     * @param {CardRenderEngine} engine - the engine to use.
+     */
+    set engine(engine) {
+        _engine.set(this, engine);
     }
 
     /**
@@ -62,27 +69,7 @@ class CardSupplier {
      * @return {SVGElement} A SVG representation of the card.
      */
     createCard(card) {
-        const attributes = {};
-
-        let color;
-        if (card.isFacingUp()) {
-            color = card.isRed() ? "red" : "black";
-        } else {
-            color = card.backColor;
-        }
-
-        attributes.fill = color;
-
-        const text = svg.text(card.toString(), attributes);
-
-        if (card.isRed() && card.isJoker() && card.isFacingUp()) {
-            // The red joker unicode symbol looks off compared to the other
-            // card symbols. Therefore, instead of red joker symbol, use the
-            // black joker symbol (but color it red).
-            text.textContent = String.fromCodePoint(0x1F0CF);
-        }
-        
-        return text;
+        return this.engine.createCard(card);
     }
 
     /**
@@ -91,10 +78,7 @@ class CardSupplier {
      * @return {SVGElement} A SVG representation of a card's circumference
      */
     createBase() {
-        return svg.text(String.fromCodePoint(0x1F0A0), {
-            fill: "silver",
-            "fill-opacity": 0.2
-        });
+        return this.engine.createBase();
     }
 
     /**
@@ -105,11 +89,9 @@ class CardSupplier {
      * @return {SVGElement} A SVG representation of the suit.
      */
     createSuit(suit) {
-        return svg.text(String.fromCodePoint(SUITS[suit].codePoint), {
-            fill: SUITS[suit].color
-        });
+        return this.engine.createSuit(suit);
     }
 
-}
+};
 
-export {CardSupplier};
+export {CARD_SUPPLIER};

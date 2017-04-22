@@ -1,6 +1,6 @@
 require("jsdom-global")();
 import {Deck} from "../../../src/Deck.js";
-import {CardSupplier} from "../../../src/card_supplier/CardSupplier.js";
+import {UnicodeCardRenderEngine} from "../../../src/card_render_engine/UnicodeCardRenderEngine.js";
 
 import {assert} from "chai";
 
@@ -25,9 +25,9 @@ const checkCard = function (card, supplier) {
     assert.equal(representation.getAttribute("fill"), card.isRed() ? "red" : "black"); 
 };
 
-describe("CardSupplier", function () {
+describe("CardRenderEngine", function () {
     const deck = new Deck("skyblue", true);
-    const supplier = new CardSupplier();
+    const supplier = new UnicodeCardRenderEngine();
     
     describe("#createCard()", function () {
         it("should create a SVGText node with the unicode representation in it", function () {

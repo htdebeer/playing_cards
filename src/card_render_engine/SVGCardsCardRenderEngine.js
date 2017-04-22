@@ -22,20 +22,20 @@
  * @module
  */
 import {svg} from "../svg.js";
-import {CardSupplier} from "./CardSupplier.js";
+import {CardRenderEngine} from "./CardRenderEngine.js";
 
 const _url = new WeakMap();
 
 /**
- * SVGCardsCardSupplier is a CardSupplier that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
+ * SVGCardsCardRenderEngine is a CardRenderEngine that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
  * to supply cards.
  *
- * @extends CardSupplier
+ * @extends CardRenderEngine
  */
-class SVGCardsCardSupplier extends CardSupplier {
+class SVGCardsCardRenderEngine extends CardRenderEngine {
 
     /** 
-     * Create a SVGCardsCardsSupplier. Specify the URL to the SVG file to get
+     * Create a SVGCardsCardsRenderEngine. Specify the URL to the SVG file to get
      * the cards from.
      *
      * @param {string} [url = "/svg-cards.svg"] - the URL to the SVG file to
@@ -105,4 +105,4 @@ class SVGCardsCardSupplier extends CardSupplier {
     }
 }
 
-export {SVGCardsCardSupplier};
+export {SVGCardsCardRenderEngine};

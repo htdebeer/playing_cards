@@ -1,6 +1,6 @@
 require("jsdom-global")();
 import {Deck} from "../../../src/Deck.js";
-import {SVGCardsCardSupplier} from "../../../src/card_supplier/SVGCardsCardSupplier.js";
+import {SVGCardsCardRenderEngine} from "../../../src/card_render_engine/SVGCardsCardRenderEngine.js";
 
 import {assert} from "chai";
 
@@ -30,9 +30,9 @@ const checkCard = function (card, supplier) {
 };
 
 
-describe("SVGCardsCardSupplier", function () {
+describe("SVGCardsCardRenderEngine", function () {
     const deck = new Deck("skyblue", true);
-    const supplier = new SVGCardsCardSupplier();
+    const supplier = new SVGCardsCardRenderEngine();
 
     describe("#createCard(card)", function () {
         it("should create a USE element pointing to the card to show in the svg-cards.svg file", function () {
