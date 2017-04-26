@@ -51,9 +51,11 @@ class Card extends View {
      * @param {float} [y = 0] - the y coordinate
      */
     render(x = 0, y = 0) {
-        this.element.removeChild(this.element.lastChild);
+        if (this.element.hasChildNodes()) {
+            this.element.removeChild(this.element.lastChild);
+        }
         this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
-        super(x, y);
+        super.render(x, y);
     }
 }
 

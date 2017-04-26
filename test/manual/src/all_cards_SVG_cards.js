@@ -1,7 +1,8 @@
 import {Deck} from "../../../src/Deck.js";
-import {SVGCardsCardSupplier} from "../../../src/card_supplier/SVGCardsCardSupplier.js";
+import {CARD_SUPPLIER} from "../../../src/CardSupplier.js";
+import {SVGCardsCardRenderEngine} from "../../../src/card_render_engine/SVGCardsCardRenderEngine.js";
 
-const card_supplier = new SVGCardsCardSupplier("/SVG-cards/svg-cards.svg");
+CARD_SUPPLIER.engine = new SVGCardsCardRenderEngine("/SVG-cards/svg-cards.svg");
 const deck = new Deck("navy", true);
 
 const WIDTH = 170;
@@ -17,7 +18,7 @@ let x = 0;
 let y = 0;
 
 const renderCard = function (card, x, y) {
-    const cardElt = card_supplier.createCard(card);
+    const cardElt = CARD_SUPPLIER.createCard(card);
     cardElt.setAttribute("transform", `translate(${x}, ${y})`);
     svg.appendChild(cardElt);
 }
@@ -42,14 +43,14 @@ renderCard(card, x, y);
 
 // Render base of a card
 x += WIDTH;
-const base = card_supplier.createBase();
+const base = CARD_SUPPLIER.createBase();
 base.setAttribute("transform", `translate(${x},${y})`);
 svg.appendChild(base);
 
 // Render each of the four suits separately
 x += WIDTH;
 ["club", "spade", "heart", "diamond"].forEach(suit => {
-    const suitElt = card_supplier.createSuit(suit);
+    const suitElt = CARD_SUPPLIER.createSuit(suit);
     suitElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT / 2})`);
     svg.appendChild(suitElt);
     x += 20;

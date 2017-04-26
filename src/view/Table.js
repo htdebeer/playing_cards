@@ -35,23 +35,14 @@ const _dragElement = new WeakMap();
  */
 class Table extends View {
 
-    constructor(model, config = {}) {
+    constructor(svgElement, model, config = {}) {
         config.name = "table";
         super(undefined, model, config);
 
-        this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
+        svgElement.appendChild(svg.rectangle(0, 0, "100%", "100%", {
             "fill": config.fill || "green"
         }));
     } 
-
-    /**
-     * Render this table at (x, y).
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
-     */
-    render(x = 0, y = 0) {
-    }
 
     /**
      * This view is a table view.

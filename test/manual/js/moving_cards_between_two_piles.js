@@ -1116,7 +1116,7 @@ class SVG {
 
 }
 
-const svg$1 = new SVG();
+const svg = new SVG();
 
 /*
  * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
@@ -1193,7 +1193,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
 
         attributes.fill = color;
 
-        const text = svg$1.text(card.toString(), attributes);
+        const text = svg.text(card.toString(), attributes);
 
         if (card.isRed() && card.isJoker() && card.isFacingUp()) {
             // The red joker unicode symbol looks off compared to the other
@@ -1211,7 +1211,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of a card's circumference
      */
     createBase() {
-        return svg$1.text(String.fromCodePoint(0x1F0A0), {
+        return svg.text(String.fromCodePoint(0x1F0A0), {
             fill: "silver",
             "fill-opacity": 0.2
         });
@@ -1225,7 +1225,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of the suit.
      */
     createSuit(suit) {
-        return svg$1.text(String.fromCodePoint(SUITS[suit].codePoint), {
+        return svg.text(String.fromCodePoint(SUITS[suit].codePoint), {
             fill: SUITS[suit].color
         });
     }
@@ -1401,7 +1401,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
             // Color the back
             attributes.fill = card.backColor;
         }
-        return svg$1.use(`${this.url}/#${id}`, attributes);
+        return svg.use(`${this.url}/#${id}`, attributes);
     }
     
     /**
@@ -1410,7 +1410,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of a card's circumference
      */
     createBase() {
-        return svg$1.use(`${this.url}/#card-base`, {
+        return svg.use(`${this.url}/#card-base`, {
             fill: "silver",
             "fill-opacity": 0.2,
             "stroke-opacity": 0.2
@@ -1425,60 +1425,714 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of the suit.
      */
     createSuit(suit) {
-        return svg$1.use(`${this.url}/#suit-${suit}`);
+        return svg.use(`${this.url}/#suit-${suit}`);
     }
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+const _cards$1 = new WeakMap();
+
+/**
+ * A pile of cards.
+ *
+ * @extends Model
+ */
+class Pile extends Model {
+    /**
+     * Create an empty pile.
+     */
+    constructor() {
+        super();
+        _cards$1.set(this, []);
+    }
+
+    /**
+     * The number of cards in this pile.
+     *
+     * @return {integer} The number of cards in this pile.
+     */
+    get count() {
+        return _cards$1.get(this).length;
+    }
+
+    /**
+     * Get a list of the cards in this pile.
+     *
+     * @return {Card[]} The cards in this pile as an array.
+     */
+    get cards() {
+        return _cards$1.get(this);
+    }
+
+    /**
+     * Is this pile empty?
+     *
+     * @return {Boolean} True if this pile has no cards, false otherwise.
+     */
+    isEmpty() {
+        return 0 >= this.count;
+    }
+
+    /**
+     * Add a card to this pile.
+     *
+     * @param {Card} card - the card to add.
+     * @param {integer} [index = pile.count] - the index to insert the card in
+     * this pile. Defaults to the end of the pile.
+     *
+     * @return {Pile} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {Error} Index out of bounds.
+     */
+    add (card, index = this.count) {
+        if (0 <= index && index <= this.count) {
+            _cards$1.get(this).splice(index, 0, card);
+            this.emit(EVENT_MODEL_CHANGE, this);
+            return this;
+        } else {
+            throw new Error("Index out of bounds");
+        }
+    }
+
+    /**
+     * Iterator over all cards of this pile.
+     *
+     * @return {iterator} 
+     */
+    *each() {
+        for (const card of _cards$1.get(this)) {
+            yield card;
+        }
+    }
+
+    /**
+     * Apply callback to each card in this pile.
+     *
+     * @param {Function} callback - the function to apply to each card in this
+     * pile
+     */
+    forEach(callback) {
+        _cards$1.get(this).forEach(callback);
+    }
+
+    /**
+     * Pick a random card from this pile; the pile contains one card less
+     * hereafter.
+     *
+     * @return {Card} the picked card.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    pick() {
+        const randomIndex = Math.floor(Math.random() * this.count);
+        const card = _cards$1.get(this).splice(randomIndex, 1)[0];
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return card;
+    }
+
+    /**
+     * Take a card from this pile. The pile contains one card less.
+     *
+     * @param {integer} [index = this.count -1] - the index of the card to
+     * take. Defaults to the top card.
+     *
+     * @return {Card} the top card
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    take(index = this.count - 1) {
+        const card = _cards$1.get(this).splice(index, 1)[0];
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return card;
+    }
+
+    /**
+     * Inspect a card in this pile. The pile does not change.
+     *
+     * @param {integer} [index = top] - the index of the card to
+     * inspect. Defaults to the top card
+     *
+     * @return {Card} the card to inspect.
+     */
+    inspect(index = this.count - 1) {
+        return _cards$1.get(this)[index];
+    }
+
+    /**
+     * Shuffle this pile.
+     *
+     * @return {Pile} this pile, shuffled.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    shuffle() {
+        _cards$1.get(this).sort(() => Math.random() - 0.5);
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return this;
+    }
+
+    /**
+     * Split this pile in a number of smaller piles. By default the pile is
+     * split in two.
+     *
+     * @param {integer} [numberOfPiles = 2] - the number of piles to split
+     * this pile into, defaults to 2.
+     *
+     * @return {Pile[]} An array of piles, this pile is the first in that list
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    split(numberOfPiles = 2) {
+        if (Number.isInteger(numberOfPiles)) {
+            const pileCount = Math.floor(this.count / numberOfPiles);
+            const piles = [];
+            piles.push(this);
+
+            while (this.count > pileCount) {
+                const pile = new Pile();
+
+                while (pile.count < pileCount) {
+                    pile.add(this.take());
+                }
+
+                piles.push(pile);
+            }
+
+            this.emit(EVENT_MODEL_CHANGE, this);
+            return piles;
+        }
+    }
+
+    /**
+     * Merge another pile with this pile. Other pile will be empty afterwards.
+     *
+     * @param {Pile} other - the other pile to merge with this one.
+     *
+     * @return {Pile} this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     */
+    merge(other) {
+        while (!other.isEmpty()) {
+            this.add(other.take(0));
+        }
+        this.emit(EVENT_MODEL_CHANGE, this);
+        return this;
+    }
+
+
+    
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+const EVENT_CLICK = Symbol("event:view:click");
+const EVENT_DRAG = Symbol("event:view:drag");
+const EVENT_DRAG_START = Symbol("event:view:drag-start");
+const EVENT_DRAG_END = Symbol("event:view:drag-end");
+const EVENT_DROP = Symbol("event:view:drop");
+
+const createClickableAndDraggableElement = function (view, name = "") {
+    const group = svg.group({
+        "class": name
+    });
+
+    let dragging = false;
+    let moving = false;
+
+    group.addEventListener("mousedown", (event) => {
+        event.stopPropagation();
+        dragging = true;
+    });
+
+    group.addEventListener("mousemove", (event) => {
+        if (dragging) {
+            if (!moving) {
+                moving = true;
+                view.table.startDragging(event, view);
+                event.stopPropagation();
+            }
+        }
+    });
+
+    group.addEventListener("mouseup", (event) => {
+        if (dragging) {
+            event.stopPropagation();
+            dragging = false;
+            if (moving) {
+                moving = false;
+                view.table.stopDragging(view);
+            } else {
+                view.emit(EVENT_CLICK, this);
+            }
+        }
+    });
+
+    return group;
+};
+
+
+const _parent = new WeakMap();
+const _model = new WeakMap();
+const _config = new WeakMap();
+const _element = new WeakMap();
+
+
+/**
+ * Base class of views.
+ *
+ * @extends EventAware
+ */
+class View extends EventAware {
+    /**
+     * Create a new view
+     *
+     * @param {View} parent - the parent view. Will be undefined for the root view.
+     * @param {Model} model - the model this view represents
+     * @param {object} [config = {}] - an (initial) configuration of this
+     * view.
+     */
+    constructor(parent, model, config = {}) {
+        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
+        _parent.set(this, parent);
+        _model.set(this, model);
+        _config.set(this, {});
+        
+        this.configure(config);
+
+        _element.set(this, createClickableAndDraggableElement(this, config.name || ""));
+
+        // Append the view to the parent unless it is a table. The table has
+        // to be appended to an SVG element that is not part of a view.
+        if (!this.isTable()) {
+            this.parent.element.appendChild(this.element);
+        }
+
+        this.model.on(EVENT_MODEL_CHANGE, () => this.render());
+    }
+
+    /**
+     * Get this view's parent view.
+     */
+    get parent() {
+        return _parent.get(this);
+    }
+
+    /**
+     * Get the table this view belongs to; each view belongs to a table or is
+     * a table.
+     */
+    get table() {
+        return this.isTable() ? this : this.parent.table();
+    }
+
+    /**
+     * Get this view's model.
+     */
+    get model() {
+        return _model.get(this);
+    }
+
+    /**
+     * Get this view's configuration.
+     */
+    get config() {
+        return _config.get(this);
+    }
+
+    /**
+     * Get this view's SVG DOM element.
+     */
+    get element() {
+        return _element.get(this);
+    }
+
+    /**
+     * Render this view. Has to be implemented for all subclasses of View.
+     *
+     * @param {float} [x = 0] - the x coordinate to render this view.
+     * @param {float} [y = 0] - the y coordinate to render this view.
+     */
+    render(x = 0, y = 0) {
+        this.element.setAttribute("transform", `translate(${x}, ${y})`);
+    }
+
+    /**
+     * Is this view a table node?
+     */
+    isTable() {
+        return false;
+    }
+
+    /**
+     * Configure this view. Each subclass will override this method to handle
+     * view specific configuration options.
+     *
+     * @param {object} [config = {}] - the configuration to set on this view.
+     */
+    configure(config = {}) {
+        _config.set(this, Object.assign(_config.get(this), config));
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+/**
+ * View of a card.
+ *
+ * @extends View
+ */
+class Card$1 extends View {
+    /**
+     * Create a new card view.
+     *
+     * @param {View} parent - the parent view
+     * @param {Card} model - the card model this view represents
+     * @param {object} [config = {}] - the configuration of this view. Set
+     * property "cardSupplier" to choose a card supplier; defaults to the font
+     * based card supplier.
+     */
+    constructor(parent, model, config = {}) {
+        config.name = "card";
+        super(parent, model, config);
+    }
+
+    /**
+     * Render this card at (x, y)
+     *
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
+     */
+    render(x = 0, y = 0) {
+        if (this.element.hasChildNodes()) {
+            this.element.removeChild(this.element.lastChild);
+        }
+        console.log(CARD_SUPPLIER.createCard(this.model), this.model);
+        this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
+        super.render(x, y);
+    }
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+const CARD_OFFSET = 0.2;
+
+/**
+ * View representing a pile
+ *
+ * @extends View
+ */
+class Pile$1 extends View {
+    /**
+     * Create a new pile view
+     *
+     * @param {View} parent - this view's parent
+     * @param {Pile} model - the pile this view represents
+     * @param {object} [config = {}] - initial configuration of this pile
+     * view.
+     */
+    constructor(parent, model, config = {}) {
+        config.name = "pile";
+        super(parent, model, config);
+        this.element.appendChild(CARD_SUPPLIER.createBase());
+    }
+
+    /**
+     * Rending this pile at (x, y)
+     *
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
+     */
+    render(x = 0, y = 0) {
+        for (const cardElement of this.element.querySelectorAll("g.card")) {
+            this.element.removeChild(cardElement);
+        }
+
+        let index = 0;
+        for (const card of this.model.each()) {
+            const cardElement = new Card$1(this, card);
+            cardElement.render(0, CARD_OFFSET * index);
+            index++;
+        }
+        super.render(x, y);
+    }
+
+    /**
+     * Configure this pile view. 
+     *
+     * @param {object} [config = {}] - the configuration to set on this view.
+     */
+    configure(config = {}) {
+        if (!config.hasOwnProperty("offset")) {
+            config.offset = CARD_OFFSET;
+        }
+        super.configure(config);
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+
+/**
+ * Table a card game is played on.
+ *
+ * @extends Model
+ */
+class Table extends Model {
+    constructor() {
+        super();
+    }
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+const _dragElement = new WeakMap();
+
+/**
+ * Table represents the table a card game is played on. All viewed elements
+ * are on top of the table.
+ *
+ * @extends View
+ */
+class Table$1 extends View {
+
+    constructor(svgElement, model, config = {}) {
+        config.name = "table";
+        super(undefined, model, config);
+
+        svgElement.appendChild(svg.rectangle(0, 0, "100%", "100%", {
+            "fill": config.fill || "green"
+        }));
+    } 
+
+    /**
+     * This view is a table view.
+     */
+    isTable() {
+        return true;
+    }
+  
+    /**
+     * Start dragging a view over this table.
+     *
+     * @param {Event} event - the original event initialing the dragging;
+     * @param {View} view - the view to drag
+     *
+     * @fire EVENT_DRAG_START
+     */
+    startDragging(event, view) {
+        const svgRoot = view.element.ownerSVGElement;
+
+        let point = svgRoot.createSVGPoint();
+        point.x = event.clientX - document.body.scrollLeft;
+        point.y = event.clientY - document.body.scrollTop;
+        point = point.matrixTransform(view.element.getScreenCTM().inverse());
+
+        const offset = {
+            x: point.x,
+            y: point.y
+        };
+
+        let transform = view.element.ownerSVGElement.createSVGTransform();
+        let transformList = view.element.transform.baseVal;
+
+        /**
+         * Drag this view around
+         *
+         * @param {Event} event - the mouse event
+         *
+         * @fire EVENT_DRAG
+         */
+        _dragElement.set(this, (event) => {
+            // Move card to table for dragging, only after starting moving, though
+            if (view.element.parentNode !== this.element) {
+                const elementToDrag = view.element.parentNode.removeChild(view.element);
+                this.element.appendChild(elementToDrag);
+            }
+
+            // Get a point in viewport coordinates
+            point = svgRoot.createSVGPoint();
+            point.x = event.clientX - document.body.scrollLeft;
+            point.y = event.clientY - document.body.scrollTop;
+
+            // transfor the to user coordinates
+            point = point.matrixTransform(view.element.getScreenCTM().inverse());
+
+            // keep track of the offset so the element that is being dragged keeps
+            // located under the cursor 
+            point.x -= offset.x;
+            point.y -= offset.y; 
+
+            // set transform
+            transform.setTranslate(point.x, point.y);
+            transformList.appendItem(transform);
+            transformList.consolidate();
+
+            view.emit(EVENT_DRAG, view);
+        });
+
+        this.element.addEventListener("mousemove", _dragElement.get(this));
+        view.emit(EVENT_DRAG_START, view);
+    }
+
+    /**
+     * Stop dragging a view over this table.
+     *
+     * @param {View} view - the view that has been dragged.
+     *
+     * @fire EVENT_DRAG_END
+     */
+    stopDragging(view) {
+        this.element.removeEventListener("mousemove", _dragElement.get(this));
+        this.element.removeChild(view.element);
+        view.emit(EVENT_DRAG_END, view);
+    }
+
 }
 
 CARD_SUPPLIER.engine = new SVGCardsCardRenderEngine("/SVG-cards/svg-cards.svg");
-const deck = new Deck("navy", true);
 
-const WIDTH = 170;
-const HEIGHT = 245;
-const SUIT_WIDTH = 12 * WIDTH;
 
-const svg = document.getElementById("table");
-svg.setAttribute("width", SUIT_WIDTH + WIDTH);
-svg.setAttribute("height", 5 * HEIGHT);
-svg.style["font-size"] = `${WIDTH}px`;
+const deck = new Deck("Maroon");
 
-let x = 0;
-let y = 0;
+const pile = new Pile();
+deck.addToPile(pile);
 
-const renderCard = function (card, x, y) {
-    const cardElt = CARD_SUPPLIER.createCard(card);
-    cardElt.setAttribute("transform", `translate(${x}, ${y})`);
-    svg.appendChild(cardElt);
-};
-
-for (const card of deck.cards) {
-    if (x > SUIT_WIDTH) {
-        x = 0;
-        y += HEIGHT;
-    }
-
-    // Render the front of the cards
-    card.turn();
-    renderCard(card, x, y);
-
-    x += WIDTH;
-}
-
-// Render back as well.
-const card = deck.cards[0];
-card.turn();
-renderCard(card, x, y);
-
-// Render base of a card
-x += WIDTH;
-const base = CARD_SUPPLIER.createBase();
-base.setAttribute("transform", `translate(${x},${y})`);
-svg.appendChild(base);
-
-// Render each of the four suits separately
-x += WIDTH;
-["club", "spade", "heart", "diamond"].forEach(suit => {
-    const suitElt = CARD_SUPPLIER.createSuit(suit);
-    suitElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT / 2})`);
-    svg.appendChild(suitElt);
-    x += 20;
-});
+const table = new Table();
+const svgElt = document.getElementById("table");
+const tableView = new Table$1(svgElt, table);
+tableView.render(0,0);
+const pileView = new Pile$1(tableView, pile);
+console.log(pile.cards);
+pileView.render(100, 100);

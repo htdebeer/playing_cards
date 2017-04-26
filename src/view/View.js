@@ -95,6 +95,7 @@ class View extends EventAware {
         super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
         _parent.set(this, parent);
         _model.set(this, model);
+        _config.set(this, {});
         
         this.configure(config);
 

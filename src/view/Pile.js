@@ -22,7 +22,7 @@
  * @module
  */
 import {CARD_SUPPLIER} from "../CardSupplier.js";
-import {CardView} from "./Card.js";
+import {Card} from "./Card.js";
 import {View} from "./View.js";
 
 const CARD_OFFSET = 0.2;
@@ -58,11 +58,13 @@ class Pile extends View {
             this.element.removeChild(cardElement);
         }
 
-        for (const [index, card] of this.model.each()) {
-            const cardElement = new CardView(this, card);
+        let index = 0;
+        for (const card of this.model.each()) {
+            const cardElement = new Card(this, card);
             cardElement.render(0, CARD_OFFSET * index);
+            index++;
         }
-        super(x, y);
+        super.render(x, y);
     }
 
     /**
@@ -74,7 +76,7 @@ class Pile extends View {
         if (!config.hasOwnProperty("offset")) {
             config.offset = CARD_OFFSET;
         }
-        super(config);
+        super.configure(config);
     }
 
 }

@@ -965,6 +965,70 @@ class Deck {
  */
 
 /**
+ * @module
+ */
+/**
+ * CardRenderEngine is an abstract base class as an interface to various card render engines, such as
+ * an unicode font based one, an image based one, or a SVG based one.
+ */
+class CardRenderEngine {
+    /**
+     * Create a new render engine
+     */
+    constructor() {
+    }
+
+    /**
+     * Represent a card as a SVG element.
+     *
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} A SVG representation of the card.
+     */
+    createCard() {
+    }
+
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit() {
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
  * Utilities for handling SVG.
  *
  * @module
@@ -1098,14 +1162,16 @@ const SUITS = {
 };
 
 /**
- * CardSupplier base class as an interface to various card suppliers, such as
- * a font based one, an image based one, or a SVG based one.
+ * UnicodeCardRenderEngine renders cards and suits as unicode SVG TEXT elements.
+ *
+ * @extends CardRenderEngine
  */
-class CardSupplier {
+class UnicodeCardRenderEngine extends CardRenderEngine {
     /**
-     * Create a new supplier
+     * Create a new Unicode font based render engine.
      */
     constructor() {
+        super();
     }
 
     /**
@@ -1166,7 +1232,99 @@ class CardSupplier {
 
 }
 
-const card_supplier = new CardSupplier();
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+
+const _engine = new WeakMap();
+
+/**
+ * CardSupplier is a singleton that renders cards. The engine to render cards
+ * can be configured.
+ *
+ * @extends CardRenderEngine
+ */
+const CARD_SUPPLIER = new class extends CardRenderEngine {
+    /**
+     * Create a new supplier
+     *
+     */
+    constructor() {
+        super();
+        _engine.set(this, new UnicodeCardRenderEngine());
+    }
+
+    /**
+     * Get the configured card render engine.
+     *
+     * @returns {CardRenderEngine}
+     */
+    get engine() {
+        return _engine.get(this);
+    }
+
+    /**
+     * Set the card render engine.
+     *
+     * @param {CardRenderEngine} engine - the engine to use.
+     */
+    set engine(engine) {
+        _engine.set(this, engine);
+    }
+
+    /**
+     * Represent a card as a SVG element.
+     *
+     * @param {Card} card - the card model to represent;
+     *
+     * @return {SVGElement} A SVG representation of the card.
+     */
+    createCard(card) {
+        return this.engine.createCard(card);
+    }
+
+    /**
+     * Represent a card's base, its circumference, as a SVG Element.
+     *
+     * @return {SVGElement} A SVG representation of a card's circumference
+     */
+    createBase() {
+        return this.engine.createBase();
+    }
+
+    /**
+     * Represent a suit as a SVG Element
+     *
+     * @param {string} suit - the suit to represent.
+     *
+     * @return {SVGElement} A SVG representation of the suit.
+     */
+    createSuit(suit) {
+        return this.engine.createSuit(suit);
+    }
+
+};
+
 const deck = new Deck("navy", true);
 
 const WIDTH = 60;
@@ -1182,7 +1340,7 @@ let x = 0;
 let y = 0;
 
 const renderCard = function (card, x, y) {
-    const cardElt = card_supplier.createCard(card);
+    const cardElt = CARD_SUPPLIER.createCard(card);
     cardElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT})`);
     svg.appendChild(cardElt);
 };
@@ -1207,14 +1365,14 @@ renderCard(card, x, y);
 
 // Render base of a card
 x += WIDTH;
-const base = card_supplier.createBase();
+const base = CARD_SUPPLIER.createBase();
 base.setAttribute("transform", `translate(${x},${y + HEIGHT})`);
 svg.appendChild(base);
 
 // Render each of the four suits separately
 x += WIDTH;
 ["club", "spade", "heart", "diamond"].forEach(suit => {
-    const suitElt = card_supplier.createSuit(suit);
+    const suitElt = CARD_SUPPLIER.createSuit(suit);
     suitElt.setAttribute("transform", `translate(${x}, ${y + HEIGHT})`);
     svg.appendChild(suitElt);
     x += WIDTH;
