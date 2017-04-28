@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>card_render_engine/SVGCardsCardRenderEngine - Documentation</title>
+    <title>model/TableModel.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,58 +27,59 @@
 
 <div id="main">
     
-    <h1 class="page-title">card_render_engine/SVGCardsCardRenderEngine</h1>
+    <h1 class="page-title">model/TableModel.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright 2017 Huub de Beer &lt;huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see &lt;http://www.gnu.org/licenses/>.
+ * 
+ */
 
-<article>
-    <div class="container-overview">
-    
-        
+/**
+ * @module
+ */
 
-        
-    
-    </div>
+import {Model} from "./Model.js";
 
-    
+/**
+ * Table a card game is played on.
+ *
+ * @extends Model
+ */
+class TableModel extends Model {
+    constructor() {
+        super();
+    }
+}
 
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-card_render_engine_SVGCardsCardRenderEngine-SVGCardsCardRenderEngine.html">SVGCardsCardRenderEngine</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+export {
+    TableModel
+}
+</code></pre>
+        </article>
+    </section>
 
 
 

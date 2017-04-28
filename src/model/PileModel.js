@@ -30,7 +30,7 @@ const _cards = new WeakMap();
  *
  * @extends Model
  */
-class Pile extends Model {
+class PileModel extends Model {
     /**
      * Create an empty pile.
      */
@@ -69,11 +69,11 @@ class Pile extends Model {
     /**
      * Add a card to this pile.
      *
-     * @param {Card} card - the card to add.
+     * @param {CardModel} card - the card to add.
      * @param {integer} [index = pile.count] - the index to insert the card in
      * this pile. Defaults to the end of the pile.
      *
-     * @return {Pile} Return this pile.
+     * @return {PileModel} Return this pile.
      *
      * @fire EVENT_MODEL_CHANGE
      *
@@ -156,7 +156,7 @@ class Pile extends Model {
     /**
      * Shuffle this pile.
      *
-     * @return {Pile} this pile, shuffled.
+     * @return {PileModel} this pile, shuffled.
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -173,7 +173,7 @@ class Pile extends Model {
      * @param {integer} [numberOfPiles = 2] - the number of piles to split
      * this pile into, defaults to 2.
      *
-     * @return {Pile[]} An array of piles, this pile is the first in that list
+     * @return {PileModel[]} An array of piles, this pile is the first in that list
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -184,7 +184,7 @@ class Pile extends Model {
             piles.push(this);
 
             while (this.count > pileCount) {
-                const pile = new Pile();
+                const pile = new PileModel();
 
                 while (pile.count < pileCount) {
                     pile.add(this.take());
@@ -201,9 +201,9 @@ class Pile extends Model {
     /**
      * Merge another pile with this pile. Other pile will be empty afterwards.
      *
-     * @param {Pile} other - the other pile to merge with this one.
+     * @param {PileModel} other - the other pile to merge with this one.
      *
-     * @return {Pile} this pile.
+     * @return {PileModel} this pile.
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -220,5 +220,5 @@ class Pile extends Model {
 }
 
 export {
-    Pile,
+    PileModel,
 };

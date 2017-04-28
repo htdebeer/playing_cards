@@ -21,11 +21,11 @@
 /**
  * @module
  */
-import {Card} from "./model/Card.js";
+import {CardModel} from "./model/CardModel.js";
 
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
-        return Card.fromUnicode(String.fromCodePoint(codePoint), deck);
+        return CardModel.fromUnicode(String.fromCodePoint(codePoint), deck);
     };
 
     const cards = [
@@ -149,9 +149,9 @@ class Deck {
     /**
      * Add all cards from this deck to a pile.
      *
-     * @param {Pile} pile - the pile to add this deck's cards to.
+     * @param {PileModel} pile - the pile to add this deck's cards to.
      *
-     * @return {Pile} the pile the cards are added to.
+     * @return {PileModel} the pile the cards are added to.
      */
     addToPile(pile) {
         for (const card of this.cards) {

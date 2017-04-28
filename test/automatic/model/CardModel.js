@@ -1,4 +1,4 @@
-import * as cardModel from "../../../src/model/Card.js";
+import * as cardModel from "../../../src/model/CardModel.js";
 import {EVENT_MODEL_CHANGE} from "../../../src/model/Model.js";
 import {assert} from "chai";
 
@@ -72,7 +72,7 @@ const BACK_CHAR = 0x1F0A0; // The representation of the back of a card.
 
 const codePointToCard = function (codePoint) {
     const cardChar = String.fromCodePoint(codePoint);
-    return cardModel.Card.fromUnicode(cardChar, deck);
+    return cardModel.CardModel.fromUnicode(cardChar, deck);
 };
 
 const CARDS = CARD_CHARS.map(codePointToCard);
@@ -110,7 +110,7 @@ describe("Card", function () {
         it("should create the correct card fiven any unicode card symbol", function () {
             for (let cardCodePoint of CARD_CHARS) {
                 const cardChar = String.fromCodePoint(cardCodePoint);
-                const card = cardModel.Card.fromUnicode(cardChar, deck);
+                const card = cardModel.CardModel.fromUnicode(cardChar, deck);
                 assert.equal(cardChar, card.toUnicode());
             }
         });

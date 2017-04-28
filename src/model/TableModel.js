@@ -29,12 +29,12 @@ import {Model} from "./Model.js";
  *
  * @extends Model
  */
-class Table extends Model {
+class TableModel extends Model {
     constructor() {
         super();
     }
 }
 
 export {
-    Table
+    TableModel
 }

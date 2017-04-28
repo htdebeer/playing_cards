@@ -405,10 +405,10 @@ const _faceUp = new WeakMap();
  *
  * @extends Model
  */
-class Card extends Model {
+class CardModel extends Model {
 
     /** 
-     * Create a Card based on a specification in terms of suit, rank, and the
+     * Create a CardModel based on a specification in terms of suit, rank, and the
      * deck it belongs to. Optionally, you can indicate if the card should be
      * face up initially or not. By default a card faces down. Based on this
      * specification the card's color is determined.
@@ -444,10 +444,10 @@ class Card extends Model {
      * @param {boolean} [faceUp = false] - is the joker card facing up
      * initially or not?
      *
-     * @returns {Card} The newly created joker card.
+     * @returns {CardModel} The newly created joker card.
      */
     static joker(color, deck, faceUp = false) {
-        const card = new Card({suit: SPADES, rank: ACE}, deck, faceUp);
+        const card = new CardModel({suit: SPADES, rank: ACE}, deck, faceUp);
         _rank.set(card, undefined);
         _suit.set(card, undefined);
         _color$1.set(card, check(COLOR, color));
@@ -748,7 +748,7 @@ class Card extends Model {
      * @param {Deck} deck The deck this card belongs to.
      * @param {Boolean} faceUp This card is facing up.
      *
-     * @returns {Card} The card corresponding to the unicode representation of
+     * @returns {CardModel} The card corresponding to the unicode representation of
      * a card.
      *
      * @throws {Error} When the unicode representation is not exactly one
@@ -770,11 +770,11 @@ class Card extends Model {
         const suitPart = Math.trunc(codePoint / HEX);
 
         if (0xF === rankPart && (0x1F0B === suitPart || 0x1F0C === suitPart)) {
-            return Card.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
+            return CardModel.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
         } else if (0 < rankPart && rankPart < 0xF && 0x1F0A <= suitPart && suitPart <= 0x1F0D) {
             const rank = RANK[rankPart - 1];
             const suit = SUIT[suitPart - 0x1F0A];
-            return new Card({rank, suit}, deck, faceUp);
+            return new CardModel({rank, suit}, deck, faceUp);
         } else {
             throw new Error(`Unable to convert character with code point ${codePoint.toString(HEX)} to a card.`);
         }
@@ -807,7 +807,7 @@ class Card extends Model {
  */
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
-        return Card.fromUnicode(String.fromCodePoint(codePoint), deck);
+        return CardModel.fromUnicode(String.fromCodePoint(codePoint), deck);
     };
 
     const cards = [
@@ -931,9 +931,9 @@ class Deck {
     /**
      * Add all cards from this deck to a pile.
      *
-     * @param {Pile} pile - the pile to add this deck's cards to.
+     * @param {PileModel} pile - the pile to add this deck's cards to.
      *
-     * @return {Pile} the pile the cards are added to.
+     * @return {PileModel} the pile the cards are added to.
      */
     addToPile(pile) {
         for (const card of this.cards) {
@@ -981,7 +981,7 @@ class CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1177,7 +1177,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1295,7 +1295,7 @@ const CARD_SUPPLIER = new class extends CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1380,7 +1380,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} An SVG representation of the card.
      */

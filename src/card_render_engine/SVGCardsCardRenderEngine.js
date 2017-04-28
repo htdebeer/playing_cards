@@ -56,7 +56,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} An SVG representation of the card.
      */

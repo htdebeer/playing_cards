@@ -33,7 +33,7 @@ const _dragElement = new WeakMap();
  *
  * @extends View
  */
-class Table extends View {
+class TableView extends View {
 
     constructor(svgElement, model, config = {}) {
         config.name = "table";
@@ -130,5 +130,5 @@ class Table extends View {
 }
 
 export {
-    Table
+    TableView
 };

@@ -405,10 +405,10 @@ const _faceUp = new WeakMap();
  *
  * @extends Model
  */
-class Card extends Model {
+class CardModel extends Model {
 
     /** 
-     * Create a Card based on a specification in terms of suit, rank, and the
+     * Create a CardModel based on a specification in terms of suit, rank, and the
      * deck it belongs to. Optionally, you can indicate if the card should be
      * face up initially or not. By default a card faces down. Based on this
      * specification the card's color is determined.
@@ -444,10 +444,10 @@ class Card extends Model {
      * @param {boolean} [faceUp = false] - is the joker card facing up
      * initially or not?
      *
-     * @returns {Card} The newly created joker card.
+     * @returns {CardModel} The newly created joker card.
      */
     static joker(color, deck, faceUp = false) {
-        const card = new Card({suit: SPADES, rank: ACE}, deck, faceUp);
+        const card = new CardModel({suit: SPADES, rank: ACE}, deck, faceUp);
         _rank.set(card, undefined);
         _suit.set(card, undefined);
         _color$1.set(card, check(COLOR, color));
@@ -748,7 +748,7 @@ class Card extends Model {
      * @param {Deck} deck The deck this card belongs to.
      * @param {Boolean} faceUp This card is facing up.
      *
-     * @returns {Card} The card corresponding to the unicode representation of
+     * @returns {CardModel} The card corresponding to the unicode representation of
      * a card.
      *
      * @throws {Error} When the unicode representation is not exactly one
@@ -770,11 +770,11 @@ class Card extends Model {
         const suitPart = Math.trunc(codePoint / HEX);
 
         if (0xF === rankPart && (0x1F0B === suitPart || 0x1F0C === suitPart)) {
-            return Card.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
+            return CardModel.joker(0x1F0B === suitPart ? RED : BLACK, deck, faceUp);
         } else if (0 < rankPart && rankPart < 0xF && 0x1F0A <= suitPart && suitPart <= 0x1F0D) {
             const rank = RANK[rankPart - 1];
             const suit = SUIT[suitPart - 0x1F0A];
-            return new Card({rank, suit}, deck, faceUp);
+            return new CardModel({rank, suit}, deck, faceUp);
         } else {
             throw new Error(`Unable to convert character with code point ${codePoint.toString(HEX)} to a card.`);
         }
@@ -807,7 +807,7 @@ class Card extends Model {
  */
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
-        return Card.fromUnicode(String.fromCodePoint(codePoint), deck);
+        return CardModel.fromUnicode(String.fromCodePoint(codePoint), deck);
     };
 
     const cards = [
@@ -931,9 +931,9 @@ class Deck {
     /**
      * Add all cards from this deck to a pile.
      *
-     * @param {Pile} pile - the pile to add this deck's cards to.
+     * @param {PileModel} pile - the pile to add this deck's cards to.
      *
-     * @return {Pile} the pile the cards are added to.
+     * @return {PileModel} the pile the cards are added to.
      */
     addToPile(pile) {
         for (const card of this.cards) {
@@ -981,7 +981,7 @@ class CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1177,7 +1177,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1295,7 +1295,7 @@ const CARD_SUPPLIER = new class extends CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
@@ -1380,7 +1380,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} An SVG representation of the card.
      */
@@ -1459,7 +1459,7 @@ const _cards$1 = new WeakMap();
  *
  * @extends Model
  */
-class Pile extends Model {
+class PileModel extends Model {
     /**
      * Create an empty pile.
      */
@@ -1498,11 +1498,11 @@ class Pile extends Model {
     /**
      * Add a card to this pile.
      *
-     * @param {Card} card - the card to add.
+     * @param {CardModel} card - the card to add.
      * @param {integer} [index = pile.count] - the index to insert the card in
      * this pile. Defaults to the end of the pile.
      *
-     * @return {Pile} Return this pile.
+     * @return {PileModel} Return this pile.
      *
      * @fire EVENT_MODEL_CHANGE
      *
@@ -1585,7 +1585,7 @@ class Pile extends Model {
     /**
      * Shuffle this pile.
      *
-     * @return {Pile} this pile, shuffled.
+     * @return {PileModel} this pile, shuffled.
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -1602,7 +1602,7 @@ class Pile extends Model {
      * @param {integer} [numberOfPiles = 2] - the number of piles to split
      * this pile into, defaults to 2.
      *
-     * @return {Pile[]} An array of piles, this pile is the first in that list
+     * @return {PileModel[]} An array of piles, this pile is the first in that list
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -1613,7 +1613,7 @@ class Pile extends Model {
             piles.push(this);
 
             while (this.count > pileCount) {
-                const pile = new Pile();
+                const pile = new PileModel();
 
                 while (pile.count < pileCount) {
                     pile.add(this.take());
@@ -1630,9 +1630,9 @@ class Pile extends Model {
     /**
      * Merge another pile with this pile. Other pile will be empty afterwards.
      *
-     * @param {Pile} other - the other pile to merge with this one.
+     * @param {PileModel} other - the other pile to merge with this one.
      *
-     * @return {Pile} this pile.
+     * @return {PileModel} this pile.
      *
      * @fire EVENT_MODEL_CHANGE
      */
@@ -1849,12 +1849,12 @@ class View extends EventAware {
  *
  * @extends View
  */
-class Card$1 extends View {
+class CardView extends View {
     /**
      * Create a new card view.
      *
      * @param {View} parent - the parent view
-     * @param {Card} model - the card model this view represents
+     * @param {CardModel} model - the card model this view represents
      * @param {object} [config = {}] - the configuration of this view. Set
      * property "cardSupplier" to choose a card supplier; defaults to the font
      * based card supplier.
@@ -1874,7 +1874,6 @@ class Card$1 extends View {
         if (this.element.hasChildNodes()) {
             this.element.removeChild(this.element.lastChild);
         }
-        console.log(CARD_SUPPLIER.createCard(this.model), this.model);
         this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
         super.render(x, y);
     }
@@ -1910,7 +1909,7 @@ const CARD_OFFSET = 0.2;
  *
  * @extends View
  */
-class Pile$1 extends View {
+class PileView extends View {
     /**
      * Create a new pile view
      *
@@ -1938,7 +1937,7 @@ class Pile$1 extends View {
 
         let index = 0;
         for (const card of this.model.each()) {
-            const cardElement = new Card$1(this, card);
+            const cardElement = new CardView(this, card);
             cardElement.render(0, CARD_OFFSET * index);
             index++;
         }
@@ -1988,7 +1987,7 @@ class Pile$1 extends View {
  *
  * @extends Model
  */
-class Table extends Model {
+class TableModel extends Model {
     constructor() {
         super();
     }
@@ -2025,7 +2024,7 @@ const _dragElement = new WeakMap();
  *
  * @extends View
  */
-class Table$1 extends View {
+class TableView extends View {
 
     constructor(svgElement, model, config = {}) {
         config.name = "table";
@@ -2126,13 +2125,13 @@ CARD_SUPPLIER.engine = new SVGCardsCardRenderEngine("/SVG-cards/svg-cards.svg");
 
 const deck = new Deck("Maroon");
 
-const pile = new Pile();
+const pile = new PileModel();
 deck.addToPile(pile);
 
-const table = new Table();
+const table = new TableModel();
 const svgElt = document.getElementById("table");
-const tableView = new Table$1(svgElt, table);
+const tableView = new TableView(svgElt, table);
 tableView.render(0,0);
-const pileView = new Pile$1(tableView, pile);
+const pileView = new PileView(tableView, pile);
 console.log(pile.cards);
 pileView.render(100, 100);

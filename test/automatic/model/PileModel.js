@@ -1,4 +1,4 @@
-import {Pile} from "../../../src/model/Pile.js";
+import {PileModel} from "../../../src/model/PileModel.js";
 import {Deck} from "../../../src/Deck.js";
 
 import {EVENT_MODEL_CHANGE} from "../../../src/model/Model.js";
@@ -8,7 +8,7 @@ import {assert} from "chai";
 describe("Pile", function () {
     describe("constructor", function () {
         it("should create an empty pile", function () {
-            const pile = new Pile();
+            const pile = new PileModel();
             assert.isTrue(pile.isEmpty());
             assert.equal(pile.count, 0);
         });
@@ -16,7 +16,7 @@ describe("Pile", function () {
 
     describe("#each()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
         deck.addToPile(pile);
 
         it("should create an iterator over all cards", function () {
@@ -31,7 +31,7 @@ describe("Pile", function () {
 
     describe("#add(card)", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
         it("should add a card to a pile", function () {
             pile.add(deck.cards.pop());
             assert.isFalse(pile.isEmpty());
@@ -76,7 +76,7 @@ describe("Pile", function () {
 
     describe("#inspect()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
 
         it("should return undefined when trying to inspect a card in an empty pile", function () {
             assert.isTrue(pile.isEmpty());
@@ -105,7 +105,7 @@ describe("Pile", function () {
 
     describe("#isEmpty()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
 
         it("should return true when a pile has no cards", function () {
             assert.isTrue(pile.isEmpty());
@@ -123,8 +123,8 @@ describe("Pile", function () {
 
     describe("#merge()", function () {
         const deck = new Deck("navy");
-        const pile1 = new Pile();
-        const pile2 = new Pile();
+        const pile1 = new PileModel();
+        const pile2 = new PileModel();
 
         it("should merge two empty piles resulting in two empty piles", function () {
             assert.isTrue(pile1.isEmpty());
@@ -202,7 +202,7 @@ describe("Pile", function () {
     
     describe("#pick()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
         deck.addToPile(pile);
 
         it("should pick a card from the pile", function () {
@@ -228,11 +228,11 @@ describe("Pile", function () {
     
     describe("#shuffle()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
         deck.addToPile(pile);
 
         const deck2 = new Deck("maroon");
-        const pile2 = new Pile();
+        const pile2 = new PileModel();
         deck2.addToPile(pile2);
 
         const pileToString = function (pile) {
@@ -262,7 +262,7 @@ describe("Pile", function () {
 
         it("should split a pile in two", function () {
             const deck = new Deck("navy");
-            const pile = new Pile();
+            const pile = new PileModel();
             deck.addToPile(pile);
 
             const numberOfItems = pile.count;
@@ -276,7 +276,7 @@ describe("Pile", function () {
 
         it("should emit EVENT_MODEL_CHANGE", function () {
             const deck = new Deck("navy");
-            const pile = new Pile();
+            const pile = new PileModel();
             deck.addToPile(pile);
             let result = 0;
             pile.on(EVENT_MODEL_CHANGE, function () {
@@ -291,7 +291,7 @@ describe("Pile", function () {
     
     describe("#take()", function () {
         const deck = new Deck("navy");
-        const pile = new Pile();
+        const pile = new PileModel();
         deck.addToPile(pile);
 
         it("should take the top card from the pile", function () {

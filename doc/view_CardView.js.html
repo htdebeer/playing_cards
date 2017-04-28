@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>card_render_engine/SVGCardsCardRenderEngine - Documentation</title>
+    <title>view/CardView.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,58 +27,83 @@
 
 <div id="main">
     
-    <h1 class="page-title">card_render_engine/SVGCardsCardRenderEngine</h1>
+    <h1 class="page-title">view/CardView.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+ * Copyright 2017 Huub de Beer &lt;huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see &lt;http://www.gnu.org/licenses/>.
+ * 
+ */
 
-<article>
-    <div class="container-overview">
-    
-        
+/**
+ * @module
+ */
+import {View} from "./View.js";
+import {CARD_SUPPLIER} from "../CardSupplier.js";
 
-        
-    
-    </div>
+/**
+ * View of a card.
+ *
+ * @extends View
+ */
+class CardView extends View {
+    /**
+     * Create a new card view.
+     *
+     * @param {View} parent - the parent view
+     * @param {CardModel} model - the card model this view represents
+     * @param {object} [config = {}] - the configuration of this view. Set
+     * property "cardSupplier" to choose a card supplier; defaults to the font
+     * based card supplier.
+     */
+    constructor(parent, model, config = {}) {
+        config.name = "card";
+        super(parent, model, config);
+    }
 
-    
+    /**
+     * Render this card at (x, y)
+     *
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
+     */
+    render(x = 0, y = 0) {
+        if (this.element.hasChildNodes()) {
+            this.element.removeChild(this.element.lastChild);
+        }
+        this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
+        super.render(x, y);
+    }
+}
 
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-card_render_engine_SVGCardsCardRenderEngine-SVGCardsCardRenderEngine.html">SVGCardsCardRenderEngine</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+export {
+    CardView
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

@@ -21,44 +21,66 @@
 /**
  * @module
  */
-import {View} from "./View.js";
 import {CARD_SUPPLIER} from "../CardSupplier.js";
+import {CardView} from "./CardView.js";
+import {View} from "./View.js";
+
+const CARD_OFFSET = 0.2;
 
 /**
- * View of a card.
+ * View representing a pile
  *
  * @extends View
  */
-class Card extends View {
+class PileView extends View {
     /**
-     * Create a new card view.
+     * Create a new pile view
      *
-     * @param {View} parent - the parent view
-     * @param {Card} model - the card model this view represents
-     * @param {object} [config = {}] - the configuration of this view. Set
-     * property "cardSupplier" to choose a card supplier; defaults to the font
-     * based card supplier.
+     * @param {View} parent - this view's parent
+     * @param {Pile} model - the pile this view represents
+     * @param {object} [config = {}] - initial configuration of this pile
+     * view.
      */
     constructor(parent, model, config = {}) {
-        config.name = "card";
+        config.name = "pile";
         super(parent, model, config);
+        this.element.appendChild(CARD_SUPPLIER.createBase());
     }
 
     /**
-     * Render this card at (x, y)
+     * Rending this pile at (x, y)
      *
      * @param {float} [x = 0] - the x coordinate
      * @param {float} [y = 0] - the y coordinate
      */
     render(x = 0, y = 0) {
-        if (this.element.hasChildNodes()) {
-            this.element.removeChild(this.element.lastChild);
+        for (const cardElement of this.element.querySelectorAll("g.card")) {
+            this.element.removeChild(cardElement);
         }
-        this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
+
+        let index = 0;
+        for (const card of this.model.each()) {
+            const cardElement = new CardView(this, card);
+            cardElement.render(0, CARD_OFFSET * index);
+            index++;
+        }
         super.render(x, y);
     }
+
+    /**
+     * Configure this pile view. 
+     *
+     * @param {object} [config = {}] - the configuration to set on this view.
+     */
+    configure(config = {}) {
+        if (!config.hasOwnProperty("offset")) {
+            config.offset = CARD_OFFSET;
+        }
+        super.configure(config);
+    }
+
 }
 
 export {
-    Card
+    PileView
 };

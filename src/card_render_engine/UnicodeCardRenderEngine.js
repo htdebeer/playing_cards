@@ -60,7 +60,7 @@ class UnicodeCardRenderEngine extends CardRenderEngine {
     /**
      * Represent a card as a SVG element.
      *
-     * @param {Card} card - the card model to represent;
+     * @param {CardModel} card - the card model to represent;
      *
      * @return {SVGElement} A SVG representation of the card.
      */
