@@ -1677,51 +1677,10 @@ const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
 const EVENT_DROP = Symbol("event:view:drop");
 
-const createClickableAndDraggableElement = function (view, name = "") {
-    const group = svg.group({
-        "class": name
-    });
-
-    let dragging = false;
-    let moving = false;
-
-    group.addEventListener("mousedown", (event) => {
-        event.stopPropagation();
-        dragging = true;
-    });
-
-    group.addEventListener("mousemove", (event) => {
-        if (dragging) {
-            if (!moving) {
-                moving = true;
-                view.table.startDragging(event, view);
-                event.stopPropagation();
-            }
-        }
-    });
-
-    group.addEventListener("mouseup", (event) => {
-        if (dragging) {
-            event.stopPropagation();
-            dragging = false;
-            if (moving) {
-                moving = false;
-                view.table.stopDragging(view);
-            } else {
-                view.emit(EVENT_CLICK, this);
-            }
-        }
-    });
-
-    return group;
-};
-
-
 const _parent = new WeakMap();
 const _model = new WeakMap();
 const _config = new WeakMap();
 const _element = new WeakMap();
-
 
 /**
  * Base class of views.
@@ -1742,17 +1701,9 @@ class View extends EventAware {
         _parent.set(this, parent);
         _model.set(this, model);
         _config.set(this, {});
+        _element.set(this, undefined);
         
         this.configure(config);
-
-        _element.set(this, createClickableAndDraggableElement(this, config.name || ""));
-
-        // Append the view to the parent unless it is a table. The table has
-        // to be appended to an SVG element that is not part of a view.
-        if (!this.isTable()) {
-            this.parent.element.appendChild(this.element);
-        }
-
         this.model.on(EVENT_MODEL_CHANGE, () => this.render());
     }
 
@@ -1790,6 +1741,15 @@ class View extends EventAware {
      */
     get element() {
         return _element.get(this);
+    }
+
+    /**
+     * Set this view's SVG DOM element.
+     *
+     * @param {SVGElement} elt - the element to set
+     */
+    set element(elt) {
+        _element.set(this, elt);
     }
 
     /**
@@ -1844,12 +1804,101 @@ class View extends EventAware {
 /**
  * @module
  */
+const createClickableAndDraggableElement = function (view, name = "") {
+    const group = svg.group({
+        "class": name
+    });
+
+    let dragging = false;
+    let moving = false;
+
+    group.addEventListener("mousedown", (event) => {
+        event.stopPropagation();
+        dragging = true;
+    });
+
+    group.addEventListener("mousemove", (event) => {
+        if (dragging) {
+            if (!moving) {
+                moving = true;
+                view.table.startDragging(event, view);
+                event.stopPropagation();
+            }
+        }
+    });
+
+    group.addEventListener("mouseup", (event) => {
+        if (dragging) {
+            event.stopPropagation();
+            dragging = false;
+            if (moving) {
+                moving = false;
+                view.table.stopDragging(view);
+            } else {
+                view.emit(EVENT_CLICK, this);
+            }
+        }
+    });
+
+    return group;
+};
+
 /**
- * View of a card.
+ * Base class of SVG G element based views.
  *
  * @extends View
  */
-class CardView extends View {
+class GView extends View {
+    /**
+     * Create a new gview
+     *
+     * @param {View} parent - the parent view. Will be undefined for the root view.
+     * @param {Model} model - the model this view represents
+     * @param {object} [config = {}] - an (initial) configuration of this
+     * view.
+     */
+    constructor(parent, model, config = {}) {
+        super(parent, model, config);
+
+        this.element = createClickableAndDraggableElement(this, config.name || "");
+
+        // Append the view to the parent unless it is a table. The table has
+        // to be appended to an SVG element that is not part of a view.
+        if (!this.isTable()) {
+            this.parent.element.appendChild(this.element);
+        }
+    }
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+/**
+ * View of a card.
+ *
+ * @extends GView
+ */
+class CardView extends GView {
     /**
      * Create a new card view.
      *
@@ -1907,9 +1956,9 @@ const CARD_OFFSET = 0.2;
 /**
  * View representing a pile
  *
- * @extends View
+ * @extends GView
  */
-class PileView extends View {
+class PileView extends GView {
     /**
      * Create a new pile view
      *
@@ -2022,15 +2071,14 @@ const _dragElement = new WeakMap();
  * Table represents the table a card game is played on. All viewed elements
  * are on top of the table.
  *
- * @extends View
+ * @extends GView
  */
-class TableView extends View {
+class TableView extends GView {
 
     constructor(svgElement, model, config = {}) {
         config.name = "table";
         super(undefined, model, config);
-
-        svgElement.appendChild(svg.rectangle(0, 0, "100%", "100%", {
+        this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
             "fill": config.fill || "green"
         }));
     } 

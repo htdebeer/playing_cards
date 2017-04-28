@@ -23,16 +23,16 @@
  */
 import {CARD_SUPPLIER} from "../CardSupplier.js";
 import {CardView} from "./CardView.js";
-import {View} from "./View.js";
+import {GView} from "./GView.js";
 
 const CARD_OFFSET = 0.2;
 
 /**
  * View representing a pile
  *
- * @extends View
+ * @extends GView
  */
-class PileView extends View {
+class PileView extends GView {
     /**
      * Create a new pile view
      *

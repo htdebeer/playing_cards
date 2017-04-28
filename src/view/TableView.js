@@ -24,6 +24,7 @@
 import {svg} from "../svg.js";
 
 import {EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG, View} from "./View.js";
+import {GView} from "./GView.js";
 
 const _dragElement = new WeakMap();
 
@@ -31,15 +32,14 @@ const _dragElement = new WeakMap();
  * Table represents the table a card game is played on. All viewed elements
  * are on top of the table.
  *
- * @extends View
+ * @extends GView
  */
-class TableView extends View {
+class TableView extends GView {
 
     constructor(svgElement, model, config = {}) {
         config.name = "table";
         super(undefined, model, config);
-
-        svgElement.appendChild(svg.rectangle(0, 0, "100%", "100%", {
+        this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
             "fill": config.fill || "green"
         }));
     } 

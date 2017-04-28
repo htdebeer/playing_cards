@@ -21,15 +21,15 @@
 /**
  * @module
  */
-import {View} from "./View.js";
+import {GView} from "./GView.js";
 import {CARD_SUPPLIER} from "../CardSupplier.js";
 
 /**
  * View of a card.
  *
- * @extends View
+ * @extends GView
  */
-class CardView extends View {
+class CardView extends GView {
     /**
      * Create a new card view.
      *

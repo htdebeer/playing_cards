@@ -31,51 +31,10 @@ const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
 const EVENT_DROP = Symbol("event:view:drop");
 
-const createClickableAndDraggableElement = function (view, name = "") {
-    const group = svg.group({
-        "class": name
-    });
-
-    let dragging = false;
-    let moving = false;
-
-    group.addEventListener("mousedown", (event) => {
-        event.stopPropagation();
-        dragging = true;
-    });
-
-    group.addEventListener("mousemove", (event) => {
-        if (dragging) {
-            if (!moving) {
-                moving = true;
-                view.table.startDragging(event, view);
-                event.stopPropagation();
-            }
-        }
-    });
-
-    group.addEventListener("mouseup", (event) => {
-        if (dragging) {
-            event.stopPropagation();
-            dragging = false;
-            if (moving) {
-                moving = false;
-                view.table.stopDragging(view);
-            } else {
-                view.emit(EVENT_CLICK, this);
-            }
-        }
-    });
-
-    return group;
-};
-
-
 const _parent = new WeakMap();
 const _model = new WeakMap();
 const _config = new WeakMap();
 const _element = new WeakMap();
-
 
 /**
  * Base class of views.
@@ -96,17 +55,9 @@ class View extends EventAware {
         _parent.set(this, parent);
         _model.set(this, model);
         _config.set(this, {});
+        _element.set(this, undefined);
         
         this.configure(config);
-
-        _element.set(this, createClickableAndDraggableElement(this, config.name || ""));
-
-        // Append the view to the parent unless it is a table. The table has
-        // to be appended to an SVG element that is not part of a view.
-        if (!this.isTable()) {
-            this.parent.element.appendChild(this.element);
-        }
-
         this.model.on(EVENT_MODEL_CHANGE, () => this.render());
     }
 
@@ -144,6 +95,15 @@ class View extends EventAware {
      */
     get element() {
         return _element.get(this);
+    }
+
+    /**
+     * Set this view's SVG DOM element.
+     *
+     * @param {SVGElement} elt - the element to set
+     */
+    set element(elt) {
+        _element.set(this, elt);
     }
 
     /**
