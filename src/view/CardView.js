@@ -35,27 +35,27 @@ class CardView extends GView {
      *
      * @param {View} parent - the parent view
      * @param {CardModel} model - the card model this view represents
+     * @param {float} [x = 0] - the x coordinate.
+     * @param {float} [y = 0] - the y coordinate.
      * @param {object} [config = {}] - the configuration of this view. Set
      * property "cardSupplier" to choose a card supplier; defaults to the font
      * based card supplier.
      */
-    constructor(parent, model, config = {}) {
+    constructor(parent, model, x = 0, y = 0, config = {}) {
         config.name = "card";
-        super(parent, model, config);
+        super(parent, model, x, y, config);
+        this.enableDragging();
+        this.render();
     }
 
     /**
-     * Render this card at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * Render this card
      */
-    render(x = 0, y = 0) {
+    render() {
         if (this.element.hasChildNodes()) {
             this.element.removeChild(this.element.lastChild);
         }
         this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
-        super.render(x, y);
     }
 }
 

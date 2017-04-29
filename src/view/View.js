@@ -23,7 +23,6 @@
  */
 import {EventAware} from "../EventAware.js";
 import {EVENT_MODEL_CHANGE} from "../model/Model.js";
-import {svg} from "../svg.js";
 
 const EVENT_CLICK = Symbol("event:view:click");
 const EVENT_DRAG = Symbol("event:view:drag");
@@ -34,7 +33,6 @@ const EVENT_DROP = Symbol("event:view:drop");
 const _parent = new WeakMap();
 const _model = new WeakMap();
 const _config = new WeakMap();
-const _element = new WeakMap();
 
 /**
  * Base class of views.
@@ -55,7 +53,6 @@ class View extends EventAware {
         _parent.set(this, parent);
         _model.set(this, model);
         _config.set(this, {});
-        _element.set(this, undefined);
         
         this.configure(config);
         this.model.on(EVENT_MODEL_CHANGE, () => this.render());
@@ -66,14 +63,6 @@ class View extends EventAware {
      */
     get parent() {
         return _parent.get(this);
-    }
-
-    /**
-     * Get the table this view belongs to; each view belongs to a table or is
-     * a table.
-     */
-    get table() {
-        return this.isTable() ? this : this.parent.table();
     }
 
     /**
@@ -91,37 +80,13 @@ class View extends EventAware {
     }
 
     /**
-     * Get this view's SVG DOM element.
-     */
-    get element() {
-        return _element.get(this);
-    }
-
-    /**
-     * Set this view's SVG DOM element.
-     *
-     * @param {SVGElement} elt - the element to set
-     */
-    set element(elt) {
-        _element.set(this, elt);
-    }
-
-    /**
      * Render this view. Has to be implemented for all subclasses of View.
      *
      * @param {float} [x = 0] - the x coordinate to render this view.
      * @param {float} [y = 0] - the y coordinate to render this view.
      */
-    render(x = 0, y = 0) {
-        this.element.setAttribute("transform", `translate(${x}, ${y})`);
-    }
+    render() {}
 
-    /**
-     * Is this view a table node?
-     */
-    isTable() {
-        return false;
-    }
 
     /**
      * Configure this view. Each subclass will override this method to handle

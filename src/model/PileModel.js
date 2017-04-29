@@ -33,10 +33,12 @@ const _cards = new WeakMap();
 class PileModel extends Model {
     /**
      * Create an empty pile.
+     *
+     * @param {Deck} [deck = undefined] - create a pile from a deck
      */
-    constructor() {
+    constructor(deck = undefined) {
         super();
-        _cards.set(this, []);
+        _cards.set(this, undefined === deck ? [] : deck.cards);
     }
 
     /**

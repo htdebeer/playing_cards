@@ -12,12 +12,18 @@ describe("Pile", function () {
             assert.isTrue(pile.isEmpty());
             assert.equal(pile.count, 0);
         });
+
+        it("should create a new pile from a deck", function () {
+            const deck = new Deck("red");
+            const pile = new PileModel(deck);
+            assert.isFalse(pile.isEmpty());
+            assert.equal(pile.count, deck.cards.length);
+        });
     });
 
     describe("#each()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel();
-        deck.addToPile(pile);
+        const pile = new PileModel(deck);
 
         it("should create an iterator over all cards", function () {
             let i = 0;
@@ -76,7 +82,7 @@ describe("Pile", function () {
 
     describe("#inspect()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel();
+        let pile = new PileModel();
 
         it("should return undefined when trying to inspect a card in an empty pile", function () {
             assert.isTrue(pile.isEmpty());
@@ -85,7 +91,7 @@ describe("Pile", function () {
         });
         
         it("should return undefined when trying to inspect a card on an index that is out of bounds", function () {
-            deck.addToPile(pile);
+            pile = new PileModel(deck);
             assert.isFalse(pile.isEmpty());
             assert.equal(pile.inspect(100), undefined);
         });
@@ -202,8 +208,7 @@ describe("Pile", function () {
     
     describe("#pick()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel();
-        deck.addToPile(pile);
+        const pile = new PileModel(deck);
 
         it("should pick a card from the pile", function () {
             const numberOfCards = pile.count;
@@ -228,12 +233,10 @@ describe("Pile", function () {
     
     describe("#shuffle()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel();
-        deck.addToPile(pile);
+        const pile = new PileModel(deck);
 
         const deck2 = new Deck("maroon");
-        const pile2 = new PileModel();
-        deck2.addToPile(pile2);
+        const pile2 = new PileModel(deck2);
 
         const pileToString = function (pile) {
             return pile.cards.map((c) => c.toUnicode()).join(" ");
@@ -262,8 +265,7 @@ describe("Pile", function () {
 
         it("should split a pile in two", function () {
             const deck = new Deck("navy");
-            const pile = new PileModel();
-            deck.addToPile(pile);
+            const pile = new PileModel(deck);
 
             const numberOfItems = pile.count;
             const splits = pile.split();
@@ -276,8 +278,7 @@ describe("Pile", function () {
 
         it("should emit EVENT_MODEL_CHANGE", function () {
             const deck = new Deck("navy");
-            const pile = new PileModel();
-            deck.addToPile(pile);
+            const pile = new PileModel(deck);
             let result = 0;
             pile.on(EVENT_MODEL_CHANGE, function () {
                 result = 1;
@@ -291,8 +292,7 @@ describe("Pile", function () {
     
     describe("#take()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel();
-        deck.addToPile(pile);
+        const pile = new PileModel(deck);
 
         it("should take the top card from the pile", function () {
             const numberOfCards = pile.count;

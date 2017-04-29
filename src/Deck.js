@@ -145,21 +145,6 @@ class Deck {
     get cards() {
         return _cards.get(this);
     }
-
-    /**
-     * Add all cards from this deck to a pile.
-     *
-     * @param {PileModel} pile - the pile to add this deck's cards to.
-     *
-     * @return {PileModel} the pile the cards are added to.
-     */
-    addToPile(pile) {
-        for (const card of this.cards) {
-            pile.add(card);
-        }
-        return pile;
-    }
-        
 }
 
 export {

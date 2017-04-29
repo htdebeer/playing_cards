@@ -38,33 +38,32 @@ class PileView extends GView {
      *
      * @param {View} parent - this view's parent
      * @param {Pile} model - the pile this view represents
+     * @param {float} [x = 0] - the x coordinate.
+     * @param {float} [y = 0] - the y coordinate.
      * @param {object} [config = {}] - initial configuration of this pile
      * view.
      */
-    constructor(parent, model, config = {}) {
+    constructor(parent, model, x = 0, y = 0, config = {}) {
         config.name = "pile";
-        super(parent, model, config);
+        super(parent, model, x, y, config);
+        this.disableDragging();
         this.element.appendChild(CARD_SUPPLIER.createBase());
+        this.render();
     }
 
     /**
-     * Rending this pile at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * Rending this pile
      */
-    render(x = 0, y = 0) {
+    render() {
         for (const cardElement of this.element.querySelectorAll("g.card")) {
             this.element.removeChild(cardElement);
         }
 
         let index = 0;
         for (const card of this.model.each()) {
-            const cardElement = new CardView(this, card);
-            cardElement.render(0, CARD_OFFSET * index);
+            new CardView(this, card, 0, CARD_OFFSET * index);
             index++;
         }
-        super.render(x, y);
     }
 
     /**

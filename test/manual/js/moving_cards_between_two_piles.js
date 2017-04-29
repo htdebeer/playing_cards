@@ -927,21 +927,6 @@ class Deck {
     get cards() {
         return _cards.get(this);
     }
-
-    /**
-     * Add all cards from this deck to a pile.
-     *
-     * @param {PileModel} pile - the pile to add this deck's cards to.
-     *
-     * @return {PileModel} the pile the cards are added to.
-     */
-    addToPile(pile) {
-        for (const card of this.cards) {
-            pile.add(card);
-        }
-        return pile;
-    }
-        
 }
 
 /*
@@ -1452,6 +1437,105 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
 /**
  * @module
  */
+const EVENT_CLICK = Symbol("event:view:click");
+const EVENT_DRAG = Symbol("event:view:drag");
+const EVENT_DRAG_START = Symbol("event:view:drag-start");
+const EVENT_DRAG_END = Symbol("event:view:drag-end");
+const EVENT_DROP = Symbol("event:view:drop");
+
+const _parent = new WeakMap();
+const _model = new WeakMap();
+const _config = new WeakMap();
+
+/**
+ * Base class of views.
+ *
+ * @extends EventAware
+ */
+class View extends EventAware {
+    /**
+     * Create a new view
+     *
+     * @param {View} parent - the parent view. Will be undefined for the root view.
+     * @param {Model} model - the model this view represents
+     * @param {object} [config = {}] - an (initial) configuration of this
+     * view.
+     */
+    constructor(parent, model, config = {}) {
+        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
+        _parent.set(this, parent);
+        _model.set(this, model);
+        _config.set(this, {});
+        
+        this.configure(config);
+        this.model.on(EVENT_MODEL_CHANGE, () => this.render());
+    }
+
+    /**
+     * Get this view's parent view.
+     */
+    get parent() {
+        return _parent.get(this);
+    }
+
+    /**
+     * Get this view's model.
+     */
+    get model() {
+        return _model.get(this);
+    }
+
+    /**
+     * Get this view's configuration.
+     */
+    get config() {
+        return _config.get(this);
+    }
+
+    /**
+     * Render this view. Has to be implemented for all subclasses of View.
+     *
+     * @param {float} [x = 0] - the x coordinate to render this view.
+     * @param {float} [y = 0] - the y coordinate to render this view.
+     */
+    render() {}
+
+
+    /**
+     * Configure this view. Each subclass will override this method to handle
+     * view specific configuration options.
+     *
+     * @param {object} [config = {}] - the configuration to set on this view.
+     */
+    configure(config = {}) {
+        _config.set(this, Object.assign(_config.get(this), config));
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
 const _cards$1 = new WeakMap();
 
 /**
@@ -1462,10 +1546,12 @@ const _cards$1 = new WeakMap();
 class PileModel extends Model {
     /**
      * Create an empty pile.
+     *
+     * @param {Deck} [deck = undefined] - create a pile from a deck
      */
-    constructor() {
+    constructor(deck = undefined) {
         super();
-        _cards$1.set(this, []);
+        _cards$1.set(this, undefined === deck ? [] : deck.cards);
     }
 
     /**
@@ -1671,150 +1757,22 @@ class PileModel extends Model {
 /**
  * @module
  */
-const EVENT_CLICK = Symbol("event:view:click");
-const EVENT_DRAG = Symbol("event:view:drag");
-const EVENT_DRAG_START = Symbol("event:view:drag-start");
-const EVENT_DRAG_END = Symbol("event:view:drag-end");
-const EVENT_DROP = Symbol("event:view:drop");
-
-const _parent = new WeakMap();
-const _model = new WeakMap();
-const _config = new WeakMap();
-const _element = new WeakMap();
-
-/**
- * Base class of views.
- *
- * @extends EventAware
- */
-class View extends EventAware {
-    /**
-     * Create a new view
-     *
-     * @param {View} parent - the parent view. Will be undefined for the root view.
-     * @param {Model} model - the model this view represents
-     * @param {object} [config = {}] - an (initial) configuration of this
-     * view.
-     */
-    constructor(parent, model, config = {}) {
-        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
-        _parent.set(this, parent);
-        _model.set(this, model);
-        _config.set(this, {});
-        _element.set(this, undefined);
-        
-        this.configure(config);
-        this.model.on(EVENT_MODEL_CHANGE, () => this.render());
-    }
-
-    /**
-     * Get this view's parent view.
-     */
-    get parent() {
-        return _parent.get(this);
-    }
-
-    /**
-     * Get the table this view belongs to; each view belongs to a table or is
-     * a table.
-     */
-    get table() {
-        return this.isTable() ? this : this.parent.table();
-    }
-
-    /**
-     * Get this view's model.
-     */
-    get model() {
-        return _model.get(this);
-    }
-
-    /**
-     * Get this view's configuration.
-     */
-    get config() {
-        return _config.get(this);
-    }
-
-    /**
-     * Get this view's SVG DOM element.
-     */
-    get element() {
-        return _element.get(this);
-    }
-
-    /**
-     * Set this view's SVG DOM element.
-     *
-     * @param {SVGElement} elt - the element to set
-     */
-    set element(elt) {
-        _element.set(this, elt);
-    }
-
-    /**
-     * Render this view. Has to be implemented for all subclasses of View.
-     *
-     * @param {float} [x = 0] - the x coordinate to render this view.
-     * @param {float} [y = 0] - the y coordinate to render this view.
-     */
-    render(x = 0, y = 0) {
-        this.element.setAttribute("transform", `translate(${x}, ${y})`);
-    }
-
-    /**
-     * Is this view a table node?
-     */
-    isTable() {
-        return false;
-    }
-
-    /**
-     * Configure this view. Each subclass will override this method to handle
-     * view specific configuration options.
-     *
-     * @param {object} [config = {}] - the configuration to set on this view.
-     */
-    configure(config = {}) {
-        _config.set(this, Object.assign(_config.get(this), config));
-    }
-
-}
-
-/*
- * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
- *
- * This file is part of playing_cards.
- *
- * playing_cards is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * playing_cards is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
- * 
- */
-
-/**
- * @module
- */
-const createClickableAndDraggableElement = function (view, name = "") {
+const createClickableAndDraggableElement = function (view) {
     const group = svg.group({
-        "class": name
+        "class": view.config.name || ""
     });
+
+    // Disable click event;
+    group.addEventListener("click", (event) => event.stopPropagation());
 
     let dragging = false;
     let moving = false;
 
     group.addEventListener("mousedown", (event) => {
         event.stopPropagation();
-        dragging = true;
+        if (view.isDraggable()) {
+            dragging = true;
+        }
     });
 
     group.addEventListener("mousemove", (event) => {
@@ -1828,20 +1786,30 @@ const createClickableAndDraggableElement = function (view, name = "") {
     });
 
     group.addEventListener("mouseup", (event) => {
-        if (dragging) {
-            event.stopPropagation();
-            dragging = false;
-            if (moving) {
-                moving = false;
-                view.table.stopDragging(view);
-            } else {
-                view.emit(EVENT_CLICK, this);
+        if (view.isDraggable()) {
+            if (dragging) {
+                event.stopPropagation();
+                dragging = false;
+                if (moving) {
+                    moving = false;
+                    view.table.stopDragging(view);
+                } else {
+                    view.emit(EVENT_CLICK, view);
+                }
             }
+        } else {
+            event.stopPropagation();
+            view.emit(EVENT_CLICK, view);
         }
     });
 
     return group;
 };
+
+const _element = new WeakMap();
+const _x = new WeakMap();
+const _y = new WeakMap();
+const _draggable = new WeakMap();
 
 /**
  * Base class of SVG G element based views.
@@ -1854,20 +1822,108 @@ class GView extends View {
      *
      * @param {View} parent - the parent view. Will be undefined for the root view.
      * @param {Model} model - the model this view represents
+     * @param {float} [x = 0] - the x coordinate
+     * @param {float} [y = 0] - the y coordinate
      * @param {object} [config = {}] - an (initial) configuration of this
      * view.
      */
-    constructor(parent, model, config = {}) {
+    constructor(parent, model, x = 0, y = 0, config = {}) {
         super(parent, model, config);
+        this.x = x;
+        this.y = y;
 
-        this.element = createClickableAndDraggableElement(this, config.name || "");
+        _element.set(this, createClickableAndDraggableElement(this));
 
         // Append the view to the parent unless it is a table. The table has
         // to be appended to an SVG element that is not part of a view.
         if (!this.isTable()) {
             this.parent.element.appendChild(this.element);
         }
+        
+        this.element.setAttribute("transform", `translate(${this.x}, ${this.y})`);
     }
+    
+    /**
+     * Get this view's SVG DOM element.
+     */
+    get element() {
+        return _element.get(this);
+    }
+
+    /**
+     * Enable dragging of this view.
+     */
+    enableDragging() {
+        _draggable.set(this, true);
+    }
+
+    /**
+     * Disable dragging of this view.
+     */
+    disableDragging() {
+        _draggable.set(this, false);
+    }
+
+    /**
+     * Is this view draggable?
+     *
+     * @return {Boolean} true when this view is draggable.
+     */
+    isDraggable() {
+        return _draggable.get(this);
+    }
+
+    /**
+     * Get the x coordinate.
+     *
+     * @return {float} the x coordinate.
+     */
+    get x() {
+        return _x.get(this);
+    }
+
+    /**
+     * Set the x coordinate.
+     *
+     * @param {float} newX - the new x coordinate.
+     */
+    set x(newX) {
+        _x.set(this, newX);
+    }
+
+    /**
+     * Set the y coordinate.
+     *
+     * @param {float} newY - the new y coordinate.
+     */
+    set y(newY) {
+        _y.set(this, newY);
+    }
+
+    /**
+     * Get the y coordinate.
+     *
+     * @return {float} the y coordinate.
+     */
+    get y() {
+        return _y.get(this);
+    }
+    
+    /**
+     * Get the table this view belongs to; each view belongs to a table or is
+     * a table.
+     */
+    get table() {
+        return this.isTable() ? this : this.parent.table;
+    }
+    
+    /**
+     * Is this view a table node?
+     */
+    isTable() {
+        return false;
+    }
+
 }
 
 /*
@@ -1904,27 +1960,27 @@ class CardView extends GView {
      *
      * @param {View} parent - the parent view
      * @param {CardModel} model - the card model this view represents
+     * @param {float} [x = 0] - the x coordinate.
+     * @param {float} [y = 0] - the y coordinate.
      * @param {object} [config = {}] - the configuration of this view. Set
      * property "cardSupplier" to choose a card supplier; defaults to the font
      * based card supplier.
      */
-    constructor(parent, model, config = {}) {
+    constructor(parent, model, x = 0, y = 0, config = {}) {
         config.name = "card";
-        super(parent, model, config);
+        super(parent, model, x, y, config);
+        this.enableDragging();
+        this.render();
     }
 
     /**
-     * Render this card at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * Render this card
      */
-    render(x = 0, y = 0) {
+    render() {
         if (this.element.hasChildNodes()) {
             this.element.removeChild(this.element.lastChild);
         }
         this.element.appendChild(CARD_SUPPLIER.createCard(this.model));
-        super.render(x, y);
     }
 }
 
@@ -1964,33 +2020,32 @@ class PileView extends GView {
      *
      * @param {View} parent - this view's parent
      * @param {Pile} model - the pile this view represents
+     * @param {float} [x = 0] - the x coordinate.
+     * @param {float} [y = 0] - the y coordinate.
      * @param {object} [config = {}] - initial configuration of this pile
      * view.
      */
-    constructor(parent, model, config = {}) {
+    constructor(parent, model, x = 0, y = 0, config = {}) {
         config.name = "pile";
-        super(parent, model, config);
+        super(parent, model, x, y, config);
+        this.disableDragging();
         this.element.appendChild(CARD_SUPPLIER.createBase());
+        this.render();
     }
 
     /**
-     * Rending this pile at (x, y)
-     *
-     * @param {float} [x = 0] - the x coordinate
-     * @param {float} [y = 0] - the y coordinate
+     * Rending this pile
      */
-    render(x = 0, y = 0) {
+    render() {
         for (const cardElement of this.element.querySelectorAll("g.card")) {
             this.element.removeChild(cardElement);
         }
 
         let index = 0;
         for (const card of this.model.each()) {
-            const cardElement = new CardView(this, card);
-            cardElement.render(0, CARD_OFFSET * index);
+            new CardView(this, card, 0, CARD_OFFSET * index);
             index++;
         }
-        super.render(x, y);
     }
 
     /**
@@ -2075,12 +2130,21 @@ const _dragElement = new WeakMap();
  */
 class TableView extends GView {
 
-    constructor(svgElement, model, config = {}) {
+    /**
+     *  Create a new playing table.
+     *
+     *  @param {TableModel} model - the table model.
+     *  @param {float} [x = 0] - the x coordinate.
+     *  @param {float} [y = 0] - the y coordinate.
+     *  @param {Object} [config = {}] - the initial configuration.
+     */
+    constructor(model, x = 0, y = 0, config = {}) {
         config.name = "table";
-        super(undefined, model, config);
+        super(undefined, model, x, y, config);
         this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
             "fill": config.fill || "green"
         }));
+        this.render();
     } 
 
     /**
@@ -2170,16 +2234,44 @@ class TableView extends GView {
 
 CARD_SUPPLIER.engine = new SVGCardsCardRenderEngine("/SVG-cards/svg-cards.svg");
 
-
+// Use one deck of cards; the back is colored "maroon"
 const deck = new Deck("Maroon");
 
-const pile = new PileModel();
-deck.addToPile(pile);
 
+// Create two piles and a playing table
+//
+// 1. Create the models
 const table = new TableModel();
+const pileA = new PileModel(deck);
+const pileB = new PileModel();
+
+
+// 2. Create the views for these models
+const tableView = new TableView(table);
+const pileAView = new PileView(tableView, pileA, 100, 100);
+const pileBView = new PileView(tableView, pileB, 300, 100);
+
+// Add the playing table to an SVG element
 const svgElt = document.getElementById("table");
-const tableView = new TableView(svgElt, table);
-tableView.render(0,0);
-const pileView = new PileView(tableView, pile);
-console.log(pile.cards);
-pileView.render(100, 100);
+svgElt.appendChild(tableView.element);
+
+// Turn all card, so we can see them face up.
+for (const card of pileA.each()) {
+    card.turn();
+}
+
+// Shuffle the pile, so we get a different order each time we run this program
+pileA.shuffle();
+
+let piles = [pileA, pileB];
+
+// Add a click handler to the SVG element to move cards from A to B
+tableView.on(EVENT_CLICK, () => {
+    const [sourcePile, destinationPile] = piles;
+
+    destinationPile.add(sourcePile.take());
+
+    if (sourcePile.isEmpty()) {
+        piles = [destinationPile, sourcePile];
+    }
+});
