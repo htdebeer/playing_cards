@@ -26,7 +26,7 @@ import {svg} from "../svg.js";
 
 const createClickableAndDraggableElement = function (view) {
     const group = svg.group({
-        "class": view.config.name || ""
+        "class": `view ${view.config.name || ""}`
     });
 
     // Disable click event;

@@ -2,7 +2,7 @@ import {Deck} from "../../../src/Deck.js";
 import {CARD_SUPPLIER} from "../../../src/CardSupplier.js";
 import {SVGCardsCardRenderEngine} from "../../../src/card_render_engine/SVGCardsCardRenderEngine.js";
 
-import {EVENT_CLICK} from "../../../src/view/View.js";
+import {EVENT_CLICK, EVENT_DRAG_OVER} from "../../../src/view/View.js";
 
 import {PileModel} from "../../../src/model/PileModel.js";
 import {PileView} from "../../../src/view/PileView.js";
@@ -25,8 +25,13 @@ const pileB = new PileModel();
 
 // 2. Create the views for these models
 const tableView = new TableView(table)
-const pileAView = new PileView(tableView, pileA, 100, 100);
 const pileBView = new PileView(tableView, pileB, 300, 100);
+const pileAView = new PileView(tableView, pileA, 100, 100);
+
+pileBView.on(EVENT_DRAG_OVER, (view) => {
+    console.log("Dragged over");
+    console.log(view);
+});
 
 // Add the playing table to an SVG element
 const svgElt = document.getElementById("table");

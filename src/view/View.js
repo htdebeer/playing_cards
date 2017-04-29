@@ -28,6 +28,7 @@ const EVENT_CLICK = Symbol("event:view:click");
 const EVENT_DRAG = Symbol("event:view:drag");
 const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
+const EVENT_DRAG_OVER = Symbol("event:view:drag-over");
 const EVENT_DROP = Symbol("event:view:drop");
 
 const _parent = new WeakMap();
@@ -49,7 +50,7 @@ class View extends EventAware {
      * view.
      */
     constructor(parent, model, config = {}) {
-        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
+        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DRAG_OVER, EVENT_DROP]);
         _parent.set(this, parent);
         _model.set(this, model);
         _config.set(this, {});
@@ -106,5 +107,6 @@ export {
     EVENT_DRAG,
     EVENT_DRAG_START,
     EVENT_DRAG_END,
+    EVENT_DRAG_OVER,
     EVENT_DROP
 };

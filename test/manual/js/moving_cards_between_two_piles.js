@@ -1441,6 +1441,7 @@ const EVENT_CLICK = Symbol("event:view:click");
 const EVENT_DRAG = Symbol("event:view:drag");
 const EVENT_DRAG_START = Symbol("event:view:drag-start");
 const EVENT_DRAG_END = Symbol("event:view:drag-end");
+const EVENT_DRAG_OVER = Symbol("event:view:drag-over");
 const EVENT_DROP = Symbol("event:view:drop");
 
 const _parent = new WeakMap();
@@ -1462,7 +1463,7 @@ class View extends EventAware {
      * view.
      */
     constructor(parent, model, config = {}) {
-        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DROP]);
+        super([EVENT_CLICK, EVENT_DRAG_START, EVENT_DRAG, EVENT_DRAG_END, EVENT_DRAG_OVER, EVENT_DROP]);
         _parent.set(this, parent);
         _model.set(this, model);
         _config.set(this, {});
@@ -1759,7 +1760,7 @@ class PileModel extends Model {
  */
 const createClickableAndDraggableElement = function (view) {
     const group = svg.group({
-        "class": view.config.name || ""
+        "class": `view ${view.config.name || ""}`
     });
 
     // Disable click event;
@@ -2030,6 +2031,7 @@ class PileView extends GView {
         super(parent, model, x, y, config);
         this.disableDragging();
         this.element.appendChild(CARD_SUPPLIER.createBase());
+
         this.render();
     }
 
@@ -2228,6 +2230,7 @@ class TableView extends GView {
         this.element.removeEventListener("mousemove", _dragElement.get(this));
         this.element.removeChild(view.element);
         view.emit(EVENT_DRAG_END, view);
+        view.parent.render();
     }
 
 }
@@ -2248,8 +2251,13 @@ const pileB = new PileModel();
 
 // 2. Create the views for these models
 const tableView = new TableView(table);
-const pileAView = new PileView(tableView, pileA, 100, 100);
 const pileBView = new PileView(tableView, pileB, 300, 100);
+const pileAView = new PileView(tableView, pileA, 100, 100);
+
+pileBView.on(EVENT_DRAG_OVER, (view) => {
+    console.log("Dragged over");
+    console.log(view);
+});
 
 // Add the playing table to an SVG element
 const svgElt = document.getElementById("table");

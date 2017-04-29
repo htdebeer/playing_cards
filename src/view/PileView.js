@@ -25,6 +25,7 @@ import {CARD_SUPPLIER} from "../CardSupplier.js";
 import {CardView} from "./CardView.js";
 import {GView} from "./GView.js";
 
+
 const CARD_OFFSET = 0.2;
 
 /**
@@ -48,6 +49,7 @@ class PileView extends GView {
         super(parent, model, x, y, config);
         this.disableDragging();
         this.element.appendChild(CARD_SUPPLIER.createBase());
+
         this.render();
     }
 

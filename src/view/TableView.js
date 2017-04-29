@@ -134,6 +134,7 @@ class TableView extends GView {
         this.element.removeEventListener("mousemove", _dragElement.get(this));
         this.element.removeChild(view.element);
         view.emit(EVENT_DRAG_END, view);
+        view.parent.render();
     }
 
 }
