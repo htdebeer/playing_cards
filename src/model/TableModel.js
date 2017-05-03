@@ -23,6 +23,10 @@
  */
 
 import {Model} from "./Model.js";
+import {Layout} from "../layout/Layout.js";
+
+
+const _layout = new WeakMap();
 
 /**
  * Table a card game is played on.
@@ -30,11 +34,28 @@ import {Model} from "./Model.js";
  * @extends Model
  */
 class TableModel extends Model {
-    constructor() {
-        super();
+    
+    /**
+     * Create a new Table model.
+     *
+     * @param {Layout} [layout = new Layout] - the initial layout of the table.
+     */
+    constructor(layout = new Layout()) {
+        super([]);
+        _layout.set(this, layout);
     }
+
+    /**
+     * Get this table's layout.
+     *
+     * @return {Layout} this table's layout.
+     */
+    get layout() {
+        return _layout.get(this);
+    }
+    
 }
 
 export {
     TableModel
-}
+};
