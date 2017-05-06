@@ -38,6 +38,8 @@ const initialize = function (layout, specification) {
 /**
  * Layout describes a playing table with game elements, such as piles,
  * labels, and the like.
+ *
+ * @extends GameElement
  */
 class Layout {
 

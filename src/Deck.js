@@ -17,11 +17,12 @@
  * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
+import {GameElement} from "./GameElement.js";
+import {CardModel} from "./model/CardModel.js";
 
 /**
  * @module
  */
-import {CardModel} from "./model/CardModel.js";
 
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
@@ -102,17 +103,20 @@ const _cards = new WeakMap();
 /**
  * A Deck is a {@link https://en.wikipedia.org/wiki/Standard_52-card_deck|standard 52-card deck} 
  * and, optionally, with two joker cards.
+ *
+ * @extends GameElement
  */
-class Deck {
+class Deck extends GameElement {
 
     /**
-     * Construct a new Deck.
+     * Construct a new Deck. The deck's color is also its name.
      *
      * @param {string} [color = "red"] - the background color of this deck.
      * @param {Boolean} [jokers = false] - should this deck include joker
      * cards or not?
      */
     constructor(color = "red", jokers = false) {
+        super(color);
         _color.set(this, color);
         _hasJokers.set(this, jokers);
         _cards.set(this, createDeck(this, jokers));
