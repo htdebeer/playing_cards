@@ -21,33 +21,42 @@ import {GameElement} from "../GameElement.js";
 import {PileModel} from "../model/PileModel.js";
 import {PileView} from "../view/PileView.js";
 
-
+// Fan types
 const FAN_NONE = Symbol("fan:none");
-const FAN_HORIZONTAL = Symbol("fan:horizontal");
-const FAN_VERTICAL = Symbol("fan:vertical");
+const FAN_UP = Symbol("fan:up");
+const FAN_DOWN = Symbol("fan:down");
+const FAN_LEFT = Symbol("fan:left");
+const FAN_RIGHT = Symbol("fan:right");
 const FAN_ARC = Symbol("fan:arc");
-
-const setFanning = function (pile, specification) {
-    if (specification.fanning) {
-        if (fanning === "horizontal") {
-            _fanning.set(pile, FAN_HORIZONTAL);
-        } else if (fanning === "vertical") {
-            _fanning.set(pile, FAN_VERTICAL);
-        } else if (fanning === "arc") {
-            _fanning.set(pile, FAN_ARC);
-        } else {
-            _fanning.set(pile, FAN_NONE);
-        }
-    } else {
-        _fanning.set(pile, FAN_NONE);
-    }
+const FAN_TYPES = [FAN_NONE, FAN_UP, FAN_DOWN, FAN_LEFT, FAN_RIGHT, FAN_ARC];
+        
+// Pile predicates
+const TAUTOLOGY = function (pile) { return true; };
+const FACE_DOWN = function (pile) {
+    return pile.cards.every((c) => c.isFaceDown());
 };
+const FACE_UP = function (pile) {
+    return pile.cards.every((c) => c.isFaceUp());
+};
+const MAX_SIZE = function (N) {
+    return function (pile) {
+        return pile.count <= N;
+    };
+};
+const CELL = MAX_SIZE(1);
+
+
 
 /**
  * @module
  */
+const _view = new WeakMap();
 const _model = new WeakMap();
 const _fanning = new WeakMap();
+const _invariant = new WeakMap();
+
+const _x = new WeakMap();
+const _y = new WeakMap();
 
 /**
  * A pile in a card game.
@@ -59,7 +68,25 @@ class Pile extends GameElement {
         super(name);
 
         _model.set(this, new PileModel());
-        setFanning(this, specification);
+
+        this.fanning = specifiation.fanning || FAN_NONE;
+        this.invariant = specification.invariant || TAUTOLOGY;
+
+        const position = specification.position || {x: 0, y: 0};
+        this.x = parseFloat(position.x) || 0;
+        this.y = parseFloat(position.y) || 0;
+    }
+
+    /**
+     * Update this pile's view.
+     */
+    updateView() {
+        const view = _view.get(this);
+        if (view) {
+            view.x = _x.get(this);
+            view.y = _y.get(this);
+            view.render();
+        }
     }
 
     /**
@@ -98,14 +125,115 @@ class Pile extends GameElement {
         return FAN_NONE === this.fanning;
     }
 
+    /**
+     * Set the fanning for this pile.
+     *
+     * @param {Symbol|string} [fanType = FAN_NONE] - the fan type
+     */
+    set fanning(fanType = FAN_NONE) {
+        let type = FAN_NONE;
+        if (typeof fanType === "string" || fanType instanceof String) {
+            if (fanType === "left") {
+                type = FAN_LEFT;
+            } else if (fanType === "right") {
+                type = FAN_RIGHT;
+            } else if (fanType === "up") {
+                type = FAN_UP;
+            } else if (fanType === "down") {
+                type = FAN_DOWN;
+            } else if (fanType === "arc") {
+                type = FAN_ARC;
+            }
+        } else if (FAN_TYPES.includes(fanType)) {
+                type = fanType;
+        }
 
+        _fanned.set(this, type);
+        this.updateView();
+    }
+
+    /**
+     * Get the fanning of this pile.
+     *
+     * @return {symbol} the fanning type of this pile.
+     */
+    get fanning() {
+        return _fanning.get(this);
+    }
+
+    /**
+     * Set the invariant for this pile.
+     *
+     * @param {function} predicate - the invariant for this pile.
+     *
+     * @throw Expected a function
+     */
+    set invariant(predicate) {
+        if ({}.toString.call(invariant) === "[object Function]") {
+            _invariant.set(this, predicate);
+        } else {
+            _invariant.set(this, TAUTOLOGY);
+            throw new Error(`Expected a function, got '${predicate}' instead.`);
+        }
+    }
+
+    /**
+     * Get the invariant for this pile.
+     *
+     * @return {function} this pile's invariant.
+     */
+    get invariant() {
+        return _invariant.get(this);
+    }
+
+
+    /**
+     * Set the x coordinate of this pile.
+     *
+     * @param {float} newX - the new x coordinate.
+     */
+    set x(newX) {
+        _x.set(this, newX);
+        this.updateView();
+    }
+
+    /**
+     * Get the x coordinate of this pile.
+     *
+     * @return {float} the x coordinate fo this pile.
+     */
+    get x() {
+        return _x.get(this);
+    }
+
+    /**
+     * Set the y coordinate of this pile.
+     *
+     * @param {float} newY - the new y coordinate.
+     */
+    set y(newY) {
+        _y.set(this, newY);
+        this.updateView();
+    }
+
+    /**
+     * Get the y coordinate of this pile.
+     *
+     * @return {float} the y coordinate fo this pile.
+     */
+    get y() {
+        return _y.get(this);
+    }
 
 }
 
 export {
     Pile,
     FAN_NONE,
-    FAN_HORIZONTAL,
-    FAN_VERTICAL,
+    FAN_UP,
+    FAN_DOWN,
+    FAN_LEFT,
+    FAN_RIGHT,
     FAN_ARC,
+    FAN_TYPES,
 };
