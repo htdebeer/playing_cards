@@ -1,4 +1,9 @@
-import {PileModel, TAUTOLOGY} from "../../../src/model/PileModel.js";
+import {
+    PileModel, 
+    TAUTOLOGY, 
+    PileInvariantError, 
+    PileIndexOutOfBoundsError
+} from "../../../src/model/PileModel.js";
 import {Deck} from "../../../src/Deck.js";
 
 import {EVENT_MODEL_CHANGE} from "../../../src/model/Model.js";
@@ -15,11 +20,19 @@ describe("Pile", function () {
         });
 
         it("should create an empty pile with an invariant", function () {
-            const inv = function (pile) {return pile.count < 60;};
+            const inv = function (pile) {return pile.length < 60;};
             const pile = new PileModel(inv);
             assert.isTrue(pile.isEmpty());
             assert.equal(pile.count, 0);
             assert.equal(pile.invariant, inv);
+        });
+
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function () {return false;};
+            assert.throws(function () {
+                new PileModel(inv);
+            }, PileInvariantError);
+
         });
 
         it("should create a new pile from a deck", function () {
@@ -68,6 +81,15 @@ describe("Pile", function () {
             assert.equal(pile.count, 3);
             assert.equal(result, 3);
         });
+        
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function (pile) {return pile.length < 1;};
+            const pile = new PileModel(inv);
+            assert.throws(function () {
+                pile.add(deck.cards.pop());
+            }, PileInvariantError);
+
+        });
     });
 
 
@@ -98,10 +120,19 @@ describe("Pile", function () {
         it("should throw an index out of bounds error", function () {
             assert.throws(function () {
                 pile.insert(deck.cards.pop(), 100);
-            });
+            }, PileIndexOutOfBoundsError);
             assert.throws(function () {
                 pile.insert(deck.cards.pop(), -9);
-            });
+            }, PileIndexOutOfBoundsError);
+        });
+        
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function (pile) {return pile.length < 1;};
+            const pile = new PileModel(inv);
+            assert.throws(function () {
+                pile.insert(deck.cards.pop(), 0);
+            }, PileInvariantError);
+
         });
     });
 
@@ -230,6 +261,14 @@ describe("Pile", function () {
             assert.equal(result, currentCount + 2);
         });
 
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function (pile) {return pile.length < 1;};
+            const pile = new PileModel(inv);
+            assert.throws(function () {
+                pile.merge(pile1);
+            }, PileInvariantError);
+        });
+
     });
     
     describe("#pick()", function () {
@@ -254,6 +293,14 @@ describe("Pile", function () {
 
             assert.equal(result, 1);
             assert.equal(pile.count + 1, currentCount);
+        });
+
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function (p) {return p.length < pile.count ;};
+            const pile2 = new PileModel(inv);
+            assert.throws(function () {
+                pile2.pick();
+            }, PileInvariantError);
         });
     });
     
@@ -284,6 +331,16 @@ describe("Pile", function () {
             pile.shuffle();
 
             assert.equal(result, 1);
+        });
+
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            // Theoretically, all three piles could have the same order,
+            // albeit unlikely.
+            const inv = function (p) {return p.every((card, index) => pile2.inspect(index) === card);};
+            const pile3 = new PileModel(inv, pile2.cards);
+            assert.throws(function () {
+                pile3.shuffle();
+            }, PileInvariantError);
         });
     });
     
@@ -318,6 +375,14 @@ describe("Pile", function () {
 
             assert.equal(result, 1);
             assert.equal(pile.count + 1, currentCount);
+        });
+
+        it("should throw PileInvariantError when invariant is not valid", function () {
+            const inv = function (p) {return p.length < pile.count ;};
+            const pile2 = new PileModel(inv);
+            assert.throws(function () {
+                pile2.take();
+            }, PileInvariantError);
         });
     });
 });

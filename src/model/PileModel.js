@@ -22,6 +22,7 @@
  * @module
  */
 import {Model, EVENT_MODEL_CHANGE} from "./Model.js";
+import {Deck} from "../Deck.js";
 
 /**
  * PileInvariantError is thrown when a PileModel's invariant is invalidated.
@@ -201,12 +202,22 @@ class PileModel extends Model {
      *
      * @param {Function} [invariant = TAUTOLOGY] - the data invariant for this
      * pile.
-     * @param {Deck} [deck = undefined] - create a pile from a deck
+     * @param {CardModel[]|Deck} [initial = []] - create a pile from a list of cards
+     *
+     * @throw {PileInvariantError} Invariant invalidated by adding this card
      */
-    constructor(invariant = TAUTOLOGY, deck = undefined) {
+    constructor(invariant = TAUTOLOGY, initial = []) {
         super();
         _invariant.set(this, invariant);
-        _cards.set(this, undefined === deck ? [] : deck.cards);
+
+        let initialCards = initial instanceof Deck ? initial.cards : initial;
+        initialCards = Array.isArray(initialCards) ? initialCards : [];
+
+        checkInvariant(
+            this, 
+            initialCards,
+            `Initial cards does not fullfill data invariant`
+        );
     }
 
     /**
