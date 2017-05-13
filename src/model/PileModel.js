@@ -23,22 +23,199 @@
  */
 import {Model, EVENT_MODEL_CHANGE} from "./Model.js";
 
-const _cards = new WeakMap();
+/**
+ * PileInvariantError is thrown when a PileModel's invariant is invalidated.
+ */
+const PileInvariantError = class extends Error {
+};
 
 /**
- * A pile of cards.
+ * PileIndexOutOfBoundsErrow is thrown when a CardModel outside a PileModel's
+ * bounds is being accessed.
+ */
+const PileIndexOutOfBoundsError = class extends Error {
+};
+
+/**
+ * @function PILE_ACTIONS.INSERT
+ * Insert card in cards at index
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {CardModel} card - the card to insert
+ * @param {Integer} index - the place in cards to insert the card
+ *
+ * @return {CardModel[]} the list of cards with card inserted at index
+ */
+const insert = function (cards, card, index) {
+    cards.splice(index, 0, card);
+    return cards;
+};
+
+/**
+ * @function PILE_ACTIONS.ADD
+ * Add card to the top of cards.
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {CardModel} card - the card to add to the list of cards
+ *
+ * @return {CardModel[]} the list of cards with card added to it
+ */
+const add = function (cards, card) {
+    return insert(cards, card, cards.length);
+};
+
+/**
+ * @function PILE_ACTIONS.PICK
+ * Pick a card at random from cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ *
+ * @return {Array} an array with the list of card minus the picked card, and
+ * the picked card.
+ */
+const pick = function (cards) {
+    const RANDOM_INDEX = Math.floor(Math.random() * cards.length);
+    const rest = cards;
+    const picked = rest.splice(RANDOM_INDEX, 1)[0];
+    return [rest, picked];
+};
+
+/**
+ * @function PILE_ACTIONS.TAKE
+ * Take a card from list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {integer} index - the index of the card to take
+ *
+ * @return {Array} an array with the list of card minus the taken card, and
+ * the taken card.
+ */
+const take = function (cards, index = cards.length - 1) {
+    const rest = cards;
+    const taken = rest.splice(index, 1)[0];
+    return [rest, taken];
+};
+
+/**
+ * @function PILE_ACTIONS.MERGE
+ * Merge other lists of cards with a list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @Param {cardModel[][]} others - list of lists of cards
+ *
+ * @return {CardModel[]} list with all lists of cards merged into one list
+ */
+const merge = function (cards, others) {
+    return cards.concat(...others);
+};
+
+/**
+ * @function PILE_ACTION.SHUFFLE
+ * Shuffle a list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ *
+ * @return {CardModel[]} shuffled list of cards
+ */
+const shuffle = function (cards) {
+    return cards.sort(() => Math.random() - 0.5);
+};
+
+/** 
+ * Insert action symbol
+ */
+const INSERT = Symbol("action:insert");
+/**
+ * Add action symbol
+ */
+const ADD = Symbol("action:add");
+/**
+ * Pick action symbol
+ */
+const PICK = Symbol("action:pick");
+/**
+ * Take action symbol
+ */
+const TAKE = Symbol("action:take");
+/**
+ * Merge action symbol
+ */
+const MERGE = Symbol("action:merge");
+/**
+ * Shuffle action symbol
+ */
+const SHUFFLE = Symbol("action:shuffle");
+
+/**
+ * Available actions on a pile.
+ *
+ * @property {function} INSERT - Insert a card at index in a pile
+ * @property {function} ADD - Add a card in a pile
+ * @property {function} PICK - Pick a card at random from pile
+ * @property {function} TAKE - Take a card from index from pile
+ * @property {function} MERGE - Merge other piles with this pile
+ * @property {function} SHUFFLE - Shuffle pile
+ */
+const PILE_ACTIONS = {
+    INSERT: insert,
+    ADD: add,
+    PICK: pick,
+    TAKE: take,
+    MERGE: merge,
+    SHUFFLE: shuffle
+};
+
+
+const TAUTOLOGY = function (pile) { return true; };
+
+const _cards = new WeakMap();
+const _invariant = new WeakMap();
+
+// Check the Array with cards newCards against the pile's invariant. If it
+// succeeds, set the newCards as the pile's list of cards, otherwise throw a
+// PileInvariantError with errorMessage.
+const checkInvariant = function (pile, newCards, errorMessage = "") {
+    if (!pile.invariant(newCards)) {
+        throw new PileInvariantError(`${errorMessage}.\n\t${pile.invariant}`);
+    }
+
+    _cards.set(pile, newCards);
+    pile.emit(EVENT_MODEL_CHANGE, pile);
+    return pile;
+};
+
+// Create a copy of this pile's cards as an Array;
+const copy = function (pile) {
+    return _cards.get(pile).slice();
+}
+
+/**
+ * A pile of cards. 
  *
  * @extends Model
  */
 class PileModel extends Model {
     /**
-     * Create an empty pile.
+     * Create an empty pile and set its data invariant. This data invariant
+     * should always hold.
      *
+     * @param {Function} [invariant = TAUTOLOGY] - the data invariant for this
+     * pile.
      * @param {Deck} [deck = undefined] - create a pile from a deck
      */
-    constructor(deck = undefined) {
+    constructor(invariant = TAUTOLOGY, deck = undefined) {
         super();
+        _invariant.set(this, invariant);
         _cards.set(this, undefined === deck ? [] : deck.cards);
+    }
+
+    /**
+     * Get the data invariant for this pile
+     *
+     * @return {Function} the data invariant
+     */
+    get invariant() {
+        return _invariant.get(this);
     }
 
     /**
@@ -69,26 +246,15 @@ class PileModel extends Model {
     }
 
     /**
-     * Add a card to this pile.
+     * Inspect a card in this pile. The pile does not change.
      *
-     * @param {CardModel} card - the card to add.
-     * @param {integer} [index = pile.count] - the index to insert the card in
-     * this pile. Defaults to the end of the pile.
+     * @param {integer} [index = top] - the index of the card to
+     * inspect. Defaults to the top card
      *
-     * @return {PileModel} Return this pile.
-     *
-     * @fire EVENT_MODEL_CHANGE
-     *
-     * @throw {Error} Index out of bounds.
+     * @return {Card} the card to inspect.
      */
-    add (card, index = this.count) {
-        if (0 <= index && index <= this.count) {
-            _cards.get(this).splice(index, 0, card);
-            this.emit(EVENT_MODEL_CHANGE, this);
-            return this;
-        } else {
-            throw new Error("Index out of bounds");
-        }
+    inspect(index = this.count - 1) {
+        return _cards.get(this)[index];
     }
 
     /**
@@ -113,18 +279,71 @@ class PileModel extends Model {
     }
 
     /**
+     * Add a card to this pile.
+     *
+     * @param {CardModel} card - the card to add.
+     *
+     * @return {PileModel} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by adding this card
+     */
+    add (card) {
+        const added = add(copy(this), card);
+        return checkInvariant(
+            this,
+            added,
+            `Cannot add ${card.toUnicode()}`
+        );
+    }
+    
+    /**
+     * Insert a card in this pile.
+     *
+     * @param {CardModel} card - the card to add.
+     * @param {integer} [index = pile.count] - the index to insert the card in
+     * this pile. Defaults to the end of the pile.
+     *
+     * @return {PileModel} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileIndexOutOfBoundsError} Index out of bounds.
+     * @throw {PileInvariantError} Invariant invalidated by inserting this card at this index
+     */
+    insert (card, index) {
+        if (0 > index || index > this.count) {
+            throw new PileIndexOutOfBoundsError();
+        }
+
+        const inserted = insert(copy(this), card, index);
+        return checkInvariant(
+            this,
+            inserted,
+            `Cannot insert ${card.toUnicode()} at index ${index}`
+        );
+    }
+
+    /**
      * Pick a random card from this pile; the pile contains one card less
      * hereafter.
      *
      * @return {Card} the picked card.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by picking a card
+     * from this pile
      */
     pick() {
-        const randomIndex = Math.floor(Math.random() * this.count);
-        const card = _cards.get(this).splice(randomIndex, 1)[0];
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return card;
+        const [rest, picked] = pick(copy(this));
+        checkInvariant(
+            this,
+            rest,
+            `Cannot pick ${picked.toUnicode()}`
+        );
+        return picked;
     }
 
     /**
@@ -136,23 +355,18 @@ class PileModel extends Model {
      * @return {Card} the top card
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated taking card from
+     * index
      */
     take(index = this.count - 1) {
-        const card = _cards.get(this).splice(index, 1)[0];
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return card;
-    }
-
-    /**
-     * Inspect a card in this pile. The pile does not change.
-     *
-     * @param {integer} [index = top] - the index of the card to
-     * inspect. Defaults to the top card
-     *
-     * @return {Card} the card to inspect.
-     */
-    inspect(index = this.count - 1) {
-        return _cards.get(this)[index];
+        const [rest, taken] = take(copy(this), index);
+        checkInvariant(
+            this,
+            rest,
+            `Cannot take ${taken.toUnicode()} from ${index}`
+        );
+        return taken;
     }
 
     /**
@@ -161,43 +375,15 @@ class PileModel extends Model {
      * @return {PileModel} this pile, shuffled.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by shuffling pile
      */
     shuffle() {
-        _cards.get(this).sort(() => Math.random() - 0.5);
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return this;
-    }
-
-    /**
-     * Split this pile in a number of smaller piles. By default the pile is
-     * split in two.
-     *
-     * @param {integer} [numberOfPiles = 2] - the number of piles to split
-     * this pile into, defaults to 2.
-     *
-     * @return {PileModel[]} An array of piles, this pile is the first in that list
-     *
-     * @fire EVENT_MODEL_CHANGE
-     */
-    split(numberOfPiles = 2) {
-        if (Number.isInteger(numberOfPiles)) {
-            const pileCount = Math.floor(this.count / numberOfPiles);
-            const piles = [];
-            piles.push(this);
-
-            while (this.count > pileCount) {
-                const pile = new PileModel();
-
-                while (pile.count < pileCount) {
-                    pile.add(this.take());
-                }
-
-                piles.push(pile);
-            }
-
-            this.emit(EVENT_MODEL_CHANGE, this);
-            return piles;
-        }
+        return checkInvariant(
+            this,
+            shuffle(copy(this)),
+            `Shuffling results in an invalid pile`
+        );
     }
 
     /**
@@ -208,19 +394,37 @@ class PileModel extends Model {
      * @return {PileModel} this pile.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by merging the other
+     * piles with this pile; or others' invariant invalidated by emptying them
      */
-    merge(other) {
-        while (!other.isEmpty()) {
-            this.add(other.take(0));
-        }
-        this.emit(EVENT_MODEL_CHANGE, this);
+    merge(...others) {
+        const merged = merge(copy(this), others.map((o) => _cards.get(o)));
+        
+        checkInvariant(
+            this,
+            merged,
+            `Merge pile with ${others} is invalid`
+        );
+
+        others.forEach((otherPile) => checkInvariant(
+            otherPile,
+            [],
+            `Empty pile is invalid`
+        ));
+
         return this;
     }
-
-
-    
 }
 
 export {
     PileModel,
+    TAUTOLOGY,
+    PILE_ACTIONS,
+    INSERT,
+    ADD,
+    PICK,
+    TAKE,
+    MERGE,
+    SHUFFLE
 };

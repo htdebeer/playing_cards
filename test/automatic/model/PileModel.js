@@ -1,4 +1,4 @@
-import {PileModel} from "../../../src/model/PileModel.js";
+import {PileModel, TAUTOLOGY} from "../../../src/model/PileModel.js";
 import {Deck} from "../../../src/Deck.js";
 
 import {EVENT_MODEL_CHANGE} from "../../../src/model/Model.js";
@@ -11,11 +11,20 @@ describe("Pile", function () {
             const pile = new PileModel();
             assert.isTrue(pile.isEmpty());
             assert.equal(pile.count, 0);
+            assert.equal(pile.invariant, TAUTOLOGY);
+        });
+
+        it("should create an empty pile with an invariant", function () {
+            const inv = function (pile) {return pile.count < 60;};
+            const pile = new PileModel(inv);
+            assert.isTrue(pile.isEmpty());
+            assert.equal(pile.count, 0);
+            assert.equal(pile.invariant, inv);
         });
 
         it("should create a new pile from a deck", function () {
             const deck = new Deck("red");
-            const pile = new PileModel(deck);
+            const pile = new PileModel(TAUTOLOGY, deck);
             assert.isFalse(pile.isEmpty());
             assert.equal(pile.count, deck.cards.length);
         });
@@ -23,7 +32,7 @@ describe("Pile", function () {
 
     describe("#each()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel(deck);
+        const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should create an iterator over all cards", function () {
             let i = 0;
@@ -49,13 +58,29 @@ describe("Pile", function () {
             assert.notEqual(pile.inspect(), top);
         });
 
-        it("should insert a card in the pile", function () {
-            const top = pile.inspect();
-            pile.add(deck.cards.pop(), 0);
+        it("should emit EVENT_MODEL_CHANGE", function () {
+            let result = 0;
+            pile.on(EVENT_MODEL_CHANGE, function (p) {
+                result = p.count;
+            });
+
+            pile.add(deck.cards.pop());
             assert.equal(pile.count, 3);
-            assert.equal(pile.inspect(), top);
-            pile.add(deck.cards.pop(), 3);
-            assert.equal(pile.count, 4);
+            assert.equal(result, 3);
+        });
+    });
+
+
+    describe("#insert(card, index)", function () {
+        const deck = new Deck("navy");
+        const pile = new PileModel();
+
+        it("should insert a card in the pile at index", function () {
+            pile.insert(deck.cards.pop(), 0);
+            assert.equal(pile.count, 1);
+            const top = pile.inspect();
+            pile.insert(deck.cards.pop(), 1);
+            assert.equal(pile.count, 2);
             assert.notEqual(pile.inspect(), top);
         });
 
@@ -65,17 +90,17 @@ describe("Pile", function () {
                 result = p.count;
             });
 
-            pile.add(deck.cards.pop(), 0);
-            assert.equal(pile.count, 5);
-            assert.equal(result, 5);
+            pile.insert(deck.cards.pop(), 0);
+            assert.equal(pile.count, 3);
+            assert.equal(result, 3);
         });
 
         it("should throw an index out of bounds error", function () {
             assert.throws(function () {
-                pile.add(deck.cards.pop(), 100);
+                pile.insert(deck.cards.pop(), 100);
             });
             assert.throws(function () {
-                pile.add(deck.cards.pop(), -9);
+                pile.insert(deck.cards.pop(), -9);
             });
         });
     });
@@ -91,7 +116,7 @@ describe("Pile", function () {
         });
         
         it("should return undefined when trying to inspect a card on an index that is out of bounds", function () {
-            pile = new PileModel(deck);
+            pile = new PileModel(TAUTOLOGY, deck);
             assert.isFalse(pile.isEmpty());
             assert.equal(pile.inspect(100), undefined);
         });
@@ -131,6 +156,7 @@ describe("Pile", function () {
         const deck = new Deck("navy");
         const pile1 = new PileModel();
         const pile2 = new PileModel();
+            
 
         it("should merge two empty piles resulting in two empty piles", function () {
             assert.isTrue(pile1.isEmpty());
@@ -208,7 +234,7 @@ describe("Pile", function () {
     
     describe("#pick()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel(deck);
+        const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should pick a card from the pile", function () {
             const numberOfCards = pile.count;
@@ -233,10 +259,10 @@ describe("Pile", function () {
     
     describe("#shuffle()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel(deck);
+        const pile = new PileModel(TAUTOLOGY, deck);
 
         const deck2 = new Deck("maroon");
-        const pile2 = new PileModel(deck2);
+        const pile2 = new PileModel(TAUTOLOGY, deck2);
 
         const pileToString = function (pile) {
             return pile.cards.map((c) => c.toUnicode()).join(" ");
@@ -261,38 +287,9 @@ describe("Pile", function () {
         });
     });
     
-    describe("#split()", function () {
-
-        it("should split a pile in two", function () {
-            const deck = new Deck("navy");
-            const pile = new PileModel(deck);
-
-            const numberOfItems = pile.count;
-            const splits = pile.split();
-
-            assert.equal(splits.length, 2);
-            
-            assert.equal(splits[0].count, numberOfItems/2);
-            assert.equal(splits[1].count, numberOfItems/2);
-        });
-
-        it("should emit EVENT_MODEL_CHANGE", function () {
-            const deck = new Deck("navy");
-            const pile = new PileModel(deck);
-            let result = 0;
-            pile.on(EVENT_MODEL_CHANGE, function () {
-                result = 1;
-            });
-            
-            pile.split();
-
-            assert.equal(result, 1);
-        });
-    });
-    
     describe("#take()", function () {
         const deck = new Deck("navy");
-        const pile = new PileModel(deck);
+        const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should take the top card from the pile", function () {
             const numberOfCards = pile.count;
