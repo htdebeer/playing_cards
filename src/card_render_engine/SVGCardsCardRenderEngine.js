@@ -98,7 +98,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createBase() {
         return svg.use(`${this.url}/#card-base`, {
-            fill: "navy",
+            fill: "silver",
             "fill-opacity": 0.2,
             "stroke-opacity": 0.2
         });

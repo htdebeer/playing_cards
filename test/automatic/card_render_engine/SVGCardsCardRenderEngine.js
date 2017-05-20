@@ -18,11 +18,13 @@ const checkCard = function (card, supplier) {
     }
 
     let representation = supplier.createCard(card);
-    assert.equal(representation.tagName, "use");
+
+//    assert.equal(representation.tagName, "use");
+    assert.equal(representation.tagName, "rect");
     assert.isTrue(representation.hasAttribute("fill"));
     assert.equal(representation.getAttribute("fill"), card.backColor);
-    assert.isTrue(representation.getAttribute("xlink:href").startsWith("/svg-cards.svg"));
-    assert.isTrue(representation.getAttribute("xlink:href").endsWith("back"));
+//    assert.isTrue(representation.getAttribute("xlink:href").startsWith("/svg-cards.svg"));
+//    assert.isTrue(representation.getAttribute("xlink:href").endsWith("back"));
     card.turn();
     representation = supplier.createCard(card);
     assert.equal(representation.tagName, "use");

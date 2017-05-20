@@ -87,18 +87,16 @@ class Game {
                 .actions
                 .forEach((action) => this.actions.add(new Action(this, action.name, action.action)))
         }
-        
-        const setup = this.action("setup");
-        if (setup) {
-            setup.run();
-        }
     }
 
     /**
      * Start this game;
      */
-    start() {
-        console.log("Start!");
+    deal() {
+        const deal = this.action("deal");
+        if (deal) {
+            deal.run();
+        }
     }
 
     /**
