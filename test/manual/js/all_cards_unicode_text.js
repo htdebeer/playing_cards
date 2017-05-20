@@ -19,6 +19,69 @@
  */
 
 /**
+ * @module
+ */
+
+const _game = new WeakMap();
+const _name = new WeakMap();
+
+/**
+ * GameElement represent elements in a card game such as a pile, player, deck,
+ * action, or label.
+ */
+class GameElement {
+    /**
+     * Create a new GameElement with name.
+     *
+     * @param {Game} game - the game this element belongs to.
+     * @param {string} name - the name of this game element.
+     */
+    constructor(game, name) {
+        _game.set(this, game);
+        _name.set(this, name);
+    }
+
+    /**
+     * Get this element's game.
+     *
+     * @return {Game} this element's game
+     */
+    get game() {
+        return _game.get(this);
+    }
+
+    /**
+     * Get this game element's name.
+     *
+     * @return {string} the name of this game element.
+     */
+    get name() {
+        return _name.get(this);
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
  * General utility functions
  *
  * @module
@@ -801,10 +864,10 @@ class CardModel extends Model {
  * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-
 /**
  * @module
  */
+
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
         return CardModel.fromUnicode(String.fromCodePoint(codePoint), deck);
@@ -884,17 +947,20 @@ const _cards = new WeakMap();
 /**
  * A Deck is a {@link https://en.wikipedia.org/wiki/Standard_52-card_deck|standard 52-card deck} 
  * and, optionally, with two joker cards.
+ *
+ * @extends GameElement
  */
-class Deck {
+class Deck extends GameElement {
 
     /**
-     * Construct a new Deck.
+     * Construct a new Deck. The deck's color is also its name.
      *
      * @param {string} [color = "red"] - the background color of this deck.
      * @param {Boolean} [jokers = false] - should this deck include joker
      * cards or not?
      */
-    constructor(color = "red", jokers = false) {
+    constructor(game, color = "red", jokers = false) {
+        super(game, color);
         _color.set(this, color);
         _hasJokers.set(this, jokers);
         _cards.set(this, createDeck(this, jokers));
@@ -1098,6 +1164,7 @@ class SVG {
         rect.setAttribute("height", height);
         return rect;
     }
+
 
 }
 

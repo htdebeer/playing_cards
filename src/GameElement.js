@@ -22,7 +22,8 @@
  * @module
  */
 
-const _name = new WeakMap()
+const _game = new WeakMap();
+const _name = new WeakMap();
 
 /**
  * GameElement represent elements in a card game such as a pile, player, deck,
@@ -32,10 +33,21 @@ class GameElement {
     /**
      * Create a new GameElement with name.
      *
+     * @param {Game} game - the game this element belongs to.
      * @param {string} name - the name of this game element.
      */
-    constructor(name) {
+    constructor(game, name) {
+        _game.set(this, game);
         _name.set(this, name);
+    }
+
+    /**
+     * Get this element's game.
+     *
+     * @return {Game} this element's game
+     */
+    get game() {
+        return _game.get(this);
     }
 
     /**

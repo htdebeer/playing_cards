@@ -31,7 +31,7 @@ const checkCard = function (card, supplier) {
 
 
 describe("SVGCardsCardRenderEngine", function () {
-    const deck = new Deck("skyblue", true);
+    const deck = new Deck(null, "skyblue", true);
     const supplier = new SVGCardsCardRenderEngine();
 
     describe("#createCard(card)", function () {

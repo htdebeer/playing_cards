@@ -36,7 +36,7 @@ describe("Pile", function () {
         });
 
         it("should create a new pile from a deck", function () {
-            const deck = new Deck("red");
+            const deck = new Deck(null, "red");
             const pile = new PileModel(TAUTOLOGY, deck);
             assert.isFalse(pile.isEmpty());
             assert.equal(pile.count, deck.cards.length);
@@ -44,7 +44,7 @@ describe("Pile", function () {
     });
 
     describe("#each()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should create an iterator over all cards", function () {
@@ -58,7 +58,7 @@ describe("Pile", function () {
     });
 
     describe("#add(card)", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel();
         it("should add a card to a pile", function () {
             pile.add(deck.cards.pop());
@@ -94,7 +94,7 @@ describe("Pile", function () {
 
 
     describe("#insert(card, index)", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel();
 
         it("should insert a card in the pile at index", function () {
@@ -137,7 +137,7 @@ describe("Pile", function () {
     });
 
     describe("#inspect()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         let pile = new PileModel();
 
         it("should return undefined when trying to inspect a card in an empty pile", function () {
@@ -166,7 +166,7 @@ describe("Pile", function () {
     });
 
     describe("#isEmpty()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel();
 
         it("should return true when a pile has no cards", function () {
@@ -184,7 +184,7 @@ describe("Pile", function () {
     });
 
     describe("#merge()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile1 = new PileModel();
         const pile2 = new PileModel();
             
@@ -272,7 +272,7 @@ describe("Pile", function () {
     });
     
     describe("#pick()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should pick a card from the pile", function () {
@@ -305,10 +305,10 @@ describe("Pile", function () {
     });
     
     describe("#shuffle()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel(TAUTOLOGY, deck);
 
-        const deck2 = new Deck("maroon");
+        const deck2 = new Deck(null, "maroon");
         const pile2 = new PileModel(TAUTOLOGY, deck2);
 
         const pileToString = function (pile) {
@@ -345,7 +345,7 @@ describe("Pile", function () {
     });
     
     describe("#take()", function () {
-        const deck = new Deck("navy");
+        const deck = new Deck(null, "navy");
         const pile = new PileModel(TAUTOLOGY, deck);
 
         it("should take the top card from the pile", function () {

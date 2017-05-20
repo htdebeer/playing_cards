@@ -115,8 +115,8 @@ class Deck extends GameElement {
      * @param {Boolean} [jokers = false] - should this deck include joker
      * cards or not?
      */
-    constructor(color = "red", jokers = false) {
-        super(color);
+    constructor(game, color = "red", jokers = false) {
+        super(game, color);
         _color.set(this, color);
         _hasJokers.set(this, jokers);
         _cards.set(this, createDeck(this, jokers));

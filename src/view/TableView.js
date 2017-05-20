@@ -25,6 +25,7 @@ import {svg} from "../svg.js";
 
 import {EVENT_DRAG_START, EVENT_DRAG_END, EVENT_DRAG} from "./View.js";
 import {GView} from "./GView.js";
+import {TableModel} from "../model/TableModel.js";
 
 const _dragElement = new WeakMap();
 
@@ -44,7 +45,7 @@ class TableView extends GView {
      *  @param {float} [y = 0] - the y coordinate.
      *  @param {Object} [config = {}] - the initial configuration.
      */
-    constructor(model, x = 0, y = 0, config = {}) {
+    constructor(model = new TableModel(), x = 0, y = 0, config = {}) {
         config.name = "table";
         super(undefined, model, x, y, config);
         this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {

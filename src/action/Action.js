@@ -19,6 +19,9 @@
  */
 import {GameElement} from "../GameElement.js";
 
+
+const _action = new WeakMap();
+
 /**
  * An action in a card game.
  *
@@ -29,10 +32,22 @@ class Action extends GameElement {
     /**
      * Create a new action.
      *
+     * @param {Game} game - the game this action belongs to.
      * @param {string} name - the name of this action.
+     * @param {Function} action - the actial action to perform.
      */
-    constructor(name) {
-        super(name);
+    constructor(game, name, action) {
+        super(game, name);
+        _action.set(this, action);
+    }
+
+    
+
+    /**
+     * Run this action.
+     */
+    run(...args) {
+        _action.get(this).apply(this.game, args);
     }
 }
 

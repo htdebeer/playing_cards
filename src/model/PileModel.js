@@ -178,11 +178,11 @@ const _invariant = new WeakMap();
 const checkInvariant = function (pile, newCards, errorMessage = "") {
     if (!pile.invariant(newCards)) {
         throw new PileInvariantError(`${errorMessage}.\n\t${pile.invariant}`);
+        return false;
     }
 
     _cards.set(pile, newCards);
-    pile.emit(EVENT_MODEL_CHANGE, pile);
-    return pile;
+    return true;
 };
 
 // Create a copy of this pile's cards as an Array;
@@ -302,11 +302,17 @@ class PileModel extends Model {
      */
     add (card) {
         const added = add(copy(this), card);
-        return checkInvariant(
+        const valid = checkInvariant(
             this,
             added,
             `Cannot add ${card.toUnicode()}`
         );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return this;
     }
     
     /**
@@ -329,11 +335,17 @@ class PileModel extends Model {
         }
 
         const inserted = insert(copy(this), card, index);
-        return checkInvariant(
+        const valid = checkInvariant(
             this,
             inserted,
             `Cannot insert ${card.toUnicode()} at index ${index}`
         );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return this;
     }
 
     /**
@@ -349,11 +361,16 @@ class PileModel extends Model {
      */
     pick() {
         const [rest, picked] = pick(copy(this));
-        checkInvariant(
+        const valid = checkInvariant(
             this,
             rest,
             `Cannot pick ${picked.toUnicode()}`
         );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
         return picked;
     }
 
@@ -372,11 +389,16 @@ class PileModel extends Model {
      */
     take(index = this.count - 1) {
         const [rest, taken] = take(copy(this), index);
-        checkInvariant(
+        const valid = checkInvariant(
             this,
             rest,
             `Cannot take ${taken.toUnicode()} from ${index}`
         );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
         return taken;
     }
 
@@ -390,11 +412,17 @@ class PileModel extends Model {
      * @throw {PileInvariantError} Invariant invalidated by shuffling pile
      */
     shuffle() {
-        return checkInvariant(
+        const valid = checkInvariant(
             this,
             shuffle(copy(this)),
             `Shuffling results in an invalid pile`
         );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return this;
     }
 
     /**
@@ -412,17 +440,21 @@ class PileModel extends Model {
     merge(...others) {
         const merged = merge(copy(this), others.map((o) => _cards.get(o)));
         
-        checkInvariant(
+        let valid = checkInvariant(
             this,
             merged,
             `Merge pile with ${others} is invalid`
         );
 
-        others.forEach((otherPile) => checkInvariant(
+        valid = valid && others.every((otherPile) => checkInvariant(
             otherPile,
             [],
             `Empty pile is invalid`
         ));
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
 
         return this;
     }

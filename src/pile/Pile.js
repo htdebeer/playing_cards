@@ -53,10 +53,10 @@ const CELL = MAX_SIZE(1);
 const _view = new WeakMap();
 const _model = new WeakMap();
 const _fanning = new WeakMap();
-const _invariant = new WeakMap();
 
 const _x = new WeakMap();
 const _y = new WeakMap();
+const _rotation = new WeakMap();
 
 /**
  * A pile in a card game.
@@ -64,28 +64,43 @@ const _y = new WeakMap();
  * @extends GameElement
  */
 class Pile extends GameElement {
-    constructor(name, specification = {}) {
-        super(name);
+    constructor(game, specification = {}) {
+        if (!specification.hasOwnProperty("name")) {
+            throw new Error("No name specified in pile");
+        }
 
-        _model.set(this, new PileModel());
+        super(game, specification.name);
 
-        this.fanning = specifiation.fanning || FAN_NONE;
-        this.invariant = specification.invariant || TAUTOLOGY;
+
+        let cards = [];
+        if (specification.hasOwnProperty("deck")) {
+            const deck = game.deck(specification.deck);
+            if (deck) {
+                cards = deck.cards;
+            }
+        }
+
+        _model.set(this, new PileModel(specification.invariant, cards));
+
+        _fanning.set(this, specification.fanning || FAN_NONE);
 
         const position = specification.position || {x: 0, y: 0};
-        this.x = parseFloat(position.x) || 0;
-        this.y = parseFloat(position.y) || 0;
+        _x.set(this, parseFloat(position.x) || 0);
+        _y.set(this, parseFloat(position.y) || 0);
+
+        _rotation.set(this, parseFloat(specification.rotation || 0));
+
+        _view.set(this, new PileView(this.game.table, this.model, this.x, this.y))
     }
 
     /**
      * Update this pile's view.
      */
     updateView() {
-        const view = _view.get(this);
-        if (view) {
-            view.x = _x.get(this);
-            view.y = _y.get(this);
-            view.render();
+        if (this.view) {
+            this.view.x = _x.get(this);
+            this.view.y = _y.get(this);
+            this.view.render();
         }
     }
 
@@ -96,6 +111,15 @@ class Pile extends GameElement {
      */
     get model() {
         return _model.get(this);
+    }
+
+    /**
+     * Get this pile's view.
+     *
+     * @return {PileView} this pile's view
+     */
+    get view() {
+        return _view.get(this);
     }
 
     /**
@@ -148,7 +172,7 @@ class Pile extends GameElement {
                 type = fanType;
         }
 
-        _fanned.set(this, type);
+        _fanning.set(this, type);
         this.updateView();
     }
 
@@ -159,31 +183,6 @@ class Pile extends GameElement {
      */
     get fanning() {
         return _fanning.get(this);
-    }
-
-    /**
-     * Set the invariant for this pile.
-     *
-     * @param {function} predicate - the invariant for this pile.
-     *
-     * @throw Expected a function
-     */
-    set invariant(predicate) {
-        if ({}.toString.call(invariant) === "[object Function]") {
-            _invariant.set(this, predicate);
-        } else {
-            _invariant.set(this, TAUTOLOGY);
-            throw new Error(`Expected a function, got '${predicate}' instead.`);
-        }
-    }
-
-    /**
-     * Get the invariant for this pile.
-     *
-     * @return {function} this pile's invariant.
-     */
-    get invariant() {
-        return _invariant.get(this);
     }
 
 
@@ -223,6 +222,25 @@ class Pile extends GameElement {
      */
     get y() {
         return _y.get(this);
+    }
+
+    /**
+     * Set the rotation of this pile.
+     *
+     * @param {float} newRotation - the new rotation in degrees
+     */
+    set rotation(newRotation) {
+        _rotation.set(this, newRotation);
+        this.updateView();
+    }
+
+    /**
+     * Get the rotation of this pule.
+     *
+     * @return {float} the rotation of this pile in degrees
+     */
+    get rotation() {
+        _rotation.get(this);
     }
 
 }

@@ -104,6 +104,7 @@ class SVG {
         return rect;
     }
 
+
 }
 
 const svg = new SVG();

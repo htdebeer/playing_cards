@@ -77,7 +77,18 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
             // Color the back
             attributes.fill = card.backColor;
         }
-        return svg.use(`${this.url}/#${id}`, attributes);
+
+        // rendering the back takes a long time: to render 52 backs, it needs
+        // about 2 seconds to render about 50000! elements. For now, a simpler
+        // back is used.
+        if ("back" === id) {
+            attributes.rx = 5;
+            attributes.ry = 5;
+            attributes.stroke = "black";
+            return svg.rectangle(0, 0, 169.075, 244.64, attributes);
+        } else {
+            return svg.use(`${this.url}/#${id}`, attributes);
+        }
     }
     
     /**
@@ -87,7 +98,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createBase() {
         return svg.use(`${this.url}/#card-base`, {
-            fill: "silver",
+            fill: "navy",
             "fill-opacity": 0.2,
             "stroke-opacity": 0.2
         });

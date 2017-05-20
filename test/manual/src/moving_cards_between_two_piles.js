@@ -19,7 +19,7 @@ const deck = new Deck("Maroon");
 //
 // 1. Create the models
 const table = new TableModel();
-const pileA = new PileModel(deck);
+const pileA = new PileModel(function () {return true;}, deck);
 const pileB = new PileModel();
 
 

@@ -26,7 +26,7 @@ const checkCard = function (card, supplier) {
 };
 
 describe("CardRenderEngine", function () {
-    const deck = new Deck("skyblue", true);
+    const deck = new Deck(null, "skyblue", true);
     const supplier = new UnicodeCardRenderEngine();
     
     describe("#createCard()", function () {

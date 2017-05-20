@@ -19,6 +19,69 @@
  */
 
 /**
+ * @module
+ */
+
+const _game = new WeakMap();
+const _name = new WeakMap();
+
+/**
+ * GameElement represent elements in a card game such as a pile, player, deck,
+ * action, or label.
+ */
+class GameElement {
+    /**
+     * Create a new GameElement with name.
+     *
+     * @param {Game} game - the game this element belongs to.
+     * @param {string} name - the name of this game element.
+     */
+    constructor(game, name) {
+        _game.set(this, game);
+        _name.set(this, name);
+    }
+
+    /**
+     * Get this element's game.
+     *
+     * @return {Game} this element's game
+     */
+    get game() {
+        return _game.get(this);
+    }
+
+    /**
+     * Get this game element's name.
+     *
+     * @return {string} the name of this game element.
+     */
+    get name() {
+        return _name.get(this);
+    }
+
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
  * General utility functions
  *
  * @module
@@ -801,10 +864,10 @@ class CardModel extends Model {
  * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-
 /**
  * @module
  */
+
 const createDeck = function (deck, jokers = false) {
     const createCard = function (codePoint) {
         return CardModel.fromUnicode(String.fromCodePoint(codePoint), deck);
@@ -884,17 +947,20 @@ const _cards = new WeakMap();
 /**
  * A Deck is a {@link https://en.wikipedia.org/wiki/Standard_52-card_deck|standard 52-card deck} 
  * and, optionally, with two joker cards.
+ *
+ * @extends GameElement
  */
-class Deck {
+class Deck extends GameElement {
 
     /**
-     * Construct a new Deck.
+     * Construct a new Deck. The deck's color is also its name.
      *
      * @param {string} [color = "red"] - the background color of this deck.
      * @param {Boolean} [jokers = false] - should this deck include joker
      * cards or not?
      */
-    constructor(color = "red", jokers = false) {
+    constructor(game, color = "red", jokers = false) {
+        super(game, color);
         _color.set(this, color);
         _hasJokers.set(this, jokers);
         _cards.set(this, createDeck(this, jokers));
@@ -1098,6 +1164,7 @@ class SVG {
         rect.setAttribute("height", height);
         return rect;
     }
+
 
 }
 
@@ -1386,7 +1453,18 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
             // Color the back
             attributes.fill = card.backColor;
         }
-        return svg.use(`${this.url}/#${id}`, attributes);
+
+        // rendering the back takes a long time: to render 52 backs, it needs
+        // about 2 seconds to render about 50000! elements. For now, a simpler
+        // back is used.
+        if ("back" === id) {
+            attributes.rx = 5;
+            attributes.ry = 5;
+            attributes.stroke = "black";
+            return svg.rectangle(0, 0, 169.075, 244.64, attributes);
+        } else {
+            return svg.use(`${this.url}/#${id}`, attributes);
+        }
     }
     
     /**
@@ -1396,7 +1474,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createBase() {
         return svg.use(`${this.url}/#card-base`, {
-            fill: "silver",
+            fill: "navy",
             "fill-opacity": 0.2,
             "stroke-opacity": 0.2
         });
@@ -1537,22 +1615,164 @@ class View extends EventAware {
 /**
  * @module
  */
-const _cards$1 = new WeakMap();
+/**
+ * PileInvariantError is thrown when a PileModel's invariant is invalidated.
+ */
+const PileInvariantError = class extends Error {
+};
 
 /**
- * A pile of cards.
+ * PileIndexOutOfBoundsErrow is thrown when a CardModel outside a PileModel's
+ * bounds is being accessed.
+ */
+const PileIndexOutOfBoundsError = class extends Error {
+};
+
+/**
+ * @function PILE_ACTIONS.INSERT
+ * Insert card in cards at index
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {CardModel} card - the card to insert
+ * @param {Integer} index - the place in cards to insert the card
+ *
+ * @return {CardModel[]} the list of cards with card inserted at index
+ */
+const insert = function (cards, card, index) {
+    cards.splice(index, 0, card);
+    return cards;
+};
+
+/**
+ * @function PILE_ACTIONS.ADD
+ * Add card to the top of cards.
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {CardModel} card - the card to add to the list of cards
+ *
+ * @return {CardModel[]} the list of cards with card added to it
+ */
+const add = function (cards, card) {
+    return insert(cards, card, cards.length);
+};
+
+/**
+ * @function PILE_ACTIONS.PICK
+ * Pick a card at random from cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ *
+ * @return {Array} an array with the list of card minus the picked card, and
+ * the picked card.
+ */
+const pick = function (cards) {
+    const RANDOM_INDEX = Math.floor(Math.random() * cards.length);
+    const rest = cards;
+    const picked = rest.splice(RANDOM_INDEX, 1)[0];
+    return [rest, picked];
+};
+
+/**
+ * @function PILE_ACTIONS.TAKE
+ * Take a card from list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @param {integer} index - the index of the card to take
+ *
+ * @return {Array} an array with the list of card minus the taken card, and
+ * the taken card.
+ */
+const take = function (cards, index = cards.length - 1) {
+    const rest = cards;
+    const taken = rest.splice(index, 1)[0];
+    return [rest, taken];
+};
+
+/**
+ * @function PILE_ACTIONS.MERGE
+ * Merge other lists of cards with a list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ * @Param {cardModel[][]} others - list of lists of cards
+ *
+ * @return {CardModel[]} list with all lists of cards merged into one list
+ */
+const merge = function (cards, others) {
+    return cards.concat(...others);
+};
+
+/**
+ * @function PILE_ACTION.SHUFFLE
+ * Shuffle a list of cards
+ *
+ * @param {CardModel[]} cards - list of cards
+ *
+ * @return {CardModel[]} shuffled list of cards
+ */
+const shuffle = function (cards) {
+    return cards.sort(() => Math.random() - 0.5);
+};
+
+const TAUTOLOGY = function (pile) { return true; };
+
+const _cards$1 = new WeakMap();
+const _invariant = new WeakMap();
+
+// Check the Array with cards newCards against the pile's invariant. If it
+// succeeds, set the newCards as the pile's list of cards, otherwise throw a
+// PileInvariantError with errorMessage.
+const checkInvariant = function (pile, newCards, errorMessage = "") {
+    if (!pile.invariant(newCards)) {
+        throw new PileInvariantError(`${errorMessage}.\n\t${pile.invariant}`);
+        return false;
+    }
+
+    _cards$1.set(pile, newCards);
+    return true;
+};
+
+// Create a copy of this pile's cards as an Array;
+const copy = function (pile) {
+    return _cards$1.get(pile).slice();
+};
+
+/**
+ * A pile of cards. 
  *
  * @extends Model
  */
 class PileModel extends Model {
     /**
-     * Create an empty pile.
+     * Create an empty pile and set its data invariant. This data invariant
+     * should always hold.
      *
-     * @param {Deck} [deck = undefined] - create a pile from a deck
+     * @param {Function} [invariant = TAUTOLOGY] - the data invariant for this
+     * pile.
+     * @param {CardModel[]|Deck} [initial = []] - create a pile from a list of cards
+     *
+     * @throw {PileInvariantError} Invariant invalidated by adding this card
      */
-    constructor(deck = undefined) {
+    constructor(invariant = TAUTOLOGY, initial = []) {
         super();
-        _cards$1.set(this, undefined === deck ? [] : deck.cards);
+        _invariant.set(this, invariant);
+
+        let initialCards = initial instanceof Deck ? initial.cards : initial;
+        initialCards = Array.isArray(initialCards) ? initialCards : [];
+
+        checkInvariant(
+            this, 
+            initialCards,
+            `Initial cards does not fullfill data invariant`
+        );
+    }
+
+    /**
+     * Get the data invariant for this pile
+     *
+     * @return {Function} the data invariant
+     */
+    get invariant() {
+        return _invariant.get(this);
     }
 
     /**
@@ -1583,26 +1803,15 @@ class PileModel extends Model {
     }
 
     /**
-     * Add a card to this pile.
+     * Inspect a card in this pile. The pile does not change.
      *
-     * @param {CardModel} card - the card to add.
-     * @param {integer} [index = pile.count] - the index to insert the card in
-     * this pile. Defaults to the end of the pile.
+     * @param {integer} [index = top] - the index of the card to
+     * inspect. Defaults to the top card
      *
-     * @return {PileModel} Return this pile.
-     *
-     * @fire EVENT_MODEL_CHANGE
-     *
-     * @throw {Error} Index out of bounds.
+     * @return {Card} the card to inspect.
      */
-    add (card, index = this.count) {
-        if (0 <= index && index <= this.count) {
-            _cards$1.get(this).splice(index, 0, card);
-            this.emit(EVENT_MODEL_CHANGE, this);
-            return this;
-        } else {
-            throw new Error("Index out of bounds");
-        }
+    inspect(index = this.count - 1) {
+        return _cards$1.get(this)[index];
     }
 
     /**
@@ -1627,18 +1836,88 @@ class PileModel extends Model {
     }
 
     /**
+     * Add a card to this pile.
+     *
+     * @param {CardModel} card - the card to add.
+     *
+     * @return {PileModel} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by adding this card
+     */
+    add (card) {
+        const added = add(copy(this), card);
+        const valid = checkInvariant(
+            this,
+            added,
+            `Cannot add ${card.toUnicode()}`
+        );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return this;
+    }
+    
+    /**
+     * Insert a card in this pile.
+     *
+     * @param {CardModel} card - the card to add.
+     * @param {integer} [index = pile.count] - the index to insert the card in
+     * this pile. Defaults to the end of the pile.
+     *
+     * @return {PileModel} Return this pile.
+     *
+     * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileIndexOutOfBoundsError} Index out of bounds.
+     * @throw {PileInvariantError} Invariant invalidated by inserting this card at this index
+     */
+    insert (card, index) {
+        if (0 > index || index > this.count) {
+            throw new PileIndexOutOfBoundsError();
+        }
+
+        const inserted = insert(copy(this), card, index);
+        const valid = checkInvariant(
+            this,
+            inserted,
+            `Cannot insert ${card.toUnicode()} at index ${index}`
+        );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return this;
+    }
+
+    /**
      * Pick a random card from this pile; the pile contains one card less
      * hereafter.
      *
      * @return {Card} the picked card.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by picking a card
+     * from this pile
      */
     pick() {
-        const randomIndex = Math.floor(Math.random() * this.count);
-        const card = _cards$1.get(this).splice(randomIndex, 1)[0];
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return card;
+        const [rest, picked] = pick(copy(this));
+        const valid = checkInvariant(
+            this,
+            rest,
+            `Cannot pick ${picked.toUnicode()}`
+        );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
+
+        return picked;
     }
 
     /**
@@ -1650,23 +1929,23 @@ class PileModel extends Model {
      * @return {Card} the top card
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated taking card from
+     * index
      */
     take(index = this.count - 1) {
-        const card = _cards$1.get(this).splice(index, 1)[0];
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return card;
-    }
+        const [rest, taken] = take(copy(this), index);
+        const valid = checkInvariant(
+            this,
+            rest,
+            `Cannot take ${taken.toUnicode()} from ${index}`
+        );
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
+        }
 
-    /**
-     * Inspect a card in this pile. The pile does not change.
-     *
-     * @param {integer} [index = top] - the index of the card to
-     * inspect. Defaults to the top card
-     *
-     * @return {Card} the card to inspect.
-     */
-    inspect(index = this.count - 1) {
-        return _cards$1.get(this)[index];
+        return taken;
     }
 
     /**
@@ -1675,43 +1954,21 @@ class PileModel extends Model {
      * @return {PileModel} this pile, shuffled.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by shuffling pile
      */
     shuffle() {
-        _cards$1.get(this).sort(() => Math.random() - 0.5);
-        this.emit(EVENT_MODEL_CHANGE, this);
-        return this;
-    }
-
-    /**
-     * Split this pile in a number of smaller piles. By default the pile is
-     * split in two.
-     *
-     * @param {integer} [numberOfPiles = 2] - the number of piles to split
-     * this pile into, defaults to 2.
-     *
-     * @return {PileModel[]} An array of piles, this pile is the first in that list
-     *
-     * @fire EVENT_MODEL_CHANGE
-     */
-    split(numberOfPiles = 2) {
-        if (Number.isInteger(numberOfPiles)) {
-            const pileCount = Math.floor(this.count / numberOfPiles);
-            const piles = [];
-            piles.push(this);
-
-            while (this.count > pileCount) {
-                const pile = new PileModel();
-
-                while (pile.count < pileCount) {
-                    pile.add(this.take());
-                }
-
-                piles.push(pile);
-            }
-
+        const valid = checkInvariant(
+            this,
+            shuffle(copy(this)),
+            `Shuffling results in an invalid pile`
+        );
+        
+        if (valid) {
             this.emit(EVENT_MODEL_CHANGE, this);
-            return piles;
         }
+
+        return this;
     }
 
     /**
@@ -1722,17 +1979,31 @@ class PileModel extends Model {
      * @return {PileModel} this pile.
      *
      * @fire EVENT_MODEL_CHANGE
+     *
+     * @throw {PileInvariantError} Invariant invalidated by merging the other
+     * piles with this pile; or others' invariant invalidated by emptying them
      */
-    merge(other) {
-        while (!other.isEmpty()) {
-            this.add(other.take(0));
+    merge(...others) {
+        const merged = merge(copy(this), others.map((o) => _cards$1.get(o)));
+        
+        let valid = checkInvariant(
+            this,
+            merged,
+            `Merge pile with ${others} is invalid`
+        );
+
+        valid = valid && others.every((otherPile) => checkInvariant(
+            otherPile,
+            [],
+            `Empty pile is invalid`
+        ));
+        
+        if (valid) {
+            this.emit(EVENT_MODEL_CHANGE, this);
         }
-        this.emit(EVENT_MODEL_CHANGE, this);
+
         return this;
     }
-
-
-    
 }
 
 /*
@@ -2084,9 +2355,103 @@ class PileView extends GView {
  * 
  */
 
+const _elements = new WeakMap();
+
+const initialize = function (layout, specification) {
+};
+
 /**
  * @module
  */
+
+/**
+ * Layout describes a playing table with game elements, such as piles,
+ * labels, and the like.
+ *
+ * @extends GameElement
+ */
+class Layout {
+
+    /**
+     * Create a new layout
+     *
+     * @param {object} [specification = {}] The initial specification
+     */
+    constructor(specification = {}) {
+        _elements.set(this, {});
+
+        initialize(this, specification);
+    }
+
+    /**
+     * Add an element to this layout
+     *
+     * @Param {string} name - the name of the pile. This name should be unique
+     * in the layout.
+     * @param {object} element - the element to add to this layout.
+     *
+     * Note. If there already exist an element with this name in this layout, it
+     * will be replaced by new element.
+     */
+    add(name, element) {
+        _elements.get(this)[name] = element;
+    }
+
+    /**
+     * Get an element by name.
+     *
+     * @param {string} name - the name of the element to get in this layout
+     *
+     * @return {object} the element associated by name; returns `undefined` if it
+     * does not exist.
+     */
+    get(name) {
+        return _elements.get(this)[name];
+    }
+
+    /**
+     * Get all the element of TYPE of this layout;
+     *
+     * @return {TYPE} type - the type to filter
+     * @return {object(name, element)} a map with all the elements of TYPE in this layout.
+     */
+    getElementsByType(type) {
+        const elements = _elements.get(this);
+        return Object
+            .keys(elements)
+            .filter((name) => elements[name].type === type)
+            .reduce((elts, name) => {
+                elts[name] = elements[name];
+                return elts;
+            }, {});
+    }
+}
+
+/*
+ * Copyright 2017 Huub de Beer <huub@heerdebeer.org>
+ *
+ * This file is part of playing_cards.
+ *
+ * playing_cards is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * playing_cards is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with playing_cards.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
+/**
+ * @module
+ */
+
+const _layout = new WeakMap();
 
 /**
  * Table a card game is played on.
@@ -2094,9 +2459,26 @@ class PileView extends GView {
  * @extends Model
  */
 class TableModel extends Model {
-    constructor() {
-        super();
+    
+    /**
+     * Create a new Table model.
+     *
+     * @param {Layout} [layout = new Layout] - the initial layout of the table.
+     */
+    constructor(layout = new Layout()) {
+        super([]);
+        _layout.set(this, layout);
     }
+
+    /**
+     * Get this table's layout.
+     *
+     * @return {Layout} this table's layout.
+     */
+    get layout() {
+        return _layout.get(this);
+    }
+    
 }
 
 /*
@@ -2140,7 +2522,7 @@ class TableView extends GView {
      *  @param {float} [y = 0] - the y coordinate.
      *  @param {Object} [config = {}] - the initial configuration.
      */
-    constructor(model, x = 0, y = 0, config = {}) {
+    constructor(model = new TableModel(), x = 0, y = 0, config = {}) {
         config.name = "table";
         super(undefined, model, x, y, config);
         this.element.appendChild(svg.rectangle(0, 0, "100%", "100%", {
@@ -2245,7 +2627,7 @@ const deck = new Deck("Maroon");
 //
 // 1. Create the models
 const table = new TableModel();
-const pileA = new PileModel(deck);
+const pileA = new PileModel(function () {return true;}, deck);
 const pileB = new PileModel();
 
 
