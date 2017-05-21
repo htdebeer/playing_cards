@@ -62,7 +62,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createCard(card) {
         const attributes = {};
-        let id = "back";
+        let id = "alternate-back";
         if (card.isFacingUp()) {
             if (card.isJoker()) {
                 id = `${card.isRed() ? "red" : "black"}_joker`;
@@ -78,17 +78,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
             attributes.fill = card.backColor;
         }
 
-        // rendering the back takes a long time: to render 52 backs, it needs
-        // about 2 seconds to render about 50000! elements. For now, a simpler
-        // back is used.
-        if ("back" === id) {
-            attributes.rx = 5;
-            attributes.ry = 5;
-            attributes.stroke = "black";
-            return svg.rectangle(0, 0, 169.075, 244.64, attributes);
-        } else {
-            return svg.use(`${this.url}/#${id}`, attributes);
-        }
+        return svg.use(`${this.url}/#${id}`, attributes);
     }
     
     /**

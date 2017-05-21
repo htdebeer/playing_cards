@@ -51,4 +51,4 @@ game.table.on(EVENT_CLICK, () => {
     }
 });
 
-game.start();
+game.deal();

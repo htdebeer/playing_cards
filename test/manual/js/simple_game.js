@@ -441,7 +441,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createCard(card) {
         const attributes = {};
-        let id = "back";
+        let id = "alternate-back";
         if (card.isFacingUp()) {
             if (card.isJoker()) {
                 id = `${card.isRed() ? "red" : "black"}_joker`;
@@ -457,17 +457,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
             attributes.fill = card.backColor;
         }
 
-        // rendering the back takes a long time: to render 52 backs, it needs
-        // about 2 seconds to render about 50000! elements. For now, a simpler
-        // back is used.
-        if ("back" === id) {
-            attributes.rx = 5;
-            attributes.ry = 5;
-            attributes.stroke = "black";
-            return svg.rectangle(0, 0, 169.075, 244.64, attributes);
-        } else {
-            return svg.use(`${this.url}/#${id}`, attributes);
-        }
+        return svg.use(`${this.url}/#${id}`, attributes);
     }
     
     /**
@@ -477,7 +467,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      */
     createBase() {
         return svg.use(`${this.url}/#card-base`, {
-            fill: "navy",
+            fill: "silver",
             "fill-opacity": 0.2,
             "stroke-opacity": 0.2
         });
@@ -2971,18 +2961,16 @@ class Game {
                 .actions
                 .forEach((action) => this.actions.add(new Action(this, action.name, action.action)));
         }
-        
-        const setup = this.action("setup");
-        if (setup) {
-            setup.run();
-        }
     }
 
     /**
      * Start this game;
      */
-    start() {
-        console.log("Start!");
+    deal() {
+        const deal = this.action("deal");
+        if (deal) {
+            deal.run();
+        }
     }
 
     /**
@@ -3065,7 +3053,7 @@ class Game {
 
 const gameSpecification = {
     actions: [{
-        name: "setup",
+        name: "deal",
         action: function () {
             const deck = this.deck("red");
             const pile = this.pile("left").model;
@@ -3076,7 +3064,8 @@ const gameSpecification = {
                 pile.add(deck.cards.pop());
             }
             pile.inspect().turn();
-        }
+        },
+        allowed: true
     }],
     decks: [{
         color: "red",
@@ -3112,4 +3101,4 @@ game.table.on(EVENT_CLICK, () => {
     }
 });
 
-game.start();
+game.deal();
