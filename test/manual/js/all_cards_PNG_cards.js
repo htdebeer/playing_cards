@@ -1419,45 +1419,51 @@ const CARD_SUPPLIER = new class extends CardRenderEngine {
 /**
  * @module
  */
+const WIDTH$1 = 169.075;
+const HEIGHT$1 = 244.64;
+
+const SUIT_WIDTH$1 = 15.42;
+const SUIT_HEIGHT = 15.88;
+
 const _url = new WeakMap();
 
 /**
- * SVGCardsCardRenderEngine is a CardRenderEngine that uses {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
+ * PNGCardsCardRenderEngine is a CardRenderEngine that uses PNG files renderings of {@link https://github.com/htdebeer/SVG-cards|SVG Cards}
  * to supply cards.
  *
  * @extends CardRenderEngine
  */
-class SVGCardsCardRenderEngine extends CardRenderEngine {
+class PNGCardsCardRenderEngine extends CardRenderEngine {
 
     /** 
-     * Create a SVGCardsCardsRenderEngine. Specify the URL to the SVG file to get
-     * the cards from.
+     * Create a PNGCardsCardsRenderEngine. Specify the URL to the directory with
+     * PNG files to get the cards from.
      *
-     * @param {string} [url = "/svg-cards.svg"] - the URL to the SVG file to
-     * get the cards from.
+     * @param {string} [url = "/png"] - the URL to the directory with PNG
+     * to get the cards from.
      */
-    constructor(url = "/svg-cards.svg") {
+    constructor(url = "/png") {
         super();
         _url.set(this, url);
     }
 
     /**
-     * The URL to the SVG file to get the cards from;
+     * The URL to the directory with PNG files to get the cards from;
      */
     get url() {
         return _url.get(this);
     }
 
     /**
-     * Represent a card as an SVG USE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
+     * Represent a card as an SVG IMAGE element, using cards defined in {@link https://github.com/htdebeer/SVG-cards| SVG Cards}.
      *
      * @param {CardModel} card - the card model to represent;
      *
-     * @return {SVGElement} An SVG representation of the card.
+     * @return {SVGImageElement} An SVG representation of the card.
      */
     createCard(card) {
-        const attributes = {};
-        let id = "alternate-back";
+        let id = "back";
+
         if (card.isFacingUp()) {
             if (card.isJoker()) {
                 id = `${card.isRed() ? "red" : "black"}_joker`;
@@ -1469,11 +1475,11 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
                 id = `${rank}_${suit.slice(0, -1)}`;
             }
         } else {
-            // Color the back
-            attributes.fill = card.backColor;
+            id = `${id}-${card.backColor}`;
         }
 
-        return svg$1.use(`${this.url}/#${id}`, attributes);
+
+        return svg$1.image(`${this.url}/${id}.png`, 0, 0, WIDTH$1, HEIGHT$1);
     }
     
     /**
@@ -1482,11 +1488,7 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of a card's circumference
      */
     createBase() {
-        return svg$1.use(`${this.url}/#card-base`, {
-            fill: "silver",
-            "fill-opacity": 0.2,
-            "stroke-opacity": 0.2
-        });
+        return svg$1.image(`${this.url}/card-base.png`, 0, 0, WIDTH$1, HEIGHT$1);
     }
 
     /**
@@ -1497,11 +1499,11 @@ class SVGCardsCardRenderEngine extends CardRenderEngine {
      * @return {SVGElement} A SVG representation of the suit.
      */
     createSuit(suit) {
-        return svg$1.use(`${this.url}/#suit-${suit}`);
+        return svg$1.image(`${this.url}/suit-${suit}.png`, 0, 0, SUIT_WIDTH$1, SUIT_HEIGHT);
     }
 }
 
-CARD_SUPPLIER.engine = new SVGCardsCardRenderEngine("/SVG-cards/svg-cards.svg");
+CARD_SUPPLIER.engine = new PNGCardsCardRenderEngine("/SVG-cards/png/2x");
 const deck = new Deck("navy", true);
 
 const WIDTH = 170;

@@ -1165,6 +1165,25 @@ class SVG {
         return rect;
     }
 
+    /**
+     * Create an IMAGE
+     *
+     * @param {String} url - the url to the PNG file
+     * @param {float} x - the upper left corner, x coordinate
+     * @param {float} y - the upper left corner, y coordinate
+     * @param {float} width - the width of the rectangle
+     * @param {float} height - the heigt of the rectangle
+     * @param {attributes} [attributes = {}] - other attributes
+     */
+    image(url, x, y, width, height, attributes = {}) {
+        const image = this.create("image", attributes);
+        image.setAttributeNS(XLINKNS, "xlink:href", url);
+        image.setAttribute("x", x);
+        image.setAttribute("y", y);
+        image.setAttribute("width", width);
+        image.setAttribute("height", height);
+        return image;
+    }
 
 }
 
