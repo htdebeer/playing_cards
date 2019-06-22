@@ -37,7 +37,7 @@
     "babel-register": "^6.24.0",
     "chai": "^3.5.0",
     "docdash": "^0.4.0",
-    "eslint": "^3.19.0",
+    "eslint": ">=4.18.1",
     "jsdoc": "^3.4.3",
     "jsdom": "9.12.0",
     "jsdom-global": "2.1.1",
