@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register ./test/automatic",
+    "test": "node_modules/mocha/bin/mocha --recursive --require babel-polyfill --require babel-core/register ./test/automatic",
     "build": "node_modules/rollup/bin/rollup --config ./rollup.config.js",
     "doc": "node_modules/jsdoc/jsdoc.js ./src --destination doc --recurse --template node_modules/docdash",
     "dev": "npm run build && npm run test && npm run doc"
@@ -41,7 +41,7 @@
     "jsdoc": "^3.6.3",
     "jsdom": "9.12.0",
     "jsdom-global": "2.1.1",
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
     "rollup": "^0.41.6"
   }
 }
